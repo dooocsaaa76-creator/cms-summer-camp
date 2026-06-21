@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 여름방학 특강 | CMS 서초영재관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ===================== 디자인 토큰 ===================== */
+  :root{
+    --ink:#16243E;
+    --ink-soft:#33425C;
+    --paper:#F3F5F1;
+    --paper-grid:#DCE3DD;
+    --card:#FFFFFF;
+    --teal:#1F7A6C;
+    --teal-dark:#14564C;
+    --teal-pale:#E3F1EC;
+    --red:#D64545;
+    --red-pale:#FBE7E4;
+    --yellow:#F4B73F;
+    --muted:#5C6B66;
+    --line:#D9E0DA;
+    --radius:14px;
+    --shadow: 0 8px 24px rgba(22,36,62,0.08);
+    --font-display:'Song Myung', serif;
+    --font-body:'Gowun Dodum', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.6;
+    background-image:
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size:28px 28px;
+  }
+  a{color:var(--teal-dark);}
+  img{max-width:100%;display:block;}
+  :focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
+
+  /* ===================== HERO ===================== */
+  .hero{
+    position:relative;
+    padding:64px 20px 48px;
+    text-align:center;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(31,122,108,0.10), transparent 45%),
+      radial-gradient(circle at 82% 75%, rgba(214,69,69,0.08), transparent 40%);
+    border-bottom:2px solid var(--ink);
+    overflow:hidden;
+  }
+  .hero .eyebrow{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:13px;
+    letter-spacing:.12em;
+    color:var(--teal-dark);
+    background:var(--teal-pale);
+    border:1px solid var(--teal);
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-size:clamp(34px,6vw,58px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .hero h1 span{color:var(--teal-dark);}
+  .hero p.lead{
+    max-width:620px;
+    margin:0 auto 28px;
+    color:var(--ink-soft);
+    font-size:17px;
+  }
+  .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    font-family:var(--font-body);
+    font-size:15px;
+    font-weight:700;
+    border:2px solid var(--ink);
+    border-radius:999px;
+    padding:12px 26px;
+    cursor:pointer;
+    background:var(--card);
+    color:var(--ink);
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{background:var(--teal-dark);border-color:var(--teal-dark);}
+  .btn-ghost{background:transparent;}
+
+  /* ===================== FILTER BAR ===================== */
+  .filterbar{
+    position:sticky;top:0;z-index:30;
+    background:rgba(243,245,241,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    padding:12px 16px;
+  }
+  .filterbar-inner{
+    max-width:1100px;margin:0 auto;
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;
+  }
+  .chip{
+    font-family:var(--font-mono);
+    font-size:13px;
+    border:1.5px solid var(--ink);
+    border-radius:999px;
+    padding:7px 16px;
+    background:var(--card);
+    cursor:pointer;
+    color:var(--ink);
+    transition:all .15s ease;
+  }
+  .chip.active{background:var(--ink);color:#fff;}
+  .chip:hover{background:var(--ink);color:#fff;}
+
+  /* ===================== MAIN / CATALOG ===================== */
+  main{max-width:1100px;margin:0 auto;padding:36px 20px 80px;}
+  .cat-block{margin-bottom:52px;}
+  .cat-heading{
+    display:flex;align-items:baseline;gap:10px;
+    font-family:var(--font-display);
+    font-size:26px;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:10px;
+    margin-bottom:20px;
+  }
+  .cat-heading .count{
+    font-family:var(--font-mono);font-size:13px;color:var(--muted);font-weight:400;
+  }
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+
+  .card{
+    background:var(--card);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:10px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(22,36,62,.14);}
+  .card .badge{
+    align-self:flex-start;
+    font-family:var(--font-mono);
+    font-size:11px;
+    background:var(--teal-pale);
+    color:var(--teal-dark);
+    border:1px solid var(--teal);
+    border-radius:6px;
+    padding:2px 8px;
+  }
+  .card h3{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.3;}
+  .card .target{font-size:14px;color:var(--ink-soft);}
+  .card .meta{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--muted);
+    display:flex;flex-direction:column;gap:3px;
+    border-top:1px dashed var(--line);
+    padding-top:10px;
+    margin-top:auto;
+  }
+  .card .meta b{color:var(--ink);}
+  .card-actions{display:flex;gap:8px;margin-top:6px;}
+  .btn-sm{
+    font-size:13px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--ink);
+    background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:700;
+  }
+  .btn-sm.detail{color:var(--ink);}
+  .btn-sm.detail:hover{background:var(--ink);color:#fff;}
+  .btn-sm.apply{background:var(--teal-dark);color:#fff;border-color:var(--teal-dark);}
+  .btn-sm.apply:hover{background:var(--ink);border-color:var(--ink);}
+
+  /* ===================== 썸머스쿨 배너 ===================== */
+  .summer-banner{
+    background:var(--ink);color:#fff;border-radius:var(--radius);
+    padding:28px 26px;margin-bottom:56px;
+    display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;
+  }
+  .summer-banner h3{font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--yellow);}
+  .summer-banner p{margin:2px 0;font-size:14.5px;color:#dfe6e2;}
+  .summer-banner a.btn{background:var(--yellow);border-color:var(--yellow);color:var(--ink);}
+
+  /* ===================== MODAL (상세보기) ===================== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(22,36,62,.55);
+    display:none;align-items:flex-start;justify-content:center;
+    padding:28px 16px;overflow-y:auto;z-index:100;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--card);max-width:680px;width:100%;
+    border-radius:18px;border:2px solid var(--ink);
+    padding:28px 26px 26px;position:relative;
+    animation:pop .18s ease;
+  }
+  @keyframes pop{from{transform:translateY(10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-close{
+    position:absolute;top:16px;right:16px;
+    background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink);
+    width:34px;height:34px;border-radius:50%;
+  }
+  .modal-close:hover{background:var(--paper-grid);}
+  .modal .badge{font-family:var(--font-mono);font-size:11px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:6px;padding:2px 8px;}
+  .modal h2{font-family:var(--font-display);font-size:26px;margin:10px 0 4px;}
+  .modal .feature{color:var(--ink-soft);font-size:14.5px;margin-bottom:18px;white-space:pre-line;}
+
+  .infotable{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;}
+  .infotable th{
+    text-align:left;font-family:var(--font-mono);font-size:12px;color:var(--muted);
+    width:96px;vertical-align:top;padding:8px 10px 8px 0;
+  }
+  .infotable td{padding:8px 0;border-top:1px dashed var(--line);}
+  .infotable tr:first-child td{border-top:none;}
+  .variant-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
+  .variant-pill{
+    font-family:var(--font-mono);font-size:12.5px;background:var(--paper);
+    border:1px solid var(--line);border-radius:8px;padding:6px 10px;line-height:1.5;
+  }
+  .variant-pill b{color:var(--teal-dark);}
+  .note-pill{
+    display:inline-block;font-size:12.5px;color:var(--red);background:var(--red-pale);
+    border-radius:8px;padding:4px 10px;margin-top:4px;
+  }
+
+  /* 회차별 진도 타임라인 (시그니처 요소) */
+  .timeline-label{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;}
+  .timeline{
+    display:flex;gap:0;overflow-x:auto;padding:6px 2px 14px;
+    scrollbar-width:thin;
+  }
+  .tl-node{
+    flex:0 0 auto;width:118px;text-align:center;position:relative;padding-top:6px;
+  }
+  .tl-node:not(:last-child)::after{
+    content:"";position:absolute;top:24px;left:50%;width:100%;height:2px;
+    background:repeating-linear-gradient(90deg,var(--teal) 0 6px, transparent 6px 10px);
+    z-index:0;
+  }
+  .tl-num{
+    width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;
+    font-family:var(--font-mono);font-weight:700;font-size:13px;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 8px;
+    position:relative;z-index:1;
+  }
+  .tl-topic{font-size:12.5px;color:var(--ink-soft);padding:0 6px;line-height:1.4;}
+
+  .modal-apply{
+    width:100%;margin-top:6px;padding:13px;border-radius:10px;border:none;
+    background:var(--teal-dark);color:#fff;font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;
+  }
+  .modal-apply:hover{background:var(--ink);}
+
+  /* ===================== 신청서 ===================== */
+  #apply{
+    background:var(--card);border:2px solid var(--ink);border-radius:18px;
+    padding:36px 30px;margin-top:20px;scroll-margin-top:90px;
+  }
+  #apply h2{font-family:var(--font-display);font-size:28px;margin:0 0 6px;}
+  #apply .sub{color:var(--muted);font-size:14.5px;margin-bottom:26px;}
+  .config-warning{
+    display:none;background:var(--red-pale);color:var(--red);border:1px solid var(--red);
+    border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:20px;font-family:var(--font-mono);
+  }
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;}
+  .form-grid .full{grid-column:1/-1;}
+  .field label{
+    display:block;font-size:13.5px;font-weight:700;margin-bottom:6px;color:var(--ink);
+  }
+  .field .req{color:var(--red);}
+  .field input[type=text],
+  .field input[type=tel],
+  .field select{
+    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;
+    font-family:var(--font-body);font-size:14.5px;background:#fff;color:var(--ink);
+  }
+  .field input:focus, .field select:focus{border-color:var(--teal);}
+  .field .hint{font-size:12px;color:var(--muted);margin-top:4px;}
+  .radio-row{display:flex;gap:18px;padding-top:6px;}
+  .radio-row label{display:flex;align-items:center;gap:6px;font-weight:400;font-size:14.5px;cursor:pointer;}
+  .consent-box{
+    background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.6;
+  }
+  .consent-check{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:14px;font-weight:700;cursor:pointer;}
+  .consent-check input{margin-top:3px;}
+  .submit-row{margin-top:26px;}
+  .submit-btn{
+    width:100%;padding:16px;border:none;border-radius:10px;background:var(--ink);
+    color:#fff;font-family:var(--font-body);font-weight:700;font-size:16px;cursor:pointer;
+    transition:background .15s ease;
+  }
+  .submit-btn:hover{background:var(--teal-dark);}
+  .submit-btn:disabled{background:#9aa6a3;cursor:not-allowed;}
+  .status-msg{margin-top:14px;font-size:14.5px;padding:12px 14px;border-radius:8px;display:none;}
+  .status-msg.ok{display:block;background:var(--teal-pale);color:var(--teal-dark);}
+  .status-msg.err{display:block;background:var(--red-pale);color:var(--red);}
+
+  /* ===================== FOOTER ===================== */
+  footer{
+    text-align:center;padding:40px 20px 60px;color:var(--muted);font-size:13.5px;
+  }
+  footer a{color:var(--teal-dark);font-weight:700;}
+
+  @media(max-width:640px){
+    .form-grid{grid-template-columns:1fr;}
+    #apply{padding:26px 18px;}
+    .hero{padding:48px 16px 36px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">CMS 서초영재관 · GS / FIT / G / BM</span>
+  <h1>2026 <span>여름방학 특강</span></h1>
+  <p class="lead">방학은 부족했던 빈틈을 채우고 다음 단계로 도약할 수 있는 가장 확실한 '골든타임'입니다.<br>
+  과정을 살펴보고, 우리 아이에게 꼭 맞는 특강을 신청해보세요.</p>
+  <div class="hero-actions">
+    <a href="#catalog" class="btn btn-primary">특강 둘러보기 ↓</a>
+    <a href="#apply" class="btn btn-ghost">바로 신청하기</a>
+  </div>
+</header>
+
+<nav class="filterbar">
+  <div class="filterbar-inner" id="filterChips"></div>
+</nav>
+
+<main>
+  <section id="catalog"></section>
+
+  <div class="summer-banner">
+    <div>
+      <h3>★ CMS 썸머스쿨</h3>
+      <p>오전부터 시작되는 CMS 썸머스쿨 — CMS 전문가와 함께하는 자기주도학습 프로그램</p>
+      <p>7/27(월) ~ 8/14(금) · 매일 오전 9시~12시</p>
+    </div>
+    <a class="btn" href="https://blog.naver.com/cms_seocho/224316998517" target="_blank" rel="noopener">썸머스쿨 안내 보기</a>
+  </div>
+
+  <section id="apply">
+    <h2>특강 신청서</h2>
+    <p class="sub">* 표시는 필수 입력 항목입니다. 제출 시 입력하신 정보는 학원의 구글 시트로 안전하게 전달됩니다.</p>
+    <div class="config-warning" id="configWarning">⚠️ 관리자 안내: 아직 구글 시트 연동 URL이 설정되지 않았습니다. 페이지 하단 안내에 따라 Apps Script 배포 URL을 <code>CONFIG.SCRIPT_URL</code>에 입력해주세요.</div>
+
+    <form id="applyForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="studentName">학생 이름 <span class="req">*</span></label>
+          <input type="text" id="studentName" name="studentName" required placeholder="홍길동">
+        </div>
+        <div class="field">
+          <label for="school">학교 <span class="req">*</span></label>
+          <input type="text" id="school" name="school" required placeholder="예시: OO초 or OO중">
+        </div>
+        <div class="field">
+          <label for="grade">학년 <span class="req">*</span></label>
+          <select id="grade" name="grade" required>
+            <option value="" disabled selected>선택</option>
+            <option>초1이하</option><option>초2</option><option>초3</option>
+            <option>초4</option><option>초5</option><option>초6</option>
+            <option>중1</option><option>중2</option><option>중3</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="phone">학부모 연락처 <span class="req">*</span></label>
+          <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678">
+          <div class="hint">형식: 010-1234-5678</div>
+        </div>
+        <div class="field full">
+          <label>재원 여부 <span class="req">*</span></label>
+          <div class="radio-row">
+            <label><input type="radio" name="enrolled" value="재원생" required> 재원생</label>
+            <label><input type="radio" name="enrolled" value="외부생" required> 외부생</label>
+          </div>
+        </div>
+        <div class="field full">
+          <label for="course">특강 신청 <span class="req">*</span></label>
+          <select id="course" name="course" required>
+            <option value="" disabled selected>선택</option>
+          </select>
+          <div class="hint">위에서 '자세히 보기 → 이 특강 신청하기'를 누르면 자동으로 선택됩니다.</div>
+        </div>
+        <div class="field full">
+          <div class="consent-box">
+            <b>■ 개인정보 수집·이용 동의</b><br>
+            1. 수집하는 개인정보 항목: 자녀 학년, 휴대폰 번호<br>
+            2. 수집 및 이용 목적: 설명회 안내, 예약 확인, 향후 설명회 및 개강·교육 등의 정보 제공<br>
+            3. 보유 및 이용 기간: 설명회 종료 후 1년간, 수신 거부 요청 시까지 보유·이용
+          </div>
+          <label class="consent-check">
+            <input type="checkbox" id="consent" name="consent" required>
+            개인정보 수집 및 이용에 동의합니다. <span class="req">*</span>
+          </label>
+        </div>
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="submit-btn" id="submitBtn">신청서 제출</button>
+        <div class="status-msg" id="statusMsg"></div>
+      </div>
+    </form>
+  </section>
+</main>
+
+<footer>
+  CMS 서초영재관 카카오채널에서 1:1 문의가 가능합니다 — <a href="http://pf.kakao.com/_uhxcexb" target="_blank" rel="noopener">pf.kakao.com/_uhxcexb</a><br>
+  이 페이지는 Google Forms 응답을 대체하며, 제출된 신청 내역은 연동된 구글 시트에 자동 저장됩니다.
+</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — 구글시트 연동
+   Apps Script를 배포한 뒤 아래 URL을 교체하세요.
+   (배포 방법은 함께 전달된 안내 파일 참고)
+============================================================ */
+const CONFIG = {
+  SCRIPT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"
+};
+
+/* ============================================================
+   강좌 데이터
+============================================================ */
+const COURSES = [
+{
+  id:"go-geuksimhwa", category:"고등", title:"공통수학1 극심화",
+  textbook:"자체교재",
+  target:"3GST, GST미적2상",
+  feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
+  variants:[
+    {label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"},
+    {label:"화목반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}
+  ],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"]
+},
+{
+  id:"go-samgakham", category:"고등", title:"삼각함수 & 수열",
+  textbook:"자체교재",
+  target:"GS공수2상, GS공수2하",
+  feature:"고2 대수과정 진입학생 또는 경시수업을 준비하는 학생\n고2 대수과정중 가장 높은 진입장벽을 가진 단원 중 삼각함수와 수열을 집중 공략하는 특강입니다. 경시를 준비한다면 필수 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각비","삼각함수","삼각함수의 그래프","삼각형과 삼각함수","등차수열","등비수열","수열의 합 (시그마)"]
+},
+{
+  id:"go-mibun", category:"고등", title:"미분 첫걸음",
+  textbook:"자체교재",
+  target:"GS대수상, GS미적분1",
+  feature:"미적분1의 개념, 유형수업이 필요한 학생\n미적분1의 근본적인 개념에 집중하여 미분의 본질을 제대로 이해하는 특강. 미적분1을 처음 시작하거나 개념을 탄탄히 가져가려는 학생이라면 반드시 들어야 하는 특강입니다.",
+  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/13(목)"}],
+  note:"7월 26일(일), 7월 30일(목) 특강수업은 정상 진행됩니다.",
+  sessions:["함수의 극한","함수의 연속","함수계수와 도함수","도함수의 활용(1)","도함수의 활용(2)","도함수의 활용(3)","도함수의 활용(4)"]
+},
+{
+  id:"go-major", category:"고등", title:"공통수학1 메이저클래스",
+  textbook:"자체교재",
+  target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
+  feature:"공통수학1의 응용 심화 연습이 필요한 학생\n공통수학1의 핵심 개념을 하나의 흐름으로 완전히 이해하고, 탄탄한 개념을 바탕으로 응용·심화까지 혼자 힘으로 해결해 내는 힘을 만드는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~16:00", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식 + 항등식과 나머지정리","인수분해 + 복소수","이차방정식","이차방정식과 이차함수","여러 가지 방정식(1)","여러 가지 방정식(2)","여러 가지 부등식"]
+},
+{
+  id:"go-master", category:"고등", title:"공통수학1 마스터클래스",
+  textbook:"자체교재",
+  target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
+  feature:"공통수학1의 고난도 유형 연습이 필요한 학생\n공통수학1 핵심 단원의 고난도 문항들을 여러 번 경험하는 것이 중요합니다. 한 번만 풀어봐도 부족함 없는 문제들을 경험하여 공통수학1을 마스터하는 특강입니다.",
+  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/16(일)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식과 인수분해","항등식과 나머지정리","실수와 복소수","일차·이차방정식과 판별식","이차방정식과 이차함수","여러 가지 방정식","여러 가지 부등식"]
+},
+{
+  id:"go-junggihamaster", category:"고등", title:"중등기하마스터",
+  textbook:"자체교재",
+  target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
+  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 기하 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"]
+},
+{
+  id:"mi-jung2-2", category:"중등", title:"중2-2 응용+심화",
+  textbook:"자체교재",
+  target:"GSTOP2-2, GS2-2",
+  feature:"중 2-2 실전 연습이 필요한 학생\n중등 기하의 꽃, 2-2 과정의 필수 유형을 연습하고 심화 문항까지 풀 수 있는, 사고력과 응용력을 기를 수 있는 특강입니다.",
+  variants:[{label:"화목토반", time:"화목 11:00~14:30 / 토 9:00~12:30", period:"7/25(토) ~ 8/15(토)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형의 성질","사각형의 성질","도형의 닮음","닮음의 활용","피타고라스의 정리","경우의 수","확률"]
+},
+{
+  id:"mi-jung2-1", category:"중등", title:"중2-1 응용+심화",
+  textbook:"자체교재",
+  target:"GS2-2, FIT2-2",
+  feature:"중2-1 대수 심화 과정을 제대로 잡고 싶은 학생\n중고등 과정을 진행하는 데 필요한 중2 대수 과정의 필수 유형을 복습하고, 심화 적용력을 키울 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 11:00~14:30", period:"8/3(월) ~ 8/17(월)"}],
+  sessions:["유리수와 순환소수","식의 계산","일차부등식","연립방정식","연립방정식의 활용","일차함수(1)","일차함수(2)"]
+},
+{
+  id:"mi-daesu12", category:"중등", title:"중1~중2 대수총정리",
+  textbook:"자체교재",
+  target:"GS2-1, FIT2-1, GS2-2, FIT2-2",
+  feature:"중1-1, 2-1 대수를 확실히 정리하고 중요 유형 연습이 필요한 학생\n중1과 중2 과정을 자연스럽게 연결하여 중등 대수의 흐름을 정리할 수 있는 특강입니다.",
+  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}],
+  sessions:["문자와 식","지수법칙","일차방정식","일차부등식","연립방정식","방정식·부등식의 활용","일차함수"]
+},
+{
+  id:"mi-jung1-1-giboneungyong", category:"중등", title:"중1-1 기본+응용",
+  textbook:"개념+유형 파워 (유형편)",
+  target:"GS1-1, FIT1-1",
+  feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
+  variants:[
+    {label:"월수금반", time:"월·금 11:00~14:30 / 수 14:30~18:00", period:"8/3(월) ~ 8/17(월)"},
+    {label:"화목토반", time:"화·목 11:00~14:30 / 토 16:00~19:30", period:"8/4(화) ~ 8/18(화)"}
+  ],
+  sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"]
+},
+{
+  id:"mi-jung1-1-miribogi", category:"중등", title:"중1-1 미리보기",
+  textbook:"수학의 단비 1-1",
+  target:"FIT6-2, FIT1-1",
+  feature:"중1-1 연산 & 핵심 유형 연습이 필요한 학생\n중1-1에서 다루는 개념을 미리 배우고 연습하여 중등 연산력을 키우고, 핵심 유형 연습을 통해 기본 베이스 감각을 키워놓는 특강입니다.",
+  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}],
+  sessions:["정수와 유리수","정수와 유리수의 계산","문자와 식","일차식의 계산","일차방정식","좌표평면과 그래프","정비례와 반비례"]
+},
+{
+  id:"cho-6seosul", category:"초등", title:"초6 서술",
+  textbook:"기적의 수학 문장제 11권",
+  target:"G6-1, G6-2, FIT6-1, FIT6-2",
+  feature:"중등 진입 전, 서술 연습을 확실히 잡고 싶은 학생\n초6 과정의 중요 유형을 학습하며, 초등 마무리 시점에서 서술+풀이 쓰는 연습을 확실히 할 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/14(금)"}],
+  sessions:["분수의 나눗셈","분수의 나눗셈 / 각기둥과 각뿔","각기둥과 각뿔 / 소수의 나눗셈","소수의 나눗셈 / 비와 비율","비와 비율 / 직육면체의 부피와 겉넓이","직육면체의 부피와 겉넓이 / 총정리"]
+},
+{
+  id:"cho-biwabirye", category:"초등", title:"비와 비례",
+  textbook:"바빠 비와비례",
+  target:"FIT5-1, FIT5-2, G5-1",
+  feature:"중등 수학의 고득점을 결정하는 '비와 비례' 집중 완성\n중·고등 과정에서 가장 중요한 영역인 '함수' 기초 베이스를 확실히 다지면서 6학년 비와 비율·비례식 과정까지 마스터하는 특강입니다.",
+  variants:[{label:"화목금반", time:"주3회 12:00~14:30", period:"8/4(화) ~ 8/14(금)"}],
+  sessions:["비와 비율(1)","비와 비율(2)","백분율","비의 성질","비례식과 비례배분","정비례와 반비례"]
+},
+{
+  id:"cho-5yaksu", category:"초등", title:"초5 약수와 배수",
+  textbook:"바빠 약수와 배수",
+  target:"초5 핵심 단원 예습·복습을 원하는 초4~6과정 학생",
+  feature:"고학년 수학의 핵심 '약수와 배수' 집중 완성\n약수와 배수부터 약분과 통분까지 단계적으로 학습 진행. 문장제와 활용 문제까지 다루면서 초등 고학년 수학 베이스를 확실하게 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}],
+  sessions:["약수와 배수","약수와 배수","최대공약수 & 최소공배수","최대공약수 & 최소공배수","약분과 통분"]
+},
+{
+  id:"cho-4sim", category:"초등", title:"초4-1심화 핵심 정리",
+  textbook:"최상위 수학S",
+  target:"초3~4학년 또는 초4과정을 배우는 학생",
+  feature:"초 4-1 심화를 방학 동안 완성하고 싶은 학생\n초등 고학년을 준비하는 심화의 시작인 4-1 과정의 주요 핵심 단원을 확실하게 다질 수 있는 특강입니다.",
+  variants:[{label:"화목반", time:"주2회 12:00~14:30", period:"8/4(화) ~ 8/13(목)"}],
+  sessions:["큰 수","각도","곱셈과 나눗셈","평면도형의 이동"]
+},
+{
+  id:"cho-3seosul", category:"초등", title:"초3 서술",
+  textbook:"자체교재",
+  target:"초2~3학년 또는 초3과정을 배우는 학생",
+  feature:"풀이 과정을 잘 쓰는 것에 어려움을 겪는 학생 / 서술 방법을 익히고 연습하고 싶은 학생\n초등 저학년 시기에 풀이 과정을 잘 잡는 것은 매우 중요! 서술 연습을 하며, 사고를 단계적으로 정리하는 힘을 키우는 특강입니다.",
+  variants:[{label:"월수반", time:"주2회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}],
+  note:"8/5(수)는 휴강입니다.",
+  sessions:["길이와 시간","들이와 무게","분수와 소수"]
+},
+{
+  id:"pr-kjmo", category:"프리미엄관", title:"KJMO 대비 특강",
+  textbook:"자체교재",
+  target:"초4~중1 중 초·중등 심화 과정이 완료된 학생",
+  feature:"KMO·영재고·과학고 진학을 목표로 하는 최상위권 학생, 고난도 문제를 끝까지 밀어붙이는 힘을 기르고 싶은 학생\n경시 수학 4대 영역의 완벽한 개념 해체, 답을 도출하는 '생각의 힘' 훈련, 완벽한 오답 분석 및 실전 감각을 깨우는 모의 평가",
+  variants:[{label:"화목반", time:"주2회 12:30~16:30", period:"7/14(화) ~ 8/27(목)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["수와 연산(1)","수와 연산(2) / 평면도형(1)","평면도형(2)","문자와 식(1)","문자와 식(2) / 경우의 수와 규칙성(1)","경우의 수와 규칙성(1) / 모의 기출","기출 FINAL"]
+},
+{
+  id:"pr-naeshin", category:"프리미엄관", title:"중1-2 내신대비 특강",
+  textbook:"자체교재",
+  target:"중1 2학기 내신이 진행되는 학생",
+  feature:"중등 기하 기초를 다지고 싶은 학생\n중1과정 내신 대비",
+  variants:[{label:"월수금반", time:"주3회 11:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["기본도형(1)","기본도형(2)","평면도형","입체도형(1)","입체도형(2)","통계(1)","통계(2)"]
+},
+{
+  id:"pr-junggihamaster", category:"프리미엄관", title:"중등 기하 특강",
+  textbook:"자체교재",
+  target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
+  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 10:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"]
+}
+];
+
+const CATEGORIES = ["고등","중등","초등","프리미엄관"];
+
+/* ============================================================
+   렌더링
+============================================================ */
+function courseOptionLabel(course, variant){
+  const suffix = course.variants.length > 1 ? `(${variant.label.replace('반','')})` : '';
+  return `[${course.category}] ${course.title}${suffix}`;
+}
+
+function renderChips(){
+  const wrap = document.getElementById('filterChips');
+  const all = ["전체", ...CATEGORIES];
+  wrap.innerHTML = all.map((c,i)=>`<button class="chip${i===0?' active':''}" data-cat="${c}">${c}</button>`).join('');
+  wrap.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      wrap.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCatalog(btn.dataset.cat);
+    });
+  });
+}
+
+function renderCatalog(filter){
+  const root = document.getElementById('catalog');
+  const cats = filter === "전체" ? CATEGORIES : [filter];
+  root.innerHTML = cats.map(cat=>{
+    const list = COURSES.filter(c=>c.category===cat);
+    if(!list.length) return '';
+    return `
+      <div class="cat-block">
+        <div class="cat-heading">${cat}과정 특강 <span class="count">${list.length}개 과정</span></div>
+        <div class="grid">
+          ${list.map(c=>{
+            const v = c.variants[0];
+            const multi = c.variants.length>1 ? ` 외 ${c.variants.length-1}개 일정` : '';
+            return `
+            <div class="card">
+              <span class="badge">${c.category}</span>
+              <h3>${c.title}</h3>
+              <div class="target">${c.target}</div>
+              <div class="meta">
+                <span><b>회차/시간</b> &nbsp;${v.time}${multi}</span>
+                <span><b>개강~종강</b> &nbsp;${v.period}</span>
+              </div>
+              <div class="card-actions">
+                <button class="btn-sm detail" data-id="${c.id}">자세히 보기</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  root.querySelectorAll('.btn-sm.detail').forEach(btn=>{
+    btn.addEventListener('click', ()=>openModal(btn.dataset.id));
+  });
+}
+
+function openModal(id){
+  const c = COURSES.find(x=>x.id===id);
+  if(!c) return;
+  const modal = document.getElementById('modalBody');
+  modal.innerHTML = `
+    <button class="modal-close" id="modalClose" aria-label="닫기">✕</button>
+    <span class="badge">${c.category}</span>
+    <h2>${c.title}</h2>
+    <div class="feature">${c.feature}</div>
+    <table class="infotable">
+      <tr><th>교재</th><td>${c.textbook}</td></tr>
+      <tr><th>수업대상</th><td>${c.target}</td></tr>
+      <tr><th>회차 및 시간</th><td>
+        ${c.variants.map(v=>`<div class="variant-row"><span class="variant-pill"><b>${v.label}</b> · ${v.time}</span></div>`).join('')}
+      </td></tr>
+      <tr><th>개강 및 종강</th><td>
+        ${c.variants.map(v=>`<div class="variant-row"><span class="variant-pill"><b>${v.label}</b> · ${v.period}</span></div>`).join('')}
+        ${c.note ? `<div class="note-pill">⏸ ${c.note}</div>` : ''}
+      </td></tr>
+    </table>
+    <div class="timeline-label">회차별 진도계획</div>
+    <div class="timeline">
+      ${c.sessions.map((s,i)=>`
+        <div class="tl-node">
+          <div class="tl-num">${i+1}회</div>
+          <div class="tl-topic">${s}</div>
+        </div>`).join('')}
+    </div>
+    <button class="modal-apply" id="modalApplyBtn">이 특강 신청하기</button>
+  `;
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalApplyBtn').addEventListener('click', ()=>{
+    closeModal();
+    // 옵션이 여러 개면 첫 번째 일정으로 선택, 사용자가 신청서에서 변경 가능
+    const select = document.getElementById('course');
+    const targetLabel = courseOptionLabel(c, c.variants[0]);
+    for(const opt of select.options){
+      if(opt.value === targetLabel){ select.value = targetLabel; break; }
+    }
+    document.getElementById('apply').scrollIntoView({behavior:'smooth', block:'start'});
+    document.getElementById('school') && document.getElementById('studentName').focus();
+  });
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.getElementById('overlay').addEventListener('click', (e)=>{
+  if(e.target.id==='overlay') closeModal();
+});
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+function renderCourseSelect(){
+  const select = document.getElementById('course');
+  CATEGORIES.forEach(cat=>{
+    const list = COURSES.filter(c=>c.category===cat);
+    if(!list.length) return;
+    const og = document.createElement('optgroup');
+    og.label = cat;
+    list.forEach(c=>{
+      c.variants.forEach(v=>{
+        const opt = document.createElement('option');
+        opt.value = courseOptionLabel(c, v);
+        opt.textContent = courseOptionLabel(c, v);
+        og.appendChild(opt);
+      });
+    });
+    select.appendChild(og);
+  });
+}
+
+/* ============================================================
+   신청서 제출 → 구글시트(Apps Script) 전송
+============================================================ */
+function initForm(){
+  if(CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
+    document.getElementById('configWarning').style.display='block';
+  }
+  const form = document.getElementById('applyForm');
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('statusMsg');
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    status.className='status-msg';
+    status.style.display='none';
+
+    const phone = document.getElementById('phone').value.trim();
+    if(!/^01[0-9]-?\d{3,4}-?\d{4}$/.test(phone)){
+      status.textContent = '학부모 연락처 형식을 확인해주세요. (예: 010-1234-5678)';
+      status.classList.add('err');
+      return;
+    }
+
+    const data = {
+      timestamp: new Date().toLocaleString('ko-KR'),
+      studentName: document.getElementById('studentName').value.trim(),
+      school: document.getElementById('school').value.trim(),
+      grade: document.getElementById('grade').value,
+      phone: phone,
+      enrolled: form.querySelector('input[name="enrolled"]:checked')?.value || '',
+      course: document.getElementById('course').value,
+      consent: document.getElementById('consent').checked ? 'Y' : 'N'
+    };
+
+    btn.disabled = true;
+    btn.textContent = '제출 중...';
+
+    try{
+      if(CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
+        throw new Error('NOT_CONFIGURED');
+      }
+      await fetch(CONFIG.SCRIPT_URL, {
+        method:'POST',
+        mode:'no-cors',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        body:new URLSearchParams(data).toString()
+      });
+      status.textContent = `신청이 접수되었습니다! (${data.studentName} 학생 · ${data.course})`;
+      status.classList.add('ok');
+      status.style.display='block';
+      form.reset();
+    }catch(err){
+      status.textContent = err.message==='NOT_CONFIGURED'
+        ? '아직 신청 접수가 연결되지 않았습니다. 관리자에게 문의해주세요. (카카오채널 이용 가능)'
+        : '제출 중 문제가 발생했습니다. 잠시 후 다시 시도하거나 카카오채널로 문의해주세요.';
+      status.classList.add('err');
+      status.style.display='block';
+    }finally{
+      btn.disabled = false;
+      btn.textContent = '신청서 제출';
+    }
+  });
+}
+
+renderChips();
+renderCatalog("전체");
+renderCourseSelect();
+initForm();
+</script>
+</body>
+</html>
