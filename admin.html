@@ -22,13 +22,11 @@
   }
   :focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
 
-  /* 비밀번호 게이트 */
-  #gate{
-    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-  }
+  /* 로그인 게이트 */
+  #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
   .gate-box{
     background:var(--card);border:2px solid var(--ink);border-radius:18px;
-    padding:40px 34px;max-width:360px;width:100%;text-align:center;box-shadow:0 12px 30px rgba(22,36,62,.12);
+    padding:40px 34px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 30px rgba(22,36,62,.12);
   }
   .gate-box .eyebrow{
     font-family:var(--font-mono);font-size:12px;color:var(--teal-dark);background:var(--teal-pale);
@@ -37,7 +35,7 @@
   .gate-box h1{font-family:var(--font-display);font-size:24px;margin:0 0 18px;}
   .gate-box input{
     width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;
-    font-family:var(--font-mono);font-size:15px;margin-bottom:12px;text-align:center;letter-spacing:.1em;
+    font-family:var(--font-body);font-size:14.5px;margin-bottom:12px;
   }
   .gate-box input:focus{border-color:var(--teal);}
   .gate-box button{
@@ -48,10 +46,8 @@
   .gate-error{color:var(--red);font-size:13.5px;margin-top:12px;display:none;}
 
   /* 대시보드 */
-  #dashboard{display:none;max-width:980px;margin:0 auto;padding:36px 20px 70px;}
-  .dash-header{
-    display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:8px;
-  }
+  #dashboard{display:none;max-width:1040px;margin:0 auto;padding:36px 20px 70px;}
+  .dash-header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:6px;}
   .dash-header h1{font-family:var(--font-display);font-size:28px;margin:0;}
   .dash-actions{display:flex;gap:8px;}
   .btn-sm{
@@ -59,56 +55,91 @@
     border-radius:999px;padding:8px 16px;background:var(--card);cursor:pointer;color:var(--ink);
   }
   .btn-sm:hover{background:var(--ink);color:#fff;}
-  .dash-sub{color:var(--muted);font-size:13.5px;margin-bottom:24px;font-family:var(--font-mono);}
+  .btn-sm.primary{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff;}
+  .btn-sm.primary:hover{background:var(--ink);}
+  .btn-sm.danger{border-color:var(--red);color:var(--red);}
+  .btn-sm.danger:hover{background:var(--red);color:#fff;}
+  .dash-sub{color:var(--muted);font-size:13px;margin-bottom:18px;font-family:var(--font-mono);}
 
-  .summary-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px;}
-  .summary-card{
-    background:var(--card);border:1.5px solid var(--ink);border-radius:12px;
-    padding:16px 22px;flex:1 1 160px;
+  /* 탭 */
+  .tabs{display:flex;gap:6px;margin-bottom:26px;border-bottom:2px solid var(--ink);}
+  .tab-btn{
+    font-family:var(--font-body);font-weight:700;font-size:15px;padding:10px 18px;border:none;
+    background:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;
   }
+  .tab-btn.active{color:var(--ink);border-bottom-color:var(--teal-dark);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .summary-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
+  .summary-card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:16px 22px;flex:1 1 160px;}
   .summary-card .num{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--teal-dark);}
   .summary-card .label{font-size:13px;color:var(--muted);}
 
-  .search-row{margin-bottom:26px;}
-  .search-row input{
-    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;
-    font-family:var(--font-body);font-size:14.5px;background:var(--card);
-  }
+  .search-row{margin-bottom:22px;}
+  .search-row input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:14.5px;background:var(--card);}
   .search-row input:focus{border-color:var(--teal);}
 
-  .course-group{
-    background:var(--card);border:1.5px solid var(--ink);border-radius:14px;
-    margin-bottom:18px;overflow:hidden;
-  }
-  .course-group summary{
-    list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
-    padding:16px 20px;font-family:var(--font-display);font-size:17px;
-  }
+  .course-group{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;margin-bottom:18px;overflow:hidden;}
+  .course-group summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;font-family:var(--font-display);font-size:17px;}
   .course-group summary::-webkit-details-marker{display:none;}
   .course-group summary .arrow{font-family:var(--font-mono);font-size:13px;color:var(--muted);transition:transform .15s ease;}
   .course-group[open] summary .arrow{transform:rotate(90deg);}
-  .course-group summary .count{
-    font-family:var(--font-mono);font-size:12.5px;background:var(--teal-pale);color:var(--teal-dark);
-    border:1px solid var(--teal);border-radius:999px;padding:2px 10px;margin-left:10px;
-  }
+  .course-group summary .count{font-family:var(--font-mono);font-size:12.5px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:999px;padding:2px 10px;margin-left:10px;}
   table.roster{width:100%;border-collapse:collapse;font-size:14px;}
-  table.roster th{
-    text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);
-    border-top:1px solid var(--line);padding:10px 20px 8px;background:var(--paper);
-  }
+  table.roster th{text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding:10px 20px 8px;background:var(--paper);}
   table.roster td{padding:10px 20px;border-top:1px dashed var(--line);}
   table.roster tr:nth-child(even) td{background:rgba(31,122,108,0.03);}
-  .tag-enrolled{
-    font-family:var(--font-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;
-  }
+  .tag-enrolled{font-family:var(--font-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;}
   .tag-enrolled.in{background:var(--teal-pale);color:var(--teal-dark);}
   .tag-enrolled.out{background:#FFF3DD;color:#8a6212;}
-  .empty-state{
-    text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);font-size:14px;
+  .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);font-size:14px;}
+
+  /* 강좌 관리 */
+  .seed-banner{
+    background:var(--ink);color:#fff;border-radius:14px;padding:22px;margin-bottom:24px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;
   }
-  .load-error{
-    background:var(--red-pale);color:var(--red);border-radius:10px;padding:14px 16px;font-size:14px;margin-bottom:20px;
+  .seed-banner p{margin:0;font-size:14px;color:#dfe6e2;}
+  .seed-banner button{background:var(--yellow);border:none;color:var(--ink);font-weight:700;padding:11px 18px;border-radius:999px;cursor:pointer;font-family:var(--font-body);}
+
+  .course-row{
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   }
+  .course-row .ctitle{font-family:var(--font-display);font-size:16.5px;}
+  .course-row .ctarget{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .course-row .cbadge{font-family:var(--font-mono);font-size:11px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:6px;padding:2px 8px;margin-right:8px;}
+
+  /* 모달 (강좌 수정) */
+  .overlay{position:fixed;inset:0;background:rgba(22,36,62,.55);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--card);max-width:640px;width:100%;border-radius:18px;border:2px solid var(--ink);padding:28px 26px 26px;position:relative;}
+  .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink);width:34px;height:34px;border-radius:50%;}
+  .modal-close:hover{background:var(--paper-grid);}
+  .modal h2{font-family:var(--font-display);font-size:22px;margin:0 0 18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px;}
+  .field input[type=text], .field select, .field textarea{
+    width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--font-body);font-size:14px;
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .field .hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .variant-edit-row{display:flex;gap:6px;margin-bottom:8px;align-items:center;}
+  .variant-edit-row input{flex:1;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;}
+  .variant-edit-row button{
+    flex:0 0 auto;background:var(--red-pale);color:var(--red);border:1px solid var(--red);border-radius:8px;
+    width:32px;height:32px;cursor:pointer;font-size:14px;
+  }
+  .add-variant-btn{
+    font-size:13px;border:1.5px dashed var(--teal);color:var(--teal-dark);background:var(--teal-pale);
+    border-radius:8px;padding:7px 12px;cursor:pointer;font-family:var(--font-body);font-weight:700;
+  }
+  .modal-actions{display:flex;gap:8px;margin-top:20px;}
+  .modal-actions .save-btn{flex:1;padding:13px;border:none;border-radius:10px;background:var(--teal-dark);color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-body);font-size:15px;}
+  .modal-actions .save-btn:hover{background:var(--ink);}
+  .modal-actions .delete-btn{padding:13px 16px;border:1.5px solid var(--red);color:var(--red);background:#fff;border-radius:10px;cursor:pointer;font-family:var(--font-body);font-weight:700;}
+  .modal-actions .delete-btn:hover{background:var(--red);color:#fff;}
 </style>
 </head>
 <body>
@@ -117,152 +148,186 @@
   <div class="gate-box">
     <span class="eyebrow">ADMIN ONLY</span>
     <h1>관리자 페이지</h1>
-    <input type="password" id="pwInput" placeholder="비밀번호 입력" autocomplete="off">
-    <button id="pwSubmit">접속하기</button>
-    <div class="gate-error" id="gateError">비밀번호가 올바르지 않습니다.</div>
+    <input type="email" id="emailInput" placeholder="관리자 이메일" autocomplete="username">
+    <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="current-password">
+    <button id="loginBtn">로그인</button>
+    <div class="gate-error" id="gateError"></div>
   </div>
 </div>
 
 <div id="dashboard">
   <div class="dash-header">
-    <h1>특강 신청 현황</h1>
+    <h1>CMS 서초영재관 관리자</h1>
     <div class="dash-actions">
-      <button class="btn-sm" id="refreshBtn">↻ 새로고침</button>
       <button class="btn-sm" id="logoutBtn">로그아웃</button>
     </div>
   </div>
-  <div class="dash-sub" id="updatedAt"></div>
+  <div class="dash-sub" id="updatedAt">실시간으로 동기화됩니다.</div>
 
-  <div class="summary-row" id="summaryRow"></div>
-
-  <div class="search-row">
-    <input type="text" id="searchInput" placeholder="이름 또는 학교로 검색...">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="applications">신청 현황</button>
+    <button class="tab-btn" data-tab="courses">강좌 관리</button>
   </div>
 
-  <div id="groupsRoot"></div>
+  <div class="tab-panel active" id="tab-applications">
+    <div class="summary-row" id="summaryRow"></div>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="이름 또는 학교로 검색...">
+    </div>
+    <div id="groupsRoot"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-courses">
+    <div class="seed-banner" id="seedBanner" style="display:none;">
+      <p>아직 강좌 정보가 비어 있습니다. 안내드린 19개 강좌 기본 데이터를 한 번에 불러올까요?</p>
+      <button id="seedBtn">초기 강좌 데이터 업로드</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+      <button class="btn-sm primary" id="newCourseBtn">+ 새 강좌 추가</button>
+    </div>
+    <div id="courseListRoot"></div>
+  </div>
 </div>
 
-<script>
-/* ============================================================
-   CONFIG — index.html과 동일한 Apps Script 웹앱 URL을 넣어주세요.
-============================================================ */
-const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyEOOvOMQhblJUSTMJyBCQ2zKJyq8r5PUJz-g9s9h0HxbLlhQ3sYVDZjV9-8WP-iKwyFw/exec"
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDCI98mwQ4lz3h0yzFfooTqXjrsdzyQArU",
+  authDomain: "cms-summer-camp.firebaseapp.com",
+  projectId: "cms-summer-camp",
+  storageBucket: "cms-summer-camp.firebasestorage.app",
+  messagingSenderId: "506548644045",
+  appId: "1:506548644045:web:6fb7f90d37d5891747a184"
 };
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const auth = getAuth(fbApp);
 
 const CATEGORY_ORDER = ["고등","중등","초등","프리미엄관"];
-let ALL_ROWS = [];
-let currentPw = "";
+let ALL_APPLICATIONS = [];
+let ALL_COURSES = [];
+let unsubApplications = null;
+let unsubCourses = null;
+
+/* ============================================================
+   로그인
+============================================================ */
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') login(); });
+
+async function login(){
+  const email = document.getElementById('emailInput').value.trim();
+  const pw = document.getElementById('pwInput').value;
+  const errEl = document.getElementById('gateError');
+  errEl.style.display='none';
+  if(!email || !pw) return;
+  document.getElementById('loginBtn').textContent = '확인 중...';
+  try{
+    await signInWithEmailAndPassword(auth, email, pw);
+  }catch(err){
+    errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
+    errEl.style.display='block';
+  }finally{
+    document.getElementById('loginBtn').textContent = '로그인';
+  }
+}
+
+document.getElementById('logoutBtn').addEventListener('click', ()=> signOut(auth));
+
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    startListeners();
+  }else{
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('gate').style.display='flex';
+    if(unsubApplications) unsubApplications();
+    if(unsubCourses) unsubCourses();
+  }
+});
+
+/* ============================================================
+   탭 전환
+============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ============================================================
+   실시간 리스너
+============================================================ */
+function startListeners(){
+  const aq = query(collection(db, "applications"), orderBy("createdAt", "desc"));
+  unsubApplications = onSnapshot(aq, (snap)=>{
+    ALL_APPLICATIONS = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    renderApplications();
+  });
+
+  const cq = query(collection(db, "courses"), orderBy("category"), orderBy("order"));
+  unsubCourses = onSnapshot(cq, (snap)=>{
+    ALL_COURSES = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    renderCourseList();
+  });
+}
+
+document.getElementById('searchInput').addEventListener('input', renderApplications);
 
 function categoryOf(courseStr){
   const m = /^\[(.+?)\]/.exec(courseStr || "");
   return m ? m[1] : "기타";
 }
 
-async function fetchRoster(pw){
-  if(CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
-    throw new Error('NOT_CONFIGURED');
-  }
-  const url = `${CONFIG.SCRIPT_URL}?action=list&pw=${encodeURIComponent(pw)}`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if(data.result !== 'success'){
-    throw new Error(data.message === 'unauthorized' ? 'UNAUTHORIZED' : 'ERROR');
-  }
-  return data.rows || [];
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
 }
 
-document.getElementById('pwSubmit').addEventListener('click', login);
-document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') login(); });
-
-async function login(){
-  const pw = document.getElementById('pwInput').value.trim();
-  const errEl = document.getElementById('gateError');
-  errEl.style.display = 'none';
-  if(!pw) return;
-
-  document.getElementById('pwSubmit').textContent = '확인 중...';
-  try{
-    const rows = await fetchRoster(pw);
-    currentPw = pw;
-    ALL_ROWS = rows;
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    renderDashboard();
-  }catch(err){
-    if(err.message === 'NOT_CONFIGURED'){
-      errEl.textContent = '관리자 안내: Apps Script 웹앱 URL이 아직 설정되지 않았습니다.';
-    }else if(err.message === 'UNAUTHORIZED'){
-      errEl.textContent = '비밀번호가 올바르지 않습니다.';
-    }else{
-      errEl.textContent = '명단을 불러오는 중 문제가 발생했습니다.';
-    }
-    errEl.style.display = 'block';
-  }finally{
-    document.getElementById('pwSubmit').textContent = '접속하기';
-  }
-}
-
-document.getElementById('logoutBtn').addEventListener('click', ()=>{
-  currentPw = ""; ALL_ROWS = [];
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('gate').style.display = 'flex';
-  document.getElementById('pwInput').value = '';
-  document.getElementById('pwInput').focus();
-});
-
-document.getElementById('refreshBtn').addEventListener('click', async ()=>{
-  const btn = document.getElementById('refreshBtn');
-  btn.textContent = '불러오는 중...';
-  try{
-    ALL_ROWS = await fetchRoster(currentPw);
-    renderDashboard();
-  }catch(err){
-    alert('새로고침에 실패했습니다. 다시 시도해주세요.');
-  }finally{
-    btn.textContent = '↻ 새로고침';
-  }
-});
-
-document.getElementById('searchInput').addEventListener('input', renderDashboard);
-
-function renderDashboard(){
-  document.getElementById('updatedAt').textContent =
-    `마지막 갱신: ${new Date().toLocaleString('ko-KR')} · 시트와 실시간 자동 동기화는 아니며, 새로고침 시 최신 데이터를 다시 불러옵니다.`;
+/* ============================================================
+   신청 현황 탭
+============================================================ */
+function renderApplications(){
+  document.getElementById('updatedAt').textContent = `실시간 동기화 중 · 마지막 갱신 ${new Date().toLocaleTimeString('ko-KR')}`;
 
   const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-  const rows = ALL_ROWS.filter(r=>{
+  const rows = ALL_APPLICATIONS.filter(r=>{
     if(!keyword) return true;
     return (r.studentName||'').toLowerCase().includes(keyword) || (r.school||'').toLowerCase().includes(keyword);
   });
 
-  // 요약
-  const courseSet = new Set(ALL_ROWS.map(r=>r.course));
+  const courseSet = new Set(ALL_APPLICATIONS.map(r=>r.course));
   document.getElementById('summaryRow').innerHTML = `
-    <div class="summary-card"><div class="num">${ALL_ROWS.length}</div><div class="label">총 신청 건수</div></div>
+    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.length}</div><div class="label">총 신청 건수</div></div>
     <div class="summary-card"><div class="num">${courseSet.size}</div><div class="label">신청된 강좌 수</div></div>
-    <div class="summary-card"><div class="num">${ALL_ROWS.filter(r=>r.enrolled==='재원생').length}</div><div class="label">재원생</div></div>
-    <div class="summary-card"><div class="num">${ALL_ROWS.filter(r=>r.enrolled==='외부생').length}</div><div class="label">외부생</div></div>
+    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.filter(r=>r.enrolled==='재원생').length}</div><div class="label">재원생</div></div>
+    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.filter(r=>r.enrolled==='외부생').length}</div><div class="label">외부생</div></div>
   `;
 
   const root = document.getElementById('groupsRoot');
-  if(!ALL_ROWS.length){
-    root.innerHTML = `<div class="empty-state">아직 접수된 신청이 없습니다.</div>`;
-    return;
-  }
-  if(!rows.length){
-    root.innerHTML = `<div class="empty-state">검색 결과가 없습니다.</div>`;
-    return;
-  }
+  if(!ALL_APPLICATIONS.length){ root.innerHTML = `<div class="empty-state">아직 접수된 신청이 없습니다.</div>`; return; }
+  if(!rows.length){ root.innerHTML = `<div class="empty-state">검색 결과가 없습니다.</div>`; return; }
 
-  // course 별 그룹핑
   const groups = {};
   rows.forEach(r=>{
     const key = r.course || '(특강 미선택)';
     if(!groups[key]) groups[key] = [];
     groups[key].push(r);
   });
-
   const sortedKeys = Object.keys(groups).sort((a,b)=>{
     const ca = CATEGORY_ORDER.indexOf(categoryOf(a));
     const cb = CATEGORY_ORDER.indexOf(categoryOf(b));
@@ -270,14 +335,11 @@ function renderDashboard(){
     return a.localeCompare(b, 'ko');
   });
 
-  root.innerHTML = sortedKeys.map(course=>{
+  document.getElementById('groupsRoot').innerHTML = sortedKeys.map(course=>{
     const list = groups[course];
     return `
       <details class="course-group" open>
-        <summary>
-          <span><span class="arrow">▶</span> &nbsp;${course}</span>
-          <span class="count">${list.length}명</span>
-        </summary>
+        <summary><span><span class="arrow">▶</span> &nbsp;${escapeHtml(course)}</span><span class="count">${list.length}명</span></summary>
         <table class="roster">
           <tr><th>이름</th><th>학교</th><th>학년</th><th>재원여부</th></tr>
           ${list.map(r=>`
@@ -292,11 +354,267 @@ function renderDashboard(){
   }).join('');
 }
 
-function escapeHtml(str){
-  return String(str ?? '').replace(/[&<>"']/g, s=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[s]));
+/* ============================================================
+   강좌 관리 탭
+============================================================ */
+function renderCourseList(){
+  document.getElementById('seedBanner').style.display = ALL_COURSES.length===0 ? 'flex' : 'none';
+
+  const root = document.getElementById('courseListRoot');
+  if(!ALL_COURSES.length){ root.innerHTML=''; return; }
+
+  const sorted = [...ALL_COURSES].sort((a,b)=>{
+    const ca = CATEGORY_ORDER.indexOf(a.category);
+    const cb = CATEGORY_ORDER.indexOf(b.category);
+    if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
+    return (a.order||0)-(b.order||0);
+  });
+
+  root.innerHTML = sorted.map(c=>`
+    <div class="course-row">
+      <div>
+        <span class="cbadge">${escapeHtml(c.category)}</span>
+        <span class="ctitle">${escapeHtml(c.title)}</span>
+        <div class="ctarget">${escapeHtml(c.target)}</div>
+      </div>
+      <button class="btn-sm" data-edit="${c.id}">수정</button>
+    </div>
+  `).join('');
+
+  root.querySelectorAll('[data-edit]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openCourseModal(btn.dataset.edit));
+  });
 }
+
+document.getElementById('newCourseBtn').addEventListener('click', ()=> openCourseModal(null));
+
+function openCourseModal(id){
+  const c = id ? ALL_COURSES.find(x=>x.id===id) : {
+    category:"고등", title:"", textbook:"자체교재", target:"", feature:"", note:"",
+    variants:[{label:"월수금반", time:"", period:""}], sessions:[]
+  };
+  const modal = document.getElementById('modalBody');
+  modal.innerHTML = `
+    <button class="modal-close" id="modalClose">✕</button>
+    <h2>${id ? '강좌 수정' : '새 강좌 추가'}</h2>
+    <div class="field">
+      <label>카테고리</label>
+      <select id="f-category">
+        ${CATEGORY_ORDER.map(cat=>`<option value="${cat}" ${c.category===cat?'selected':''}>${cat}</option>`).join('')}
+      </select>
+    </div>
+    <div class="field"><label>강좌명</label><input type="text" id="f-title" value="${escapeHtml(c.title)}"></div>
+    <div class="field"><label>교재</label><input type="text" id="f-textbook" value="${escapeHtml(c.textbook)}"></div>
+    <div class="field"><label>수업대상</label><input type="text" id="f-target" value="${escapeHtml(c.target)}"></div>
+    <div class="field">
+      <label>대상/특징 설명</label>
+      <textarea id="f-feature">${escapeHtml(c.feature)}</textarea>
+      <div class="hint">줄바꿈으로 문단을 구분할 수 있어요.</div>
+    </div>
+    <div class="field"><label>휴강 안내 (선택)</label><input type="text" id="f-note" value="${escapeHtml(c.note||'')}" placeholder="예: 학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다."></div>
+    <div class="field">
+      <label>회차 및 시간 / 개강~종강</label>
+      <div id="variantRows"></div>
+      <button type="button" class="add-variant-btn" id="addVariantBtn">+ 일정 추가</button>
+    </div>
+    <div class="field">
+      <label>회차별 진도계획</label>
+      <textarea id="f-sessions" style="min-height:120px;">${(c.sessions||[]).join('\n')}</textarea>
+      <div class="hint">한 줄에 하나씩, 1회부터 순서대로 입력하세요.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="save-btn" id="saveCourseBtn">저장</button>
+      ${id ? '<button class="delete-btn" id="deleteCourseBtn">삭제</button>' : ''}
+    </div>
+  `;
+
+  const variantRowsEl = document.getElementById('variantRows');
+  function addVariantRow(v){
+    const row = document.createElement('div');
+    row.className = 'variant-edit-row';
+    row.innerHTML = `
+      <input type="text" placeholder="예: 월수금반" class="v-label" value="${escapeHtml(v?.label||'')}">
+      <input type="text" placeholder="시간 (예: 주3회 12:30~16:30)" class="v-time" value="${escapeHtml(v?.time||'')}">
+      <input type="text" placeholder="개강~종강 (예: 7/24(금) ~ 8/14(금))" class="v-period" value="${escapeHtml(v?.period||'')}">
+      <button type="button">✕</button>
+    `;
+    row.querySelector('button').addEventListener('click', ()=> row.remove());
+    variantRowsEl.appendChild(row);
+  }
+  (c.variants && c.variants.length ? c.variants : [{}]).forEach(addVariantRow);
+  document.getElementById('addVariantBtn').addEventListener('click', ()=> addVariantRow());
+
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('saveCourseBtn').addEventListener('click', async ()=>{
+    const variants = [...variantRowsEl.querySelectorAll('.variant-edit-row')].map(row=>({
+      label: row.querySelector('.v-label').value.trim(),
+      time: row.querySelector('.v-time').value.trim(),
+      period: row.querySelector('.v-period').value.trim()
+    })).filter(v=>v.label || v.time || v.period);
+
+    const sessions = document.getElementById('f-sessions').value
+      .split('\n').map(s=>s.trim()).filter(Boolean);
+
+    const data = {
+      category: document.getElementById('f-category').value,
+      title: document.getElementById('f-title').value.trim(),
+      textbook: document.getElementById('f-textbook').value.trim(),
+      target: document.getElementById('f-target').value.trim(),
+      feature: document.getElementById('f-feature').value.trim(),
+      note: document.getElementById('f-note').value.trim(),
+      variants, sessions,
+      order: c.order ?? Date.now()
+    };
+
+    if(!data.title){ alert('강좌명을 입력해주세요.'); return; }
+
+    const btn = document.getElementById('saveCourseBtn');
+    btn.disabled = true; btn.textContent = '저장 중...';
+    try{
+      if(id){
+        await setDoc(doc(db, "courses", id), data);
+      }else{
+        await addDoc(collection(db, "courses"), data);
+      }
+      closeModal();
+    }catch(err){
+      alert('저장 중 문제가 발생했습니다: ' + err.message);
+    }finally{
+      btn.disabled = false; btn.textContent = '저장';
+    }
+  });
+
+  if(id){
+    document.getElementById('deleteCourseBtn').addEventListener('click', async ()=>{
+      if(!confirm(`'${c.title}' 강좌를 삭제할까요? 이미 접수된 신청 내역에는 영향이 없습니다.`)) return;
+      try{
+        await deleteDoc(doc(db, "courses", id));
+        closeModal();
+      }catch(err){
+        alert('삭제 중 문제가 발생했습니다: ' + err.message);
+      }
+    });
+  }
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+
+/* ============================================================
+   초기 강좌 데이터 19개 시드
+============================================================ */
+const SEED_COURSES = [
+{ category:"고등", title:"공통수학1 극심화", textbook:"자체교재", target:"3GST, GST미적2상",
+  feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"},{label:"화목반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"] },
+{ category:"고등", title:"삼각함수 & 수열", textbook:"자체교재", target:"GS공수2상, GS공수2하",
+  feature:"고2 대수과정 진입학생 또는 경시수업을 준비하는 학생\n고2 대수과정중 가장 높은 진입장벽을 가진 단원 중 삼각함수와 수열을 집중 공략하는 특강입니다. 경시를 준비한다면 필수 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각비","삼각함수","삼각함수의 그래프","삼각형과 삼각함수","등차수열","등비수열","수열의 합 (시그마)"] },
+{ category:"고등", title:"미분 첫걸음", textbook:"자체교재", target:"GS대수상, GS미적분1",
+  feature:"미적분1의 개념, 유형수업이 필요한 학생\n미적분1의 근본적인 개념에 집중하여 미분의 본질을 제대로 이해하는 특강. 미적분1을 처음 시작하거나 개념을 탄탄히 가져가려는 학생이라면 반드시 들어야 하는 특강입니다.",
+  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/13(목)"}],
+  note:"7월 26일(일), 7월 30일(목) 특강수업은 정상 진행됩니다.",
+  sessions:["함수의 극한","함수의 연속","함수계수와 도함수","도함수의 활용(1)","도함수의 활용(2)","도함수의 활용(3)","도함수의 활용(4)"] },
+{ category:"고등", title:"공통수학1 메이저클래스", textbook:"자체교재", target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
+  feature:"공통수학1의 응용 심화 연습이 필요한 학생\n공통수학1의 핵심 개념을 하나의 흐름으로 완전히 이해하고, 탄탄한 개념을 바탕으로 응용·심화까지 혼자 힘으로 해결해 내는 힘을 만드는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~16:00", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식 + 항등식과 나머지정리","인수분해 + 복소수","이차방정식","이차방정식과 이차함수","여러 가지 방정식(1)","여러 가지 방정식(2)","여러 가지 부등식"] },
+{ category:"고등", title:"공통수학1 마스터클래스", textbook:"자체교재", target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
+  feature:"공통수학1의 고난도 유형 연습이 필요한 학생\n공통수학1 핵심 단원의 고난도 문항들을 여러 번 경험하는 것이 중요합니다. 한 번만 풀어봐도 부족함 없는 문제들을 경험하여 공통수학1을 마스터하는 특강입니다.",
+  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/16(일)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식과 인수분해","항등식과 나머지정리","실수와 복소수","일차·이차방정식과 판별식","이차방정식과 이차함수","여러 가지 방정식","여러 가지 부등식"] },
+{ category:"고등", title:"중등기하마스터", textbook:"자체교재", target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
+  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 기하 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"] },
+{ category:"중등", title:"중2-2 응용+심화", textbook:"자체교재", target:"GSTOP2-2, GS2-2",
+  feature:"중 2-2 실전 연습이 필요한 학생\n중등 기하의 꽃, 2-2 과정의 필수 유형을 연습하고 심화 문항까지 풀 수 있는, 사고력과 응용력을 기를 수 있는 특강입니다.",
+  variants:[{label:"화목토반", time:"화목 11:00~14:30 / 토 9:00~12:30", period:"7/25(토) ~ 8/15(토)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형의 성질","사각형의 성질","도형의 닮음","닮음의 활용","피타고라스의 정리","경우의 수","확률"] },
+{ category:"중등", title:"중2-1 응용+심화", textbook:"자체교재", target:"GS2-2, FIT2-2",
+  feature:"중2-1 대수 심화 과정을 제대로 잡고 싶은 학생\n중고등 과정을 진행하는 데 필요한 중2 대수 과정의 필수 유형을 복습하고, 심화 적용력을 키울 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 11:00~14:30", period:"8/3(월) ~ 8/17(월)"}], note:"",
+  sessions:["유리수와 순환소수","식의 계산","일차부등식","연립방정식","연립방정식의 활용","일차함수(1)","일차함수(2)"] },
+{ category:"중등", title:"중1~중2 대수총정리", textbook:"자체교재", target:"GS2-1, FIT2-1, GS2-2, FIT2-2",
+  feature:"중1-1, 2-1 대수를 확실히 정리하고 중요 유형 연습이 필요한 학생\n중1과 중2 과정을 자연스럽게 연결하여 중등 대수의 흐름을 정리할 수 있는 특강입니다.",
+  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
+  sessions:["문자와 식","지수법칙","일차방정식","일차부등식","연립방정식","방정식·부등식의 활용","일차함수"] },
+{ category:"중등", title:"중1-1 기본+응용", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
+  feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"월·금 11:00~14:30 / 수 14:30~18:00", period:"8/3(월) ~ 8/17(월)"},{label:"화목토반", time:"화·목 11:00~14:30 / 토 16:00~19:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
+  sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"] },
+{ category:"중등", title:"중1-1 미리보기", textbook:"수학의 단비 1-1", target:"FIT6-2, FIT1-1",
+  feature:"중1-1 연산 & 핵심 유형 연습이 필요한 학생\n중1-1에서 다루는 개념을 미리 배우고 연습하여 중등 연산력을 키우고, 핵심 유형 연습을 통해 기본 베이스 감각을 키워놓는 특강입니다.",
+  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
+  sessions:["정수와 유리수","정수와 유리수의 계산","문자와 식","일차식의 계산","일차방정식","좌표평면과 그래프","정비례와 반비례"] },
+{ category:"초등", title:"초6 서술", textbook:"기적의 수학 문장제 11권", target:"G6-1, G6-2, FIT6-1, FIT6-2",
+  feature:"중등 진입 전, 서술 연습을 확실히 잡고 싶은 학생\n초6 과정의 중요 유형을 학습하며, 초등 마무리 시점에서 서술+풀이 쓰는 연습을 확실히 할 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/14(금)"}], note:"",
+  sessions:["분수의 나눗셈","분수의 나눗셈 / 각기둥과 각뿔","각기둥과 각뿔 / 소수의 나눗셈","소수의 나눗셈 / 비와 비율","비와 비율 / 직육면체의 부피와 겉넓이","직육면체의 부피와 겉넓이 / 총정리"] },
+{ category:"초등", title:"비와 비례", textbook:"바빠 비와비례", target:"FIT5-1, FIT5-2, G5-1",
+  feature:"중등 수학의 고득점을 결정하는 '비와 비례' 집중 완성\n중·고등 과정에서 가장 중요한 영역인 '함수' 기초 베이스를 확실히 다지면서 6학년 비와 비율·비례식 과정까지 마스터하는 특강입니다.",
+  variants:[{label:"화목금반", time:"주3회 12:00~14:30", period:"8/4(화) ~ 8/14(금)"}], note:"",
+  sessions:["비와 비율(1)","비와 비율(2)","백분율","비의 성질","비례식과 비례배분","정비례와 반비례"] },
+{ category:"초등", title:"초5 약수와 배수", textbook:"바빠 약수와 배수", target:"초5 핵심 단원 예습·복습을 원하는 초4~6과정 학생",
+  feature:"고학년 수학의 핵심 '약수와 배수' 집중 완성\n약수와 배수부터 약분과 통분까지 단계적으로 학습 진행. 문장제와 활용 문제까지 다루면서 초등 고학년 수학 베이스를 확실하게 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}], note:"",
+  sessions:["약수와 배수","약수와 배수","최대공약수 & 최소공배수","최대공약수 & 최소공배수","약분과 통분"] },
+{ category:"초등", title:"초4-1심화 핵심 정리", textbook:"최상위 수학S", target:"초3~4학년 또는 초4과정을 배우는 학생",
+  feature:"초 4-1 심화를 방학 동안 완성하고 싶은 학생\n초등 고학년을 준비하는 심화의 시작인 4-1 과정의 주요 핵심 단원을 확실하게 다질 수 있는 특강입니다.",
+  variants:[{label:"화목반", time:"주2회 12:00~14:30", period:"8/4(화) ~ 8/13(목)"}], note:"",
+  sessions:["큰 수","각도","곱셈과 나눗셈","평면도형의 이동"] },
+{ category:"초등", title:"초3 서술", textbook:"자체교재", target:"초2~3학년 또는 초3과정을 배우는 학생",
+  feature:"풀이 과정을 잘 쓰는 것에 어려움을 겪는 학생 / 서술 방법을 익히고 연습하고 싶은 학생\n초등 저학년 시기에 풀이 과정을 잘 잡는 것은 매우 중요! 서술 연습을 하며, 사고를 단계적으로 정리하는 힘을 키우는 특강입니다.",
+  variants:[{label:"월수반", time:"주2회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}],
+  note:"8/5(수)는 휴강입니다.",
+  sessions:["길이와 시간","들이와 무게","분수와 소수"] },
+{ category:"프리미엄관", title:"KJMO 대비 특강", textbook:"자체교재", target:"초4~중1 중 초·중등 심화 과정이 완료된 학생",
+  feature:"KMO·영재고·과학고 진학을 목표로 하는 최상위권 학생, 고난도 문제를 끝까지 밀어붙이는 힘을 기르고 싶은 학생\n경시 수학 4대 영역의 완벽한 개념 해체, 답을 도출하는 '생각의 힘' 훈련, 완벽한 오답 분석 및 실전 감각을 깨우는 모의 평가",
+  variants:[{label:"화목반", time:"주2회 12:30~16:30", period:"7/14(화) ~ 8/27(목)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["수와 연산(1)","수와 연산(2) / 평면도형(1)","평면도형(2)","문자와 식(1)","문자와 식(2) / 경우의 수와 규칙성(1)","경우의 수와 규칙성(1) / 모의 기출","기출 FINAL"] },
+{ category:"프리미엄관", title:"중1-2 내신대비 특강", textbook:"자체교재", target:"중1 2학기 내신이 진행되는 학생",
+  feature:"중등 기하 기초를 다지고 싶은 학생\n중1과정 내신 대비",
+  variants:[{label:"월수금반", time:"주3회 11:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["기본도형(1)","기본도형(2)","평면도형","입체도형(1)","입체도형(2)","통계(1)","통계(2)"] },
+{ category:"프리미엄관", title:"중등 기하 특강", textbook:"자체교재", target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
+  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
+  variants:[{label:"월수금반", time:"주3회 10:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"] }
+];
+
+document.getElementById('seedBtn').addEventListener('click', async ()=>{
+  if(!confirm('19개 기본 강좌 데이터를 업로드할까요? 이미 강좌가 있다면 중복으로 추가될 수 있어요.')) return;
+  const btn = document.getElementById('seedBtn');
+  btn.disabled = true; btn.textContent = '업로드 중...';
+  try{
+    for(let i=0;i<SEED_COURSES.length;i++){
+      await addDoc(collection(db, "courses"), { ...SEED_COURSES[i], order:i });
+    }
+    alert('업로드가 완료되었습니다.');
+  }catch(err){
+    alert('업로드 중 문제가 발생했습니다: ' + err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = '초기 강좌 데이터 업로드';
+  }
+});
 </script>
 </body>
 </html>
