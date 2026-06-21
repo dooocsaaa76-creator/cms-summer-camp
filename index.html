@@ -331,7 +331,8 @@
 <header class="hero">
   <span class="eyebrow">CMS 서초영재관 · GS / FIT / G / BM</span>
   <h1>2026 <span>여름방학 특강</span></h1>
-  <p class="lead">방학은 부족했던 빈틈을 채우고 다음 단계로 도약할 수 있는 가장 확실한 '골든타임'입니다.<br>
+  <p class="lead">방학은 부족했던 빈틈을 채우고 다음 단계로 도약할 수 있는<br>
+  <span style="white-space:nowrap;">가장 확실한 '골든타임'입니다.</span><br>
   과정을 살펴보고, 우리 아이에게 꼭 맞는 특강을 신청해보세요.</p>
   <div class="hero-actions">
     <a href="#catalog" class="btn btn-primary">특강 둘러보기 ↓</a>
@@ -381,7 +382,7 @@
         </div>
         <div class="field">
           <label for="phone">학부모 연락처 <span class="req">*</span></label>
-          <input type="tel" id="phone" name="phone" required placeholder="010-1234-5678">
+          <input type="tel" id="phone" name="phone" inputmode="numeric" maxlength="13" required placeholder="010-1234-5678">
           <div class="hint">형식: 010-1234-5678</div>
         </div>
         <div class="field full">
@@ -421,7 +422,8 @@
 
 <footer>
   CMS 서초영재관 카카오채널에서 1:1 문의가 가능합니다 — <a href="http://pf.kakao.com/_uhxcexb" target="_blank" rel="noopener">pf.kakao.com/_uhxcexb</a><br>
-  이 페이지는 Google Forms 응답을 대체하며, 제출된 신청 내역은 연동된 구글 시트에 자동 저장됩니다.
+  이 페이지는 Google Forms 응답을 대체하며, 제출된 신청 내역은 연동된 구글 시트에 자동 저장됩니다.<br>
+  <a href="admin.html" style="font-size:12px;color:var(--muted);">관리자 페이지</a>
 </footer>
 
 <div class="overlay" id="overlay">
@@ -435,7 +437,7 @@
    (배포 방법은 함께 전달된 안내 파일 참고)
 ============================================================ */
 const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyEOOvOMQhblJUSTMJyBCQ2zKJyq8r5PUJz-g9s9h0HxbLlhQ3sYVDZjV9-8WP-iKwyFw/exec"
+  SCRIPT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"
 };
 
 /* ============================================================
@@ -749,6 +751,20 @@ function renderCourseSelect(){
 /* ============================================================
    신청서 제출 → 구글시트(Apps Script) 전송
 ============================================================ */
+function initPhoneFormat(){
+  const phone = document.getElementById('phone');
+  phone.addEventListener('input', (e)=>{
+    let digits = e.target.value.replace(/\D/g,'').slice(0,11);
+    let formatted = digits;
+    if(digits.length > 7){
+      formatted = `${digits.slice(0,3)}-${digits.slice(3,7)}-${digits.slice(7)}`;
+    } else if(digits.length > 3){
+      formatted = `${digits.slice(0,3)}-${digits.slice(3)}`;
+    }
+    e.target.value = formatted;
+  });
+}
+
 function initForm(){
   if(CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
     document.getElementById('configWarning').style.display='block';
@@ -814,6 +830,7 @@ renderChips();
 renderCatalog("전체");
 renderCourseSelect();
 initForm();
+initPhoneFormat();
 </script>
 </body>
 </html>

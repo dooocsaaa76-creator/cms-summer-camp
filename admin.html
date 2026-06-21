@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 페이지 | CMS 서초영재관 특강 신청 현황</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16243E; --ink-soft:#33425C; --paper:#F3F5F1; --paper-grid:#DCE3DD;
+    --card:#FFFFFF; --teal:#1F7A6C; --teal-dark:#14564C; --teal-pale:#E3F1EC;
+    --red:#D64545; --red-pale:#FBE7E4; --yellow:#F4B73F; --muted:#5C6B66; --line:#D9E0DA;
+    --font-display:'Song Myung', serif; --font-body:'Gowun Dodum', sans-serif; --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;
+    background-image:linear-gradient(var(--paper-grid) 1px, transparent 1px),linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size:28px 28px;min-height:100vh;
+  }
+  :focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
+
+  /* 비밀번호 게이트 */
+  #gate{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .gate-box{
+    background:var(--card);border:2px solid var(--ink);border-radius:18px;
+    padding:40px 34px;max-width:360px;width:100%;text-align:center;box-shadow:0 12px 30px rgba(22,36,62,.12);
+  }
+  .gate-box .eyebrow{
+    font-family:var(--font-mono);font-size:12px;color:var(--teal-dark);background:var(--teal-pale);
+    border:1px solid var(--teal);border-radius:999px;padding:4px 12px;display:inline-block;margin-bottom:14px;
+  }
+  .gate-box h1{font-family:var(--font-display);font-size:24px;margin:0 0 18px;}
+  .gate-box input{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;
+    font-family:var(--font-mono);font-size:15px;margin-bottom:12px;text-align:center;letter-spacing:.1em;
+  }
+  .gate-box input:focus{border-color:var(--teal);}
+  .gate-box button{
+    width:100%;padding:13px;border:none;border-radius:10px;background:var(--ink);color:#fff;
+    font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;
+  }
+  .gate-box button:hover{background:var(--teal-dark);}
+  .gate-error{color:var(--red);font-size:13.5px;margin-top:12px;display:none;}
+
+  /* 대시보드 */
+  #dashboard{display:none;max-width:980px;margin:0 auto;padding:36px 20px 70px;}
+  .dash-header{
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:8px;
+  }
+  .dash-header h1{font-family:var(--font-display);font-size:28px;margin:0;}
+  .dash-actions{display:flex;gap:8px;}
+  .btn-sm{
+    font-family:var(--font-body);font-weight:700;font-size:13.5px;border:1.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;background:var(--card);cursor:pointer;color:var(--ink);
+  }
+  .btn-sm:hover{background:var(--ink);color:#fff;}
+  .dash-sub{color:var(--muted);font-size:13.5px;margin-bottom:24px;font-family:var(--font-mono);}
+
+  .summary-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px;}
+  .summary-card{
+    background:var(--card);border:1.5px solid var(--ink);border-radius:12px;
+    padding:16px 22px;flex:1 1 160px;
+  }
+  .summary-card .num{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--teal-dark);}
+  .summary-card .label{font-size:13px;color:var(--muted);}
+
+  .search-row{margin-bottom:26px;}
+  .search-row input{
+    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;
+    font-family:var(--font-body);font-size:14.5px;background:var(--card);
+  }
+  .search-row input:focus{border-color:var(--teal);}
+
+  .course-group{
+    background:var(--card);border:1.5px solid var(--ink);border-radius:14px;
+    margin-bottom:18px;overflow:hidden;
+  }
+  .course-group summary{
+    list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;font-family:var(--font-display);font-size:17px;
+  }
+  .course-group summary::-webkit-details-marker{display:none;}
+  .course-group summary .arrow{font-family:var(--font-mono);font-size:13px;color:var(--muted);transition:transform .15s ease;}
+  .course-group[open] summary .arrow{transform:rotate(90deg);}
+  .course-group summary .count{
+    font-family:var(--font-mono);font-size:12.5px;background:var(--teal-pale);color:var(--teal-dark);
+    border:1px solid var(--teal);border-radius:999px;padding:2px 10px;margin-left:10px;
+  }
+  table.roster{width:100%;border-collapse:collapse;font-size:14px;}
+  table.roster th{
+    text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);
+    border-top:1px solid var(--line);padding:10px 20px 8px;background:var(--paper);
+  }
+  table.roster td{padding:10px 20px;border-top:1px dashed var(--line);}
+  table.roster tr:nth-child(even) td{background:rgba(31,122,108,0.03);}
+  .tag-enrolled{
+    font-family:var(--font-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;
+  }
+  .tag-enrolled.in{background:var(--teal-pale);color:var(--teal-dark);}
+  .tag-enrolled.out{background:#FFF3DD;color:#8a6212;}
+  .empty-state{
+    text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);font-size:14px;
+  }
+  .load-error{
+    background:var(--red-pale);color:var(--red);border-radius:10px;padding:14px 16px;font-size:14px;margin-bottom:20px;
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <span class="eyebrow">ADMIN ONLY</span>
+    <h1>관리자 페이지</h1>
+    <input type="password" id="pwInput" placeholder="비밀번호 입력" autocomplete="off">
+    <button id="pwSubmit">접속하기</button>
+    <div class="gate-error" id="gateError">비밀번호가 올바르지 않습니다.</div>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="dash-header">
+    <h1>특강 신청 현황</h1>
+    <div class="dash-actions">
+      <button class="btn-sm" id="refreshBtn">↻ 새로고침</button>
+      <button class="btn-sm" id="logoutBtn">로그아웃</button>
+    </div>
+  </div>
+  <div class="dash-sub" id="updatedAt"></div>
+
+  <div class="summary-row" id="summaryRow"></div>
+
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="이름 또는 학교로 검색...">
+  </div>
+
+  <div id="groupsRoot"></div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — index.html과 동일한 Apps Script 웹앱 URL을 넣어주세요.
+============================================================ */
+const CONFIG = {
+  SCRIPT_URL: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE"
+};
+
+const CATEGORY_ORDER = ["고등","중등","초등","프리미엄관"];
+let ALL_ROWS = [];
+let currentPw = "";
+
+function categoryOf(courseStr){
+  const m = /^\[(.+?)\]/.exec(courseStr || "");
+  return m ? m[1] : "기타";
+}
+
+async function fetchRoster(pw){
+  if(CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
+    throw new Error('NOT_CONFIGURED');
+  }
+  const url = `${CONFIG.SCRIPT_URL}?action=list&pw=${encodeURIComponent(pw)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if(data.result !== 'success'){
+    throw new Error(data.message === 'unauthorized' ? 'UNAUTHORIZED' : 'ERROR');
+  }
+  return data.rows || [];
+}
+
+document.getElementById('pwSubmit').addEventListener('click', login);
+document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') login(); });
+
+async function login(){
+  const pw = document.getElementById('pwInput').value.trim();
+  const errEl = document.getElementById('gateError');
+  errEl.style.display = 'none';
+  if(!pw) return;
+
+  document.getElementById('pwSubmit').textContent = '확인 중...';
+  try{
+    const rows = await fetchRoster(pw);
+    currentPw = pw;
+    ALL_ROWS = rows;
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderDashboard();
+  }catch(err){
+    if(err.message === 'NOT_CONFIGURED'){
+      errEl.textContent = '관리자 안내: Apps Script 웹앱 URL이 아직 설정되지 않았습니다.';
+    }else if(err.message === 'UNAUTHORIZED'){
+      errEl.textContent = '비밀번호가 올바르지 않습니다.';
+    }else{
+      errEl.textContent = '명단을 불러오는 중 문제가 발생했습니다.';
+    }
+    errEl.style.display = 'block';
+  }finally{
+    document.getElementById('pwSubmit').textContent = '접속하기';
+  }
+}
+
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  currentPw = ""; ALL_ROWS = [];
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('gate').style.display = 'flex';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('pwInput').focus();
+});
+
+document.getElementById('refreshBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('refreshBtn');
+  btn.textContent = '불러오는 중...';
+  try{
+    ALL_ROWS = await fetchRoster(currentPw);
+    renderDashboard();
+  }catch(err){
+    alert('새로고침에 실패했습니다. 다시 시도해주세요.');
+  }finally{
+    btn.textContent = '↻ 새로고침';
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input', renderDashboard);
+
+function renderDashboard(){
+  document.getElementById('updatedAt').textContent =
+    `마지막 갱신: ${new Date().toLocaleString('ko-KR')} · 시트와 실시간 자동 동기화는 아니며, 새로고침 시 최신 데이터를 다시 불러옵니다.`;
+
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  const rows = ALL_ROWS.filter(r=>{
+    if(!keyword) return true;
+    return (r.studentName||'').toLowerCase().includes(keyword) || (r.school||'').toLowerCase().includes(keyword);
+  });
+
+  // 요약
+  const courseSet = new Set(ALL_ROWS.map(r=>r.course));
+  document.getElementById('summaryRow').innerHTML = `
+    <div class="summary-card"><div class="num">${ALL_ROWS.length}</div><div class="label">총 신청 건수</div></div>
+    <div class="summary-card"><div class="num">${courseSet.size}</div><div class="label">신청된 강좌 수</div></div>
+    <div class="summary-card"><div class="num">${ALL_ROWS.filter(r=>r.enrolled==='재원생').length}</div><div class="label">재원생</div></div>
+    <div class="summary-card"><div class="num">${ALL_ROWS.filter(r=>r.enrolled==='외부생').length}</div><div class="label">외부생</div></div>
+  `;
+
+  const root = document.getElementById('groupsRoot');
+  if(!ALL_ROWS.length){
+    root.innerHTML = `<div class="empty-state">아직 접수된 신청이 없습니다.</div>`;
+    return;
+  }
+  if(!rows.length){
+    root.innerHTML = `<div class="empty-state">검색 결과가 없습니다.</div>`;
+    return;
+  }
+
+  // course 별 그룹핑
+  const groups = {};
+  rows.forEach(r=>{
+    const key = r.course || '(특강 미선택)';
+    if(!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+
+  const sortedKeys = Object.keys(groups).sort((a,b)=>{
+    const ca = CATEGORY_ORDER.indexOf(categoryOf(a));
+    const cb = CATEGORY_ORDER.indexOf(categoryOf(b));
+    if(ca !== cb) return (ca<0?99:ca) - (cb<0?99:cb);
+    return a.localeCompare(b, 'ko');
+  });
+
+  root.innerHTML = sortedKeys.map(course=>{
+    const list = groups[course];
+    return `
+      <details class="course-group" open>
+        <summary>
+          <span><span class="arrow">▶</span> &nbsp;${course}</span>
+          <span class="count">${list.length}명</span>
+        </summary>
+        <table class="roster">
+          <tr><th>이름</th><th>학교</th><th>학년</th><th>재원여부</th></tr>
+          ${list.map(r=>`
+            <tr>
+              <td>${escapeHtml(r.studentName)}</td>
+              <td>${escapeHtml(r.school)}</td>
+              <td>${escapeHtml(r.grade)}</td>
+              <td><span class="tag-enrolled ${r.enrolled==='재원생'?'in':'out'}">${escapeHtml(r.enrolled)}</span></td>
+            </tr>`).join('')}
+        </table>
+      </details>`;
+  }).join('');
+}
+
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, s=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[s]));
+}
+</script>
+</body>
+</html>
