@@ -278,12 +278,20 @@ function startListeners(){
   unsubApplications = onSnapshot(aq, (snap)=>{
     ALL_APPLICATIONS = snap.docs.map(d=>({ id:d.id, ...d.data() }));
     renderApplications();
+  }, (err)=>{
+    console.error(err);
+    document.getElementById('groupsRoot').innerHTML =
+      `<div class="empty-state">신청 내역을 불러오지 못했습니다: ${err.message}</div>`;
   });
 
-  const cq = query(collection(db, "courses"), orderBy("category"), orderBy("order"));
+  const cq = collection(db, "courses");
   unsubCourses = onSnapshot(cq, (snap)=>{
     ALL_COURSES = snap.docs.map(d=>({ id:d.id, ...d.data() }));
     renderCourseList();
+  }, (err)=>{
+    console.error(err);
+    document.getElementById('courseListRoot').innerHTML =
+      `<div class="empty-state">강좌 정보를 불러오지 못했습니다: ${err.message}</div>`;
   });
 }
 

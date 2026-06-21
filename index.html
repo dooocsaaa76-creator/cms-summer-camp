@@ -462,9 +462,14 @@ let COURSES = [];
 let coursesLoaded = false;
 
 function startCoursesListener(){
-  const q = query(collection(db, "courses"), orderBy("category"), orderBy("order"));
-  onSnapshot(q, (snap)=>{
+  onSnapshot(collection(db, "courses"), (snap)=>{
     COURSES = snap.docs.map(d=>({ ...d.data(), id: d.id }));
+    COURSES.sort((a,b)=>{
+      const ca = CATEGORIES.indexOf(a.category);
+      const cb = CATEGORIES.indexOf(b.category);
+      if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
+      return (a.order||0)-(b.order||0);
+    });
     coursesLoaded = true;
     const activeChip = document.querySelector('.chip.active');
     renderCatalog(activeChip ? activeChip.dataset.cat : "전체");
