@@ -117,10 +117,29 @@
   .course-row{
     background:var(--card);border:1.5px solid var(--line);border-radius:12px;
     padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    cursor:default; transition: box-shadow .15s ease, opacity .15s ease;
   }
+  .course-row.dragging{opacity:0.4;}
+  .course-row.drag-over{box-shadow:0 0 0 2.5px var(--teal-dark); border-color:var(--teal-dark);}
+  .drag-handle{
+    cursor:grab;color:var(--muted);font-size:18px;padding:0 6px 0 0;
+    user-select:none;flex:0 0 auto;line-height:1;
+  }
+  .drag-handle:active{cursor:grabbing;}
   .course-row .ctitle{font-family:var(--font-display);font-size:16.5px;}
   .course-row .ctarget{font-size:12.5px;color:var(--muted);margin-top:2px;}
   .course-row .cbadge{font-family:var(--font-mono);font-size:11px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:6px;padding:2px 8px;margin-right:8px;}
+  .order-save-banner{
+    display:none;position:sticky;top:0;z-index:20;
+    background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px;
+    padding:10px 18px;border-radius:10px;margin-bottom:14px;
+    justify-content:space-between;align-items:center;gap:12px;
+  }
+  .order-save-banner.show{display:flex;}
+  .order-save-banner button{
+    background:var(--ink);color:#fff;border:none;border-radius:8px;
+    padding:8px 16px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:13.5px;
+  }
 
   /* 모달 (강좌 수정) */
   .overlay{position:fixed;inset:0;background:rgba(22,36,62,.55);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
@@ -191,8 +210,15 @@
 
   <div class="tab-panel" id="tab-courses">
     <div class="seed-banner" id="seedBanner" style="display:none;">
-      <p>아직 강좌 정보가 비어 있습니다. 안내드린 19개 강좌 기본 데이터를 한 번에 불러올까요?</p>
+      <p>아직 강좌 정보가 비어 있습니다. 안내드린 21개 강좌 기본 데이터를 한 번에 불러올까요?</p>
       <button id="seedBtn">초기 강좌 데이터 업로드</button>
+    </div>
+    <div class="order-save-banner" id="orderSaveBanner">
+      ⬆⬇ 순서가 변경되었습니다. 저장할까요?
+      <div style="display:flex;gap:8px;">
+        <button id="orderSaveBtn">순서 저장</button>
+        <button id="orderCancelBtn" style="background:var(--muted);">취소</button>
+      </div>
     </div>
     <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
       <button class="btn-sm primary" id="newCourseBtn">+ 새 강좌 추가</button>
@@ -401,22 +427,32 @@ function renderApplications(){
 /* ============================================================
    강좌 관리 탭
 ============================================================ */
+let dragSrcId = null;
+let pendingOrder = null; // 변경된 순서 임시 저장
+
+function getSortedCourses(){
+  return [...ALL_COURSES].sort((a,b)=>{
+    const ca = CATEGORY_ORDER.indexOf(a.category);
+    const cb = CATEGORY_ORDER.indexOf(b.category);
+    if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
+    return (a.order??9999)-(b.order??9999);
+  });
+}
+
 function renderCourseList(){
   document.getElementById('seedBanner').style.display = ALL_COURSES.length===0 ? 'flex' : 'none';
 
   const root = document.getElementById('courseListRoot');
   if(!ALL_COURSES.length){ root.innerHTML=''; return; }
 
-  const sorted = [...ALL_COURSES].sort((a,b)=>{
-    const ca = CATEGORY_ORDER.indexOf(a.category);
-    const cb = CATEGORY_ORDER.indexOf(b.category);
-    if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
-    return (a.order||0)-(b.order||0);
-  });
+  const sorted = pendingOrder
+    ? pendingOrder.map(id=> ALL_COURSES.find(c=>c.id===id)).filter(Boolean)
+    : getSortedCourses();
 
   root.innerHTML = sorted.map(c=>`
-    <div class="course-row">
-      <div>
+    <div class="course-row" draggable="true" data-id="${c.id}">
+      <span class="drag-handle" title="드래그하여 순서 변경">⠿</span>
+      <div style="flex:1;min-width:0;">
         <span class="cbadge">${escapeHtml(c.category)}</span>
         <span class="ctitle">${escapeHtml(c.title)}</span>
         <div class="ctarget">${escapeHtml(c.target)}</div>
@@ -425,10 +461,87 @@ function renderCourseList(){
     </div>
   `).join('');
 
+  // 수정 버튼
   root.querySelectorAll('[data-edit]').forEach(btn=>{
     btn.addEventListener('click', ()=> openCourseModal(btn.dataset.edit));
   });
+
+  // 드래그 앤 드롭
+  initDragDrop(root);
 }
+
+function initDragDrop(root){
+  let dragEl = null;
+
+  root.querySelectorAll('.course-row').forEach(row=>{
+    row.addEventListener('dragstart', (e)=>{
+      dragEl = row;
+      dragSrcId = row.dataset.id;
+      setTimeout(()=> row.classList.add('dragging'), 0);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+
+    row.addEventListener('dragend', ()=>{
+      row.classList.remove('dragging');
+      root.querySelectorAll('.course-row').forEach(r=> r.classList.remove('drag-over'));
+      dragEl = null;
+    });
+
+    row.addEventListener('dragover', (e)=>{
+      e.preventDefault();
+      if(row === dragEl) return;
+      root.querySelectorAll('.course-row').forEach(r=> r.classList.remove('drag-over'));
+      row.classList.add('drag-over');
+    });
+
+    row.addEventListener('drop', (e)=>{
+      e.preventDefault();
+      if(row === dragEl || !dragEl) return;
+      row.classList.remove('drag-over');
+
+      // DOM 순서 변경
+      const rows = [...root.querySelectorAll('.course-row')];
+      const fromIdx = rows.indexOf(dragEl);
+      const toIdx = rows.indexOf(row);
+      if(fromIdx < toIdx){
+        row.after(dragEl);
+      } else {
+        row.before(dragEl);
+      }
+
+      // 새 순서를 pendingOrder로 저장하고 배너 표시
+      pendingOrder = [...root.querySelectorAll('.course-row')].map(r=> r.dataset.id);
+      document.getElementById('orderSaveBanner').classList.add('show');
+    });
+  });
+}
+
+// 순서 저장
+document.getElementById('orderSaveBtn').addEventListener('click', async ()=>{
+  if(!pendingOrder) return;
+  const btn = document.getElementById('orderSaveBtn');
+  btn.disabled = true; btn.textContent = '저장 중...';
+  try{
+    // 각 강좌의 order 필드를 인덱스 값으로 일괄 업데이트
+    const updates = pendingOrder.map((id, idx)=>
+      setDoc(doc(db, "courses", id), { order: idx }, { merge: true })
+    );
+    await Promise.all(updates);
+    pendingOrder = null;
+    document.getElementById('orderSaveBanner').classList.remove('show');
+  }catch(err){
+    alert('순서 저장 중 문제가 발생했습니다: ' + err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = '순서 저장';
+  }
+});
+
+// 순서 변경 취소
+document.getElementById('orderCancelBtn').addEventListener('click', ()=>{
+  pendingOrder = null;
+  document.getElementById('orderSaveBanner').classList.remove('show');
+  renderCourseList();
+});
 
 document.getElementById('newCourseBtn').addEventListener('click', ()=> openCourseModal(null));
 
