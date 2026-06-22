@@ -86,13 +86,24 @@
   .course-group summary .arrow{font-family:var(--font-mono);font-size:13px;color:var(--muted);transition:transform .15s ease;}
   .course-group[open] summary .arrow{transform:rotate(90deg);}
   .course-group summary .count{font-family:var(--font-mono);font-size:12.5px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:999px;padding:2px 10px;margin-left:10px;}
-  table.roster{width:100%;border-collapse:collapse;font-size:14px;}
-  table.roster th{text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding:10px 20px 8px;background:var(--paper);}
-  table.roster td{padding:10px 20px;border-top:1px dashed var(--line);}
+  table.roster{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
+  table.roster th{text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding:10px 14px 8px;background:var(--paper);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  table.roster td{padding:10px 14px;border-top:1px dashed var(--line);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;vertical-align:middle;}
   table.roster tr:nth-child(even) td{background:rgba(31,122,108,0.03);}
+  table.roster .col-name{width:13%;}
+  table.roster .col-school{width:18%;}
+  table.roster .col-grade{width:9%;}
+  table.roster .col-phone{width:17%;}
+  table.roster .col-enrolled{width:11%;}
+  table.roster .col-del{width:8%;text-align:center;}
   .tag-enrolled{font-family:var(--font-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;}
   .tag-enrolled.in{background:var(--teal-pale);color:var(--teal-dark);}
   .tag-enrolled.out{background:#FFF3DD;color:#8a6212;}
+  .del-row-btn{
+    background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;
+    font-size:12px;padding:3px 8px;cursor:pointer;font-family:var(--font-mono);
+  }
+  .del-row-btn:hover{background:var(--red);color:#fff;}
   .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);font-size:14px;}
 
   /* 강좌 관리 */
@@ -159,6 +170,7 @@
   <div class="dash-header">
     <h1>CMS 서초영재관 관리자</h1>
     <div class="dash-actions">
+      <a href="index.html" class="btn-sm" style="text-decoration:none;">← 신청페이지</a>
       <button class="btn-sm" id="logoutBtn">로그아웃</button>
     </div>
   </div>
@@ -343,23 +355,47 @@ function renderApplications(){
     return a.localeCompare(b, 'ko');
   });
 
-  document.getElementById('groupsRoot').innerHTML = sortedKeys.map(course=>{
+  root.innerHTML = sortedKeys.map(course=>{
     const list = groups[course];
     return `
       <details class="course-group" open>
         <summary><span><span class="arrow">▶</span> &nbsp;${escapeHtml(course)}</span><span class="count">${list.length}명</span></summary>
         <table class="roster">
-          <tr><th>이름</th><th>학교</th><th>학년</th><th>재원여부</th></tr>
+          <colgroup>
+            <col class="col-name"><col class="col-school"><col class="col-grade">
+            <col class="col-phone"><col class="col-enrolled"><col class="col-del">
+          </colgroup>
+          <tr>
+            <th>이름</th><th>학교</th><th>학년</th>
+            <th>연락처</th><th>재원여부</th><th></th>
+          </tr>
           ${list.map(r=>`
             <tr>
               <td>${escapeHtml(r.studentName)}</td>
               <td>${escapeHtml(r.school)}</td>
               <td>${escapeHtml(r.grade)}</td>
+              <td>${escapeHtml(r.phone||'')}</td>
               <td><span class="tag-enrolled ${r.enrolled==='재원생'?'in':'out'}">${escapeHtml(r.enrolled)}</span></td>
+              <td><button class="del-row-btn" data-docid="${r.id}">삭제</button></td>
             </tr>`).join('')}
         </table>
       </details>`;
   }).join('');
+
+  // 삭제 버튼 이벤트 (이벤트 위임)
+  root.querySelectorAll('.del-row-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const name = btn.closest('tr').querySelector('td').textContent;
+      if(!confirm(`'${name}' 학생의 신청 내역을 삭제할까요? 복구할 수 없습니다.`)) return;
+      btn.disabled = true; btn.textContent = '삭제 중...';
+      try{
+        await deleteDoc(doc(db, "applications", btn.dataset.docid));
+      }catch(err){
+        alert('삭제 중 문제가 발생했습니다: ' + err.message);
+        btn.disabled = false; btn.textContent = '삭제';
+      }
+    });
+  });
 }
 
 /* ============================================================
@@ -519,9 +555,14 @@ document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); }
    초기 강좌 데이터 19개 시드
 ============================================================ */
 const SEED_COURSES = [
-{ category:"고등", title:"공통수학1 극심화", textbook:"자체교재", target:"3GST, GST미적2상",
+{ category:"고등", title:"공통수학1 극심화(월수금)", textbook:"자체교재", target:"3GST, GST미적2상",
   feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"},{label:"화목반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
+  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
+  sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"] },
+{ category:"고등", title:"공통수학1 극심화(화목)", textbook:"자체교재", target:"3GST, GST미적2상",
+  feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
+  variants:[{label:"화목반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
   note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
   sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"] },
 { category:"고등", title:"삼각함수 & 수열", textbook:"자체교재", target:"GS공수2상, GS공수2하",
@@ -562,9 +603,13 @@ const SEED_COURSES = [
   feature:"중1-1, 2-1 대수를 확실히 정리하고 중요 유형 연습이 필요한 학생\n중1과 중2 과정을 자연스럽게 연결하여 중등 대수의 흐름을 정리할 수 있는 특강입니다.",
   variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
   sessions:["문자와 식","지수법칙","일차방정식","일차부등식","연립방정식","방정식·부등식의 활용","일차함수"] },
-{ category:"중등", title:"중1-1 기본+응용", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
+{ category:"중등", title:"중1-1 기본+응용(월수금)", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
   feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"월·금 11:00~14:30 / 수 14:30~18:00", period:"8/3(월) ~ 8/17(월)"},{label:"화목토반", time:"화·목 11:00~14:30 / 토 16:00~19:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
+  variants:[{label:"월수금반", time:"월·금 11:00~14:30 / 수 14:30~18:00", period:"8/3(월) ~ 8/17(월)"}], note:"",
+  sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"] },
+{ category:"중등", title:"중1-1 기본+응용(화목토)", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
+  feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
+  variants:[{label:"화목토반", time:"화·목 11:00~14:30 / 토 16:00~19:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
   sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"] },
 { category:"중등", title:"중1-1 미리보기", textbook:"수학의 단비 1-1", target:"FIT6-2, FIT1-1",
   feature:"중1-1 연산 & 핵심 유형 연습이 필요한 학생\n중1-1에서 다루는 개념을 미리 배우고 연습하여 중등 연산력을 키우고, 핵심 유형 연습을 통해 기본 베이스 감각을 키워놓는 특강입니다.",
