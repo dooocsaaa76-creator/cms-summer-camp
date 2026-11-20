@@ -97,6 +97,12 @@ function calendar(n) {
   return `<table class="nt-cal"><thead><tr>${WEEKDAYS.map((d, i) => `<th class="${i === 0 ? "sun" : i === 6 ? "sat" : ""}">${d}</th>`).join("")}</tr></thead><tbody>${weeks.join("")}</tbody></table>`;
 }
 
+/* 줄 단위 문구: ✔ 로 시작하는 줄은 강조 체크 항목으로 */
+function richLines(text) {
+  return String(text || "").split("\n").map((l) => l.trim()).filter(Boolean).map((l) =>
+    /^[✔✓√]/.test(l) ? `<div class="ck">${esc(l.replace(/^[✔✓√]\s*/, ""))}</div>` : `<p>${esc(l)}</p>`).join("");
+}
+
 export function noticeTitle(n) {
   return n.title || `2027 서초 ${n.className || "OO반"} 겨울방학 학습 계획 안내문`;
 }
@@ -143,13 +149,14 @@ export function renderNotice(n, opts = {}) {
     </header>
     <h1 class="nt-title">${esc(noticeTitle(n))}</h1>
     ${n.headline ? `<div class="nt-headline">${nl2br(n.headline)}</div>` : ""}
+    ${String(n.intro || "").trim() ? `<div class="nt-intro">${richLines(n.intro)}</div>` : ""}
     ${(n.question || points.length) ? `<div class="nt-why">
       ${n.question ? `<h3>${esc(n.question)}</h3>` : ""}
       ${points.length ? `<ul>${points.map((p) => `<li>${esc(p.replace(/^✔\s*/, ""))}</li>`).join("")}</ul>` : ""}
     </div>` : ""}
     ${(n.highlightTitle || n.highlightBody) ? `<div class="nt-alert"><b>${esc(n.highlightTitle || "")}</b>${n.highlightBody ? `<p>${nl2br(n.highlightBody)}</p>` : ""}</div>` : ""}
-    ${specials.length ? `<div class="nt-pick"><small>그래서 우리 반 학생들을 위해 준비된 필수 수업!</small><div>${specials.map((s) => esc(s.title)).join(" · ")}</div></div>` : ""}
-    ${closing ? `<div class="nt-closing">${nl2br(closing)}</div>` : ""}
+    ${(specials.length || n.pickTitle) ? `<div class="nt-pick"><small>${esc(n.pickLead || "그래서 우리 반 학생들을 위해 준비된 필수 수업!")}</small><div>${esc(n.pickTitle || specials.map((s) => s.title).join(" · "))}</div></div>` : ""}
+    ${closing ? `<div class="nt-closing">${richLines(closing)}</div>` : ""}
 
     ${planRows.length ? `${H("학습 계획", ` <small>(${esc(n.planRange || "1월 ~ 2월")})</small>`)}
       <table class="nt-tbl nt-plan"><thead><tr><th style="width:84px">수업</th><th>과정</th><th style="width:110px">요일 / 시간</th><th style="width:104px">개강 및 종강</th><th>목표</th></tr></thead><tbody>${planRows.join("")}</tbody></table>` : ""}
@@ -191,6 +198,10 @@ export const NOTICE_CSS = `
 .nt-pick small{opacity:.85;font-size:13px;}
 .nt-pick div{font-size:20px;font-weight:800;letter-spacing:-0.02em;}
 .nt-closing{text-align:center;font-weight:600;color:#414143;margin:16px 0 8px;}
+.nt-closing p,.nt-intro p{margin:2px 0;}
+.nt-intro{text-align:center;color:#414143;margin:0 0 16px;}
+.nt-intro .ck,.nt-closing .ck{font-weight:800;color:var(--ac-d);margin:8px 0 4px;}
+.nt-intro .ck::before,.nt-closing .ck::before{content:"✔ ";color:var(--ac);}
 .nt-h{font-size:17px;margin:30px 0 10px;display:flex;align-items:baseline;gap:6px;font-weight:800;}
 .nt-h span{color:var(--ac);}
 .nt-h small{font-size:13px;color:#8A8A90;font-weight:600;}
