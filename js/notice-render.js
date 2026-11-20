@@ -24,7 +24,8 @@ function timetable(n) {
   const items = [];
   if (n.winter && n.winter.on) items.push({ days: ["월", "화", "수", "목", "금"], time: n.winter.time, text: `${n.winter.title || "윈터스쿨"} (요일 선택 가능)`, cls: "w" });
   (n.specials || []).forEach((s) => items.push({ days: s.days || [], time: s.time, text: `방학 특강<br><small>${esc(s.title)}</small>`, cls: "s" }));
-  (n.regular || []).forEach((r) => items.push({ days: r.days || [], time: r.time, text: `정규 수업<br><small>${esc(r.name)}</small>`, cls: "r" }));
+  // 정규수업은 기본/심화를 요일별로 나누지 않고 "정규 수업"으로만 표시
+  (n.regular || []).forEach((r) => items.push({ days: r.days || [], time: r.time, text: `정규 수업`, cls: "r" }));
   const valid = items.filter((i) => i.time && i.days.length);
   if (!valid.length) return "";
   const days = DAY_ORDER.filter((d) => valid.some((i) => i.days.includes(d)));
@@ -32,7 +33,7 @@ function timetable(n) {
   const rows = times.map((t) => {
     const cells = days.map((d) => {
       const hit = valid.filter((i) => i.time === t && i.days.includes(d));
-      return { html: hit.map((h) => h.text).join("<hr>"), cls: hit.length ? hit[0].cls : "" };
+      return { html: [...new Set(hit.map((h) => h.text))].join("<hr>"), cls: hit.length ? hit[0].cls : "" };
     });
     let out = "";
     for (let i = 0; i < cells.length;) {
@@ -81,12 +82,8 @@ function calendar(n) {
         specialDates.forEach(({ s, map }) => {
           if (map[iso]) ev.push(`<span class="ev s">${(n.specials || []).length > 1 ? esc(s.short || s.title) + " " : "특강 "}${map[iso]}회</span>`);
         });
-        (n.regular || []).forEach((r) => {
-          if (!(r.days || []).includes(WEEKDAYS[d.getDay()])) return;
-          if (r.start && iso < r.start) return;
-          if (r.end && iso > r.end) return;
-          ev.push(`<span class="ev r">정규수업</span>`);
-        });
+        const hasRegular = (n.regular || []).some((r) => (r.days || []).includes(WEEKDAYS[d.getDay()]) && !(r.start && iso < r.start) && !(r.end && iso > r.end));
+        if (hasRegular) ev.push(`<span class="ev r">정규수업</span>`);
       }
       const showMonth = d.getDate() === 1 || (weeks.length === 0 && k === 0);
       cells.push(`<td class="${inRange ? "" : "out"} ${hol ? "hol" : ""} ${k === 0 ? "sun" : k === 6 ? "sat" : ""}"><div class="dn">${showMonth ? `${d.getMonth() + 1}/${d.getDate()}` : d.getDate()}</div>${ev.join("")}</td>`);
@@ -117,9 +114,20 @@ export function renderNotice(n, opts = {}) {
   const w = n.winter && n.winter.on ? n.winter : null;
 
   const planRows = [];
-  regular.forEach((r, i) => planRows.push(`<tr>${i === 0 ? `<th rowspan="${regular.length}">정규수업</th>` : ""}
-    <td><b>${esc(r.name)}</b></td><td>${esc((r.days || []).join("."))}${r.time ? `<br><small>(${esc(r.time)})</small>` : ""}</td>
-    <td>${esc(fmtRange(r.start, r.end)).replace(" ~ ", "<br>~ ")}</td><td>${nl2br(r.goal || "")}</td></tr>`));
+  // 요일/시간, 기간이 같은 정규수업(기본·심화)은 한 칸으로 합쳐 표시
+  const rDays = (r) => `${esc((r.days || []).join("."))}${r.time ? `<br><small>(${esc(r.time)})</small>` : ""}`;
+  const rPeriod = (r) => esc(fmtRange(r.start, r.end)).replace(" ~ ", "<br>~ ");
+  const spanOf = (fn, i) => {
+    if (i > 0 && fn(regular[i - 1]) === fn(regular[i])) return 0;
+    let k = i + 1; while (k < regular.length && fn(regular[k]) === fn(regular[i])) k++;
+    return k - i;
+  };
+  regular.forEach((r, i) => {
+    const ds = spanOf(rDays, i), ps = spanOf(rPeriod, i);
+    planRows.push(`<tr>${i === 0 ? `<th rowspan="${regular.length}">정규수업</th>` : ""}
+    <td><b>${esc(r.name)}</b></td>${ds ? `<td rowspan="${ds}">${rDays(r)}</td>` : ""}
+    ${ps ? `<td rowspan="${ps}">${rPeriod(r)}</td>` : ""}<td>${nl2br(r.goal || "")}</td></tr>`);
+  });
   specials.forEach((s, i) => planRows.push(`<tr class="hl">${i === 0 ? `<th rowspan="${specials.length}">특강</th>` : ""}
     <td><b>${esc(s.title)}</b>${s.label ? `<br><small>${esc(s.label)}</small>` : ""}</td><td>${esc((s.days || []).join("."))}${s.time ? `<br><small>(${esc(s.time)})</small>` : ""}</td>
     <td>${esc(s.period || fmtRange(s.start, s.end)).replace(" ~ ", "<br>~ ")}</td>

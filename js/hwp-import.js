@@ -354,23 +354,10 @@ export function parseNotice(blocks, ctx) {
 
   // ---------- 정규수업 ----------
   const regular = rows.regular.map((x) => ({ name: x.name, days: x.days, time: x.time, start: x.start, end: x.end, goal: x.goal, _daysCell: x.daysCell, _dates: x.dates }));
-  // 시간표에서 시간/요일 보완
-  regular.forEach((r) => {
-    const byName = tt.regular.filter((t) => t.name && squash(t.name) === squash(r.name));
-    if (byName.length) { r.days = DAYS.filter((d) => byName.some((t) => t.day === d)); if (!r.time) r.time = byName[0].time; }
-  });
-  // 같은 요일 칸을 여러 정규수업이 공유하면 요일을 하나씩 나눠 배정
-  const groups = new Map();
-  regular.forEach((r) => { if (r._daysCell) { if (!groups.has(r._daysCell)) groups.set(r._daysCell, []); groups.get(r._daysCell).push(r); } });
-  groups.forEach((list) => {
-    if (list.length < 2) return;
-    const days = list[0].days;
-    if (list.some((r) => tt.regular.some((t) => t.name && squash(t.name) === squash(r.name)))) return;
-    if (days.length === list.length) {
-      list.forEach((r, i) => { r.days = [days[i]]; });
-      warn.push(`정규수업 ${list.map((r) => r.name).join(", ")}이(가) 요일 칸(${days.join(" ")})을 함께 쓰고 있어 순서대로 ${list.map((r, i) => `${r.name}=${days[i]}`).join(", ")}요일로 나눴습니다. 맞는지 확인해주세요.`);
-    } else warn.push(`정규수업 ${list.map((r) => r.name).join(", ")}의 요일이 한 칸(${days.join(" ")})으로 묶여 있습니다. 반별 요일을 확인해주세요.`);
-  });
+  // 정규수업(기본·심화)은 요일별로 나누지 않음: 학습 계획 표의 요일을 그대로 쓰고,
+  // 요일 칸이 비어 있으면 시간표의 정규 수업 요일 전체를 사용
+  const ttRegDays = DAYS.filter((d) => tt.regular.some((t) => t.day === d));
+  regular.forEach((r) => { if (!r.days.length && ttRegDays.length) r.days = ttRegDays; });
   const regTime = tt.regular.length ? tt.regular[0].time : "";
   regular.forEach((r) => {
     if (!r.time && regTime) r.time = regTime;
