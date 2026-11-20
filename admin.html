@@ -1072,7 +1072,11 @@ $("#cSeed").onclick = async () => {
 const SYNC_FIELDS = [["subtitle", "부제"], ["textbook", "교재"], ["target", "수업 대상"], ["feature", "특징"], ["note", "휴강 안내"]];
 const V_FIELDS = [["days", "요일"], ["time", "시간"], ["count", "회차"], ["start", "개강"], ["end", "종강"], ["period", "기간 표기"]];
 const showVal = (x) => Array.isArray(x) ? x.join(", ") : (x === undefined || x === null || x === "" ? "(없음)" : String(x));
-const same = (a, b) => JSON.stringify(a ?? "") === JSON.stringify(b ?? "");
+// Firestore는 객체 키 순서를 바꿔 돌려주므로 키를 정렬해서 비교
+const stable = (x) => Array.isArray(x) ? `[${x.map(stable).join(",")}]`
+  : x && typeof x === "object" ? `{${Object.keys(x).sort().map((k) => `${JSON.stringify(k)}:${stable(x[k])}`).join(",")}}` : JSON.stringify(x ?? "");
+const same = (a, b) => stable(a ?? "") === stable(b ?? "");
+const normBreaks = (bs) => (bs || []).filter((b) => b && b.from).map((b) => ({ from: b.from, to: b.to || b.from }));
 function courseDiff(cur, seed) {
   const changes = [], patch = {};
   SYNC_FIELDS.forEach(([k, label]) => {
@@ -1086,7 +1090,7 @@ function courseDiff(cur, seed) {
     changes.push({ label: "회차 진도", text: diffs.join(" / ") });
     patch.sessions = [...b];
   }
-  if (!same(cur.breaks || [], seed.breaks || [])) { changes.push({ label: "휴강 기간", from: breakText(cur.breaks), to: breakText(seed.breaks) }); patch.breaks = seed.breaks || []; }
+  if (!same(normBreaks(cur.breaks), normBreaks(seed.breaks))) { changes.push({ label: "휴강 기간", from: breakText(cur.breaks), to: breakText(seed.breaks) }); patch.breaks = seed.breaks || []; }
   const vars = (cur.variants || []).map((v) => ({ ...v }));
   let vChanged = false;
   (seed.variants || []).forEach((sv) => {
