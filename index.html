@@ -21,6 +21,8 @@
   .topbar nav{margin-left:auto;display:flex;align-items:center;gap:6px;}
   .topbar nav a.lnk{font-size:14px;font-weight:600;color:var(--ink-2);text-decoration:none;padding:8px 12px;border-radius:9px;}
   .topbar nav a.lnk:hover{background:var(--line-2);}
+  .topbar nav a.admin-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;margin-left:4px;border:1.5px solid var(--green,#00A57E);border-radius:9px;color:var(--green,#00A57E);background:#fff;font-size:13.5px;font-weight:700;text-decoration:none;white-space:nowrap;transition:background .15s,color .15s;}
+  .topbar nav a.admin-btn:hover{background:var(--green,#00A57E);color:#fff;}
   .cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:10px;background:#fff;color:var(--charcoal);font-size:12px;padding:0 6px;}
 
   /* ---------- hero ---------- */
@@ -179,6 +181,8 @@
     .topbar-in{padding:0 16px;gap:10px;}
     .topbar .divider,.topbar nav a.lnk{display:none;}
     .topbar .season{font-size:14px;}
+    .topbar nav a.admin-btn{padding:0 10px;margin-left:0;}
+    .topbar nav a.admin-btn span{display:none;}
     .halls{grid-template-columns:1fr 1fr;gap:8px;}
     .hall-tab{padding:12px;flex-direction:column;align-items:flex-start;}
     .hall-tab img{height:24px;}
@@ -203,6 +207,7 @@
       <a class="lnk" href="#courses">특강 안내</a>
       <a class="lnk" href="#winter">윈터스쿨</a>
       <a class="btn btn-dark btn-sm" href="#apply">신청하기 <span class="cart-count" id="cartCount">0</span></a>
+      <a class="admin-btn" href="admin.html" title="강사·관리자 로그인"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>관리자 로그인</span></a>
     </nav>
   </div>
 </header>
