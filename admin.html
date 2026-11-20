@@ -3,784 +3,1179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>관리자 페이지 | CMS 서초영재관 특강 신청 현황</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>특강 관리 | CMS 서초영재관</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="assets/logo_master.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/common.css">
+<style id="noticeCss"></style>
 <style>
-  :root{
-    --ink:#16243E; --ink-soft:#33425C; --paper:#F3F5F1; --paper-grid:#DCE3DD;
-    --card:#FFFFFF; --teal:#1F7A6C; --teal-dark:#14564C; --teal-pale:#E3F1EC;
-    --red:#D64545; --red-pale:#FBE7E4; --yellow:#F4B73F; --muted:#5C6B66; --line:#D9E0DA;
-    --font-display:'Song Myung', serif; --font-body:'Gowun Dodum', sans-serif; --font-mono:'JetBrains Mono', monospace;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.6;
-    background-image:linear-gradient(var(--paper-grid) 1px, transparent 1px),linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
-    background-size:28px 28px;min-height:100vh;
-  }
-  :focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
+  body{background:#F4F4F7;}
+  /* login */
+  .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login .card{width:100%;max-width:400px;padding:36px;}
+  .login img{height:30px;margin-bottom:22px;}
+  .login h1{font-size:22px;margin:0 0 6px;}
+  .login p{color:var(--muted);margin:0 0 22px;font-size:14px;}
+  .login .field{margin-bottom:12px;}
+  .login .err{color:var(--red);font-size:13px;min-height:18px;margin:6px 0;}
 
-  /* 로그인 게이트 */
-  #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .gate-box{
-    background:var(--card);border:2px solid var(--ink);border-radius:18px;
-    padding:40px 34px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 30px rgba(22,36,62,.12);
-  }
-  .gate-box .eyebrow{
-    font-family:var(--font-mono);font-size:12px;color:var(--teal-dark);background:var(--teal-pale);
-    border:1px solid var(--teal);border-radius:999px;padding:4px 12px;display:inline-block;margin-bottom:14px;
-  }
-  .gate-box h1{font-family:var(--font-display);font-size:24px;margin:0 0 18px;}
-  .gate-box input{
-    width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:8px;
-    font-family:var(--font-body);font-size:14.5px;margin-bottom:12px;
-  }
-  .gate-box input:focus{border-color:var(--teal);}
-  .gate-box button{
-    width:100%;padding:13px;border:none;border-radius:10px;background:var(--ink);color:#fff;
-    font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;
-  }
-  .gate-box button:hover{background:var(--teal-dark);}
-  .gate-error{color:var(--red);font-size:13.5px;margin-top:12px;display:none;}
+  /* app shell */
+  .head{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40;}
+  .head-in{max-width:1600px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;gap:14px;}
+  .head img{height:22px;}
+  .head .t{font-weight:800;font-size:16px;}
+  .head .sp{flex:1;}
+  .head .who{font-size:12.5px;color:var(--muted);}
+  .tabs{max-width:1600px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto;}
+  .tabs button{border:0;background:transparent;height:46px;padding:0 16px;font-size:14.5px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;}
+  .tabs button.on{color:var(--ink);border-bottom-color:var(--charcoal);}
+  .tabs button .c{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:10px;background:var(--line-2);font-size:11.5px;color:var(--ink-2);}
+  .main{max-width:1600px;margin:0 auto;padding:22px 20px 80px;}
+  .panel{display:none;}
+  .panel.on{display:block;}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;}
+  .bar .sp{flex:1;}
+  .bar .input{height:40px;width:auto;}
+  .search{min-width:220px;}
+  .stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-width:120px;}
+  .stat b{display:block;font-size:22px;letter-spacing:-0.02em;}
+  .stat span{font-size:12px;color:var(--muted);font-weight:600;}
+  .banner{background:var(--red-p);color:var(--red);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13.5px;display:none;}
+  .banner.show{display:block;}
+  .infobox{background:var(--amber-p);color:#8A5300;border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:13px;}
+  .infobox ul{margin:6px 0 0;padding-left:18px;}
 
-  /* 대시보드 */
-  #dashboard{display:none;max-width:1040px;margin:0 auto;padding:36px 20px 70px;}
-  .dash-header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:6px;}
-  .dash-header h1{font-family:var(--font-display);font-size:28px;margin:0;}
-  .dash-actions{display:flex;gap:8px;}
-  .btn-sm{
-    font-family:var(--font-body);font-weight:700;font-size:13.5px;border:1.5px solid var(--ink);
-    border-radius:999px;padding:8px 16px;background:var(--card);cursor:pointer;color:var(--ink);
-  }
-  .btn-sm:hover{background:var(--ink);color:#fff;}
-  .btn-sm.primary{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff;}
-  .btn-sm.primary:hover{background:var(--ink);}
-  .btn-sm.danger{border-color:var(--red);color:var(--red);}
-  .btn-sm.danger:hover{background:var(--red);color:#fff;}
-  .dash-sub{color:var(--muted);font-size:13px;margin-bottom:18px;font-family:var(--font-mono);}
+  /* roster columns */
+  .hall-h{display:flex;align-items:center;gap:10px;margin:26px 0 12px;font-size:17px;font-weight:800;}
+  .hall-h img{height:22px;}
+  .cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;align-items:start;}
+  .col{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .col.dim{opacity:.35;}
+  .col-h{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--line);}
+  .col-h .no{flex:none;width:24px;height:24px;border-radius:7px;background:var(--charcoal);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .col.premium .col-h .no{background:var(--blue);}
+  .col.gifted .col-h .no{background:var(--green);}
+  .col-h .tt{font-weight:800;font-size:14.5px;line-height:1.35;}
+  .col-h .tt small{display:block;font-weight:600;color:var(--muted);font-size:12px;}
+  .col-h .btn{margin-left:auto;flex:none;}
+  .col-meta{display:grid;grid-template-columns:52px 1fr 52px 1fr;font-size:12px;border-bottom:1px solid var(--line-2);}
+  .col-meta > div{padding:5px 8px;border-bottom:1px solid var(--line-2);}
+  .col-meta .k{color:var(--muted);font-weight:700;background:#FBFBFC;}
+  .col-stat{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:12.5px;border-bottom:1px solid var(--line);}
+  .col-stat b{font-size:15px;}
+  .col-stat .meter{flex:1;height:6px;border-radius:3px;background:var(--line-2);overflow:hidden;}
+  .col-stat .meter i{display:block;height:100%;background:var(--green);}
+  .col-stat .meter i.full{background:var(--red);}
+  .rt{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+  .rt td{padding:6px 6px;border-bottom:1px solid var(--line-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rt td.n{width:26px;color:var(--muted);text-align:center;font-size:11.5px;}
+  .rt td.nm{width:30%;font-weight:700;cursor:pointer;}
+  .rt td.nm:hover{color:var(--green-d);text-decoration:underline;}
+  .rt td.sc{color:var(--ink-2);font-size:12px;}
+  .rt td.rc{color:var(--ink-2);font-size:12px;}
+  .rt td.ox{width:34px;text-align:center;}
+  .rt td.mm{width:58px;text-align:right;}
+  .rt tr.x td.nm,.rt tr.x td.sc,.rt tr.x td.rc{text-decoration:line-through;color:#B8B8BE;}
+  .rt tr.hit td{background:#FFF7D6;}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle;background:var(--blue);}
+  .dot.in{background:var(--green);}
+  .oxb{width:26px;height:24px;border-radius:6px;border:1px solid var(--line);background:#fff;font-weight:800;font-size:12px;cursor:pointer;color:var(--green-d);}
+  .oxb.x{color:var(--red);background:var(--red-p);border-color:#f3c2c4;}
+  .memo-tag{display:inline-block;max-width:56px;overflow:hidden;text-overflow:ellipsis;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:4px;padding:1px 5px;vertical-align:middle;}
+  .dup{background:var(--amber);color:#fff;font-size:10px;border-radius:4px;padding:0 4px;margin-left:4px;}
+  .col-add{padding:8px 10px;}
+  .col-add input{width:100%;height:32px;border:1px dashed var(--line);border-radius:8px;padding:0 10px;font:inherit;font-size:13px;background:#FCFCFD;}
+  .col-add input:focus{outline:none;border-color:var(--green);border-style:solid;background:#fff;}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--muted);align-items:center;flex-wrap:wrap;}
+  .search-res{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:16px;font-size:13.5px;display:none;}
+  .search-res.show{display:block;}
+  .search-res .sr{padding:6px 0;border-bottom:1px solid var(--line-2);}
+  .search-res .sr:last-child{border-bottom:0;}
 
-  /* 탭 */
-  .tabs{display:flex;gap:6px;margin-bottom:26px;border-bottom:2px solid var(--ink);}
-  .tab-btn{
-    font-family:var(--font-body);font-weight:700;font-size:15px;padding:10px 18px;border:none;
-    background:none;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;
-  }
-  .tab-btn.active{color:var(--ink);border-bottom-color:var(--teal-dark);}
-  .tab-panel{display:none;}
-  .tab-panel.active{display:block;}
+  /* winter */
+  .wcols{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr));gap:10px;overflow-x:auto;padding-bottom:6px;}
+  .wcol{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:240px;}
+  .wcol-h{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--charcoal);color:#fff;font-weight:800;}
+  .wcol-h span{font-size:12.5px;font-weight:600;opacity:.85;}
+  .wt{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed;}
+  .wt td{padding:6px;border-bottom:1px solid var(--line-2);vertical-align:top;}
+  .wt td.n{width:24px;color:var(--muted);text-align:center;font-size:11px;}
+  .wt td.nm{font-weight:700;cursor:pointer;width:44%;}
+  .wt td.nm small{display:block;font-weight:500;color:var(--muted);font-size:11px;}
+  .wt td.pd{color:var(--ink-2);font-size:11.5px;line-height:1.4;}
+  .wt td.en{width:44px;text-align:right;}
+  .wt tr.x td{text-decoration:line-through;color:#B8B8BE;}
+  .wt tr.hit td{background:#FFF7D6;}
 
-  .summary-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;}
-  .summary-card{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:16px 22px;flex:1 1 160px;}
-  .summary-card .num{font-family:var(--font-mono);font-size:28px;font-weight:700;color:var(--teal-dark);}
-  .summary-card .label{font-size:13px;color:var(--muted);}
+  /* tables generic */
+  .dt{width:100%;border-collapse:collapse;background:#fff;font-size:13px;}
+  .dt th{background:var(--bg);text-align:left;padding:10px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap;}
+  .dt td{padding:9px 10px;border-bottom:1px solid var(--line-2);}
+  .dt-wrap{border:1px solid var(--line);border-radius:14px;overflow:auto;background:#fff;}
 
-  .search-row{margin-bottom:22px;}
-  .search-row input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:14.5px;background:var(--card);}
-  .search-row input:focus{border-color:var(--teal);}
+  /* courses manage */
+  .cm-cat{margin:22px 0 10px;font-weight:800;font-size:16px;}
+  .cm-row{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+  .cm-row.dragging{opacity:.4;}
+  .cm-row.over{box-shadow:0 0 0 2px var(--green);}
+  .cm-row .hd{cursor:grab;color:var(--muted);font-size:18px;user-select:none;}
+  .cm-row .ti{font-weight:800;}
+  .cm-row .vs{font-size:12.5px;color:var(--muted);}
+  .cm-row .ac{margin-left:auto;display:flex;gap:6px;}
 
-  .course-group{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;margin-bottom:18px;overflow:hidden;}
-  .course-group summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;font-family:var(--font-display);font-size:17px;}
-  .course-group summary::-webkit-details-marker{display:none;}
-  .course-group summary .arrow{font-family:var(--font-mono);font-size:13px;color:var(--muted);transition:transform .15s ease;}
-  .course-group[open] summary .arrow{transform:rotate(90deg);}
-  .course-group summary .count{font-family:var(--font-mono);font-size:12.5px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:999px;padding:2px 10px;margin-left:10px;}
-  table.roster{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
-  table.roster th{text-align:left;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding:10px 14px 8px;background:var(--paper);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
-  table.roster td{padding:10px 14px;border-top:1px dashed var(--line);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;vertical-align:middle;}
-  table.roster tr:nth-child(even) td{background:rgba(31,122,108,0.03);}
-  table.roster .col-name{width:13%;}
-  table.roster .col-school{width:18%;}
-  table.roster .col-grade{width:9%;}
-  table.roster .col-phone{width:17%;}
-  table.roster .col-enrolled{width:11%;}
-  table.roster .col-del{width:8%;text-align:center;}
-  .tag-enrolled{font-family:var(--font-mono);font-size:11.5px;padding:2px 8px;border-radius:6px;}
-  .tag-enrolled.in{background:var(--teal-pale);color:var(--teal-dark);}
-  .tag-enrolled.out{background:#FFF3DD;color:#8a6212;}
-  .del-row-btn{
-    background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;
-    font-size:12px;padding:3px 8px;cursor:pointer;font-family:var(--font-mono);
-  }
-  .del-row-btn:hover{background:var(--red);color:#fff;}
-  .empty-state{text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);font-size:14px;}
+  /* form grid in modals */
+  .fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .fg .full{grid-column:1/-1;}
+  .modal h2{margin:0 0 18px;font-size:21px;}
+  .modal .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap;}
+  .modal .acts .left{margin-right:auto;}
+  .ved{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--bg);}
+  .ved .fg{grid-template-columns:repeat(4,1fr);}
+  .ved .rm{float:right;}
+  .daypick{display:flex;gap:4px;flex-wrap:wrap;}
+  .daypick label{display:inline-flex;align-items:center;justify-content:center;width:34px;height:32px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:700;}
+  .daypick input{display:none;}
+  .daypick label:has(input:checked){background:var(--charcoal);color:#fff;border-color:var(--charcoal);}
+  .mini-h{font-size:13px;font-weight:800;margin:18px 0 8px;display:flex;align-items:center;gap:8px;}
 
-  /* 강좌 관리 */
-  .seed-banner{
-    background:var(--ink);color:#fff;border-radius:14px;padding:22px;margin-bottom:24px;
-    display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;
-  }
-  .seed-banner p{margin:0;font-size:14px;color:#dfe6e2;}
-  .seed-banner button{background:var(--yellow);border:none;color:var(--ink);font-weight:700;padding:11px 18px;border-radius:999px;cursor:pointer;font-family:var(--font-body);}
+  /* notices */
+  .nlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+  .ncard{padding:18px;display:flex;flex-direction:column;gap:8px;}
+  .ncard .nt1{font-weight:800;font-size:16px;}
+  .ncard .nt2{font-size:12.5px;color:var(--muted);}
+  .ncard .ac{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .editor{display:grid;grid-template-columns:minmax(380px,520px) 1fr;gap:18px;align-items:start;}
+  .ed-form{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;max-height:calc(100vh - 150px);overflow:auto;position:sticky;top:120px;}
+  .ed-form .sec{border-bottom:1px dashed var(--line);padding-bottom:16px;margin-bottom:16px;}
+  .ed-form .sec:last-child{border-bottom:0;}
+  .ed-form .sec > b{display:block;margin-bottom:10px;font-size:14px;}
+  .ed-form .field{margin-bottom:10px;}
+  .ed-prev{background:#E9E9EE;border-radius:16px;padding:20px;min-height:400px;}
+  .ed-prev .nt{box-shadow:var(--shadow);border-radius:6px;}
+  .linkbox{display:flex;gap:6px;align-items:center;background:var(--green-p);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13px;flex-wrap:wrap;}
+  .linkbox code{flex:1;min-width:200px;word-break:break-all;font-size:12px;}
+  .rowed{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg);}
+  .rowed .fg{gap:8px;}
 
-  .course-row{
-    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
-    padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-    cursor:default; transition: box-shadow .15s ease, opacity .15s ease;
-  }
-  .course-row.dragging{opacity:0.4;}
-  .course-row.drag-over{box-shadow:0 0 0 2.5px var(--teal-dark); border-color:var(--teal-dark);}
-  .drag-handle{
-    cursor:grab;color:var(--muted);font-size:18px;padding:0 6px 0 0;
-    user-select:none;flex:0 0 auto;line-height:1;
-  }
-  .drag-handle:active{cursor:grabbing;}
-  .course-row .ctitle{font-family:var(--font-display);font-size:16.5px;}
-  .course-row .ctarget{font-size:12.5px;color:var(--muted);margin-top:2px;}
-  .course-row .cbadge{font-family:var(--font-mono);font-size:11px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:6px;padding:2px 8px;margin-right:8px;}
-  .order-save-banner{
-    display:none;position:sticky;top:0;z-index:20;
-    background:var(--yellow);color:var(--ink);font-weight:700;font-size:14px;
-    padding:10px 18px;border-radius:10px;margin-bottom:14px;
-    justify-content:space-between;align-items:center;gap:12px;
-  }
-  .order-save-banner.show{display:flex;}
-  .order-save-banner button{
-    background:var(--ink);color:#fff;border:none;border-radius:8px;
-    padding:8px 16px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:13.5px;
-  }
+  /* archive cards */
+  .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+  .acard{padding:18px;display:flex;flex-direction:column;gap:6px;}
+  .acard h3{margin:0;font-size:16px;}
+  .acard .t2{font-size:12.5px;color:var(--ink-2);}
+  .acard .ac{display:flex;gap:6px;margin-top:auto;padding-top:8px;}
+  .tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px;}
+  .tl div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;}
+  .tl b{color:var(--green-d);font-size:12px;display:block;}
 
-  /* 모달 (강좌 수정) */
-  .overlay{position:fixed;inset:0;background:rgba(22,36,62,.55);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow-y:auto;z-index:100;}
-  .overlay.open{display:flex;}
-  .modal{background:var(--card);max-width:640px;width:100%;border-radius:18px;border:2px solid var(--ink);padding:28px 26px 26px;position:relative;}
-  .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink);width:34px;height:34px;border-radius:50%;}
-  .modal-close:hover{background:var(--paper-grid);}
-  .modal h2{font-family:var(--font-display);font-size:22px;margin:0 0 18px;}
-  .field{margin-bottom:14px;}
-  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px;}
-  .field input[type=text], .field select, .field textarea{
-    width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:var(--font-body);font-size:14px;
+  .set-card{padding:22px;margin-bottom:14px;max-width:820px;}
+  .set-card h3{margin:0 0 14px;font-size:16px;}
+
+  @media (max-width:1100px){ .editor{grid-template-columns:1fr;} .ed-form{position:static;max-height:none;} }
+  @media (max-width:640px){
+    .main{padding:16px 12px 60px;}
+    .head-in{padding:0 12px;}
+    .head .who{display:none;}
+    .cols{grid-template-columns:1fr;}
+    .fg,.ved .fg{grid-template-columns:1fr 1fr;}
+    .search{min-width:0;flex:1;}
   }
-  .field textarea{resize:vertical;min-height:70px;}
-  .field .hint{font-size:11.5px;color:var(--muted);margin-top:4px;}
-  .variant-edit-row{display:flex;gap:6px;margin-bottom:8px;align-items:center;}
-  .variant-edit-row input{flex:1;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;}
-  .variant-edit-row button{
-    flex:0 0 auto;background:var(--red-pale);color:var(--red);border:1px solid var(--red);border-radius:8px;
-    width:32px;height:32px;cursor:pointer;font-size:14px;
+  @media print{
+    .head,.tabs,.bar,.no-print,.col-add,.search-res{display:none !important;}
+    body{background:#fff;}
+    .main{padding:0;max-width:none;}
+    .col,.wcol{break-inside:avoid;}
+    .cols{grid-template-columns:repeat(3,1fr);}
+    .wcols{grid-template-columns:repeat(5,1fr);}
+    .ed-form{display:none;}
+    .ed-prev{background:#fff;padding:0;}
   }
-  .add-variant-btn{
-    font-size:13px;border:1.5px dashed var(--teal);color:var(--teal-dark);background:var(--teal-pale);
-    border-radius:8px;padding:7px 12px;cursor:pointer;font-family:var(--font-body);font-weight:700;
-  }
-  .modal-actions{display:flex;gap:8px;margin-top:20px;}
-  .modal-actions .save-btn{flex:1;padding:13px;border:none;border-radius:10px;background:var(--teal-dark);color:#fff;font-weight:700;cursor:pointer;font-family:var(--font-body);font-size:15px;}
-  .modal-actions .save-btn:hover{background:var(--ink);}
-  .modal-actions .delete-btn{padding:13px 16px;border:1.5px solid var(--red);color:var(--red);background:#fff;border-radius:10px;cursor:pointer;font-family:var(--font-body);font-weight:700;}
-  .modal-actions .delete-btn:hover{background:var(--red);color:#fff;}
 </style>
 </head>
 <body>
 
-<div id="gate">
-  <div class="gate-box">
-    <span class="eyebrow">ADMIN ONLY</span>
-    <h1>관리자 페이지</h1>
-    <input type="email" id="emailInput" placeholder="관리자 이메일" autocomplete="username">
-    <input type="password" id="pwInput" placeholder="비밀번호" autocomplete="current-password">
-    <button id="loginBtn">로그인</button>
-    <div class="gate-error" id="gateError"></div>
-  </div>
+<!-- ============ 로그인 ============ -->
+<div class="login" id="loginView" style="display:none">
+  <form class="card" id="loginForm">
+    <img src="assets/logo_master.png" alt="CMS">
+    <h1>특강 관리자</h1>
+    <p>강사 · 관리자 계정으로 로그인하세요.</p>
+    <div class="field"><label for="email">이메일</label><input class="input" id="email" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="pw">비밀번호</label><input class="input" id="pw" type="password" autocomplete="current-password" required></div>
+    <div class="err" id="loginErr"></div>
+    <button class="btn btn-dark btn-block" style="height:48px" type="submit">로그인</button>
+    <a href="index.html" class="hint" style="display:block;text-align:center;margin-top:14px">← 신청페이지로</a>
+  </form>
 </div>
 
-<div id="dashboard">
-  <div class="dash-header">
-    <h1>CMS 서초영재관 관리자</h1>
-    <div class="dash-actions">
-      <a href="index.html" class="btn-sm" style="text-decoration:none;">← 신청페이지</a>
-      <button class="btn-sm" id="logoutBtn">로그아웃</button>
+<!-- ============ 관리 화면 ============ -->
+<div id="appView" style="display:none">
+  <header class="head">
+    <div class="head-in">
+      <img src="assets/logo_master.png" alt="CMS">
+      <span class="t">방학특강 관리</span>
+      <span class="badge green" id="seasonBadge"></span>
+      <span class="sp"></span>
+      <span class="who" id="who"></span>
+      <a class="btn btn-sm" href="index.html" target="_blank">신청페이지 ↗</a>
+      <button class="btn btn-sm btn-ghost" id="logoutBtn">로그아웃</button>
     </div>
-  </div>
-  <div class="dash-sub" id="updatedAt">실시간으로 동기화됩니다.</div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="roster" class="on">특강 명단 <span class="c" id="cRoster">0</span></button>
+      <button data-tab="winter">윈터스쿨 명단 <span class="c" id="cWinter">0</span></button>
+      <button data-tab="notices">반별 안내문 <span class="c" id="cNotice">0</span></button>
+      <button data-tab="courses">강좌 관리</button>
+      <button data-tab="archive">지난 특강</button>
+      <button data-tab="settings">설정</button>
+    </nav>
+  </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="applications">신청 현황</button>
-    <button class="tab-btn" data-tab="courses">강좌 관리</button>
-  </div>
+  <main class="main">
+    <div class="banner" id="banner"></div>
 
-  <div class="tab-panel active" id="tab-applications">
-    <div class="summary-row" id="summaryRow"></div>
-    <div class="search-row">
-      <input type="text" id="searchInput" placeholder="이름 또는 학교로 검색...">
-    </div>
-    <div id="groupsRoot"></div>
-  </div>
-
-  <div class="tab-panel" id="tab-courses">
-    <div class="seed-banner" id="seedBanner" style="display:none;">
-      <p>아직 강좌 정보가 비어 있습니다. 안내드린 21개 강좌 기본 데이터를 한 번에 불러올까요?</p>
-      <button id="seedBtn">초기 강좌 데이터 업로드</button>
-    </div>
-    <div class="order-save-banner" id="orderSaveBanner">
-      ⬆⬇ 순서가 변경되었습니다. 저장할까요?
-      <div style="display:flex;gap:8px;">
-        <button id="orderSaveBtn">순서 저장</button>
-        <button id="orderCancelBtn" style="background:var(--muted);">취소</button>
+    <!-- 특강 명단 -->
+    <section class="panel on" id="p-roster">
+      <div class="bar">
+        <select class="input" id="rSeason"></select>
+        <div class="seg" id="rHall"><button data-h="all" class="on">전체</button><button data-h="gifted">영재관</button><button data-h="premium">프리미엄관</button></div>
+        <input class="input search" id="rSearch" placeholder="학생 이름 검색">
+        <span class="sp"></span>
+        <button class="btn btn-sm" id="rCsv">CSV 다운로드</button>
+        <a class="btn btn-sm" id="rSheet" target="_blank">구글시트 ↗</a>
+        <button class="btn btn-sm" onclick="window.print()">인쇄</button>
       </div>
-    </div>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-      <button class="btn-sm primary" id="newCourseBtn">+ 새 강좌 추가</button>
-    </div>
-    <div id="courseListRoot"></div>
-  </div>
+      <div class="stats" id="rStats"></div>
+      <div class="search-res" id="rSearchRes"></div>
+      <div class="legend no-print"><span><i class="dot in"></i> 재원생</span><span><i class="dot"></i> 외부생</span><span><b style="color:var(--green-d)">O</b> 수강 · <b style="color:var(--red)">X</b> 취소(이름 유지)</span><span>이름 클릭 → 상세/수정 · 칸 아래에 이름 입력 후 Enter → 바로 추가</span></div>
+      <div id="rosterRoot"></div>
+    </section>
+
+    <!-- 윈터스쿨 -->
+    <section class="panel" id="p-winter">
+      <div class="bar">
+        <select class="input" id="wSeason"></select>
+        <input class="input search" id="wSearch" placeholder="학생 이름 검색">
+        <span class="sp"></span>
+        <button class="btn btn-sm btn-dark" id="wAdd">＋ 학생 추가</button>
+        <button class="btn btn-sm" id="wCsv">CSV 다운로드</button>
+        <button class="btn btn-sm" onclick="window.print()">인쇄</button>
+      </div>
+      <div class="stats" id="wStats"></div>
+      <div class="hint no-print" id="wInfo" style="margin-bottom:10px"></div>
+      <div class="wcols" id="wCols"></div>
+      <div class="mini-h" style="margin-top:26px">전체 신청자</div>
+      <div class="dt-wrap"><table class="dt" id="wTable"></table></div>
+    </section>
+
+    <!-- 반별 안내문 -->
+    <section class="panel" id="p-notices">
+      <div id="nListView">
+        <div class="bar">
+          <div><b style="font-size:17px">반별 겨울방학 학습 계획 안내문</b><div class="hint">각 반 담당 선생님이 반별 안내문을 만들고, 링크를 학부모님께 발송합니다. 안내문에서 바로 특강 신청으로 연결됩니다.</div></div>
+          <span class="sp"></span>
+          <button class="btn btn-dark" id="nNew">＋ 새 안내문</button>
+        </div>
+        <div class="nlist" id="nList"></div>
+      </div>
+      <div id="nEditView" style="display:none">
+        <div class="bar">
+          <button class="btn btn-sm" id="nBack">← 목록</button>
+          <b id="nEditTitle" style="font-size:16px"></b>
+          <span class="sp"></span>
+          <button class="btn btn-sm" id="nSample">예시 불러오기</button>
+          <button class="btn btn-sm" id="nPrint">인쇄 / PDF</button>
+          <button class="btn btn-sm btn-green" id="nSave">저장</button>
+        </div>
+        <div id="nLinkBox"></div>
+        <div class="editor">
+          <div class="ed-form" id="nForm"></div>
+          <div class="ed-prev" id="nPreview"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 강좌 관리 -->
+    <section class="panel" id="p-courses">
+      <div class="bar">
+        <select class="input" id="cSeason"></select>
+        <span class="sp"></span>
+        <button class="btn btn-sm" id="cOrderSave" style="display:none">순서 저장</button>
+        <button class="btn btn-sm" id="cSeed">겨울 초기 강좌 업로드</button>
+        <button class="btn btn-sm btn-dark" id="cAdd">＋ 강좌 추가</button>
+      </div>
+      <div id="cInfo"></div>
+      <div id="cList"></div>
+    </section>
+
+    <!-- 지난 특강 -->
+    <section class="panel" id="p-archive">
+      <div class="bar">
+        <select class="input" id="aSeason"></select>
+        <div class="hint">지난 시즌 특강을 참고해서 이번 시즌 강좌를 개설할 수 있습니다. 외부에는 공개되지 않습니다.</div>
+      </div>
+      <div class="stats" id="aStats"></div>
+      <div id="aList"></div>
+    </section>
+
+    <!-- 설정 -->
+    <section class="panel" id="p-settings">
+      <div id="sForm"></div>
+    </section>
+  </main>
 </div>
 
-<div class="overlay" id="overlay">
-  <div class="modal" id="modalBody"></div>
-</div>
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp
+  collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
   getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import {
+  fbApp, db, SEASON, SEASON_LABEL, LEGACY_SEASON, seasonOf, seasonName, CATEGORIES, HALLS, hallOf, GRADES, WEEKDAYS,
+  esc, nl2br, mergeSettings, DEFAULT_SETTINGS, variantTime, variantPeriod, variantLabel, legacyCourseLabel, sortCourses,
+  computeSessions, fmtMD, fmtRange, breakText, formatPhone, toast, copyText, SHEET_URL
+} from "./js/common.js";
+import { SEED_2027_WINTER, SEED_NOTES } from "./js/seed-2027winter.js";
+import { renderNotice, NOTICE_CSS, NOTICE_DEFAULTS, noticeTitle } from "./js/notice-render.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDCI98mwQ4lz3h0yzFfooTqXjrsdzyQArU",
-  authDomain: "cms-summer-camp.firebaseapp.com",
-  projectId: "cms-summer-camp",
-  storageBucket: "cms-summer-camp.firebasestorage.app",
-  messagingSenderId: "506548644045",
-  appId: "1:506548644045:web:6fb7f90d37d5891747a184"
-};
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
+document.getElementById("noticeCss").textContent = NOTICE_CSS;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const auth = getAuth(fbApp);
 
-const CATEGORY_ORDER = ["고등","중등","초등","프리미엄관"];
-let ALL_APPLICATIONS = [];
-let ALL_COURSES = [];
-let unsubApplications = null;
-let unsubCourses = null;
+let COURSES = [], APPS = [], WINTER = [], NOTICES = [];
+let SETTINGS = mergeSettings(null);
+const ui = { rSeason: SEASON, rHall: "all", rSearch: "", wSeason: SEASON, wSearch: "", cSeason: SEASON, aSeason: LEGACY_SEASON };
+const unsubs = [];
 
-/* ============================================================
-   로그인
-============================================================ */
-document.getElementById('loginBtn').addEventListener('click', login);
-document.getElementById('pwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') login(); });
-
-async function login(){
-  const email = document.getElementById('emailInput').value.trim();
-  const pw = document.getElementById('pwInput').value;
-  const errEl = document.getElementById('gateError');
-  errEl.style.display='none';
-  if(!email || !pw) return;
-  document.getElementById('loginBtn').textContent = '확인 중...';
-  try{
-    await signInWithEmailAndPassword(auth, email, pw);
-  }catch(err){
-    errEl.textContent = '이메일 또는 비밀번호가 올바르지 않습니다.';
-    errEl.style.display='block';
-  }finally{
-    document.getElementById('loginBtn').textContent = '로그인';
-  }
-}
-
-document.getElementById('logoutBtn').addEventListener('click', ()=> signOut(auth));
-
-onAuthStateChanged(auth, (user)=>{
-  if(user){
-    document.getElementById('gate').style.display='none';
-    document.getElementById('dashboard').style.display='block';
-    startListeners();
-  }else{
-    document.getElementById('dashboard').style.display='none';
-    document.getElementById('gate').style.display='flex';
-    if(unsubApplications) unsubApplications();
-    if(unsubCourses) unsubCourses();
-  }
+/* ================= 인증 ================= */
+$("#loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("#loginErr").textContent = "";
+  try { await signInWithEmailAndPassword(auth, $("#email").value.trim(), $("#pw").value); }
+  catch (err) { $("#loginErr").textContent = "이메일 또는 비밀번호를 확인해주세요."; }
+});
+$("#logoutBtn").onclick = () => signOut(auth);
+onAuthStateChanged(auth, (user) => {
+  unsubs.splice(0).forEach((u) => u());
+  if (!user) { $("#loginView").style.display = "flex"; $("#appView").style.display = "none"; return; }
+  $("#loginView").style.display = "none"; $("#appView").style.display = "block";
+  $("#who").textContent = user.email;
+  $("#seasonBadge").textContent = `공개 중: ${SEASON_LABEL}`;
+  subscribe();
 });
 
-/* ============================================================
-   탭 전환
-============================================================ */
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
-  });
+const permErr = (what) => (err) => {
+  console.error(what, err);
+  const b = $("#banner");
+  b.classList.add("show");
+  b.innerHTML = err.code === "permission-denied"
+    ? `<b>${what}</b> 데이터를 읽을 권한이 없습니다. Firebase 콘솔에서 <b>Firestore 보안규칙</b>을 「설정파일/Firestore_보안규칙.txt」 내용으로 업데이트해주세요.`
+    : `<b>${what}</b> 데이터를 불러오지 못했습니다: ${esc(err.message)}`;
+};
+function subscribe() {
+  unsubs.push(onSnapshot(collection(db, "courses"), (s) => {
+    COURSES = sortCourses(s.docs.map((d) => ({ ...d.data(), id: d.id })));
+    refresh();
+  }, permErr("강좌")));
+  unsubs.push(onSnapshot(collection(db, "applications"), (s) => {
+    APPS = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    refresh();
+  }, permErr("특강 신청")));
+  unsubs.push(onSnapshot(collection(db, "winterSchool"), (s) => {
+    WINTER = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    refresh();
+  }, permErr("윈터스쿨")));
+  unsubs.push(onSnapshot(collection(db, "notices"), (s) => {
+    NOTICES = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    refresh();
+  }, permErr("안내문")));
+  unsubs.push(onSnapshot(doc(db, "settings", "site"), (s) => {
+    SETTINGS = mergeSettings(s.exists() ? s.data() : null);
+    refresh();
+  }, permErr("설정")));
+}
+
+/* ================= 공통 ================= */
+const tsOf = (a) => (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : (a.createdAt && a.createdAt.seconds ? a.createdAt.seconds * 1000 : Date.parse(a.timestamp) || 0));
+const fmtTs = (a) => { const t = tsOf(a); return t ? new Date(t).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : (a.timestamp || ""); };
+const isCancel = (a) => a.status === "cancel";
+function seasons() {
+  const s = new Set([SEASON, LEGACY_SEASON]);
+  [...COURSES, ...APPS, ...WINTER].forEach((x) => s.add(seasonOf(x)));
+  return [...s].sort().reverse();
+}
+function fillSeasonSelect(sel, value, exclude) {
+  const list = seasons().filter((s) => s !== exclude);
+  sel.innerHTML = list.map((s) => `<option value="${esc(s)}" ${s === value ? "selected" : ""}>${esc(seasonName(s))}${s === SEASON ? " (현재)" : ""}</option>`).join("");
+}
+function openModal(html, wide = false) {
+  $("#modal").className = `modal ${wide ? "wide" : ""}`;
+  $("#modal").innerHTML = `<button class="modal-close" data-close>✕</button>${html}`;
+  $$("[data-close]", $("#modal")).forEach((b) => b.onclick = closeModal);
+  $("#overlay").classList.add("open"); document.body.style.overflow = "hidden"; $("#overlay").scrollTop = 0;
+}
+function closeModal() { $("#overlay").classList.remove("open"); document.body.style.overflow = ""; }
+$("#overlay").addEventListener("mousedown", (e) => { if (e.target.id === "overlay") closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+function downloadCSV(name, rows) {
+  const csv = "﻿" + rows.map((r) => r.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const dayPick = (name, sel = [], days = ["월", "화", "수", "목", "금", "토", "일"]) =>
+  `<div class="daypick">${days.map((d) => `<label><input type="checkbox" name="${name}" value="${d}" ${sel.includes(d) ? "checked" : ""}>${d}</label>`).join("")}</div>`;
+const picked = (name, root = document) => $$(`input[name="${name}"]:checked`, root).map((x) => x.value);
+
+/* 탭 */
+$$("#tabs button").forEach((b) => b.onclick = () => {
+  $$("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
+  $$(".panel").forEach((p) => p.classList.toggle("on", p.id === `p-${b.dataset.tab}`));
 });
 
-/* ============================================================
-   실시간 리스너
-============================================================ */
-function startListeners(){
-  const aq = query(collection(db, "applications"), orderBy("createdAt", "desc"));
-  unsubApplications = onSnapshot(aq, (snap)=>{
-    ALL_APPLICATIONS = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-    renderApplications();
-  }, (err)=>{
-    console.error(err);
-    document.getElementById('groupsRoot').innerHTML =
-      `<div class="empty-state">신청 내역을 불러오지 못했습니다: ${err.message}</div>`;
-  });
-
-  const cq = collection(db, "courses");
-  unsubCourses = onSnapshot(cq, (snap)=>{
-    ALL_COURSES = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-    renderCourseList();
-  }, (err)=>{
-    console.error(err);
-    document.getElementById('courseListRoot').innerHTML =
-      `<div class="empty-state">강좌 정보를 불러오지 못했습니다: ${err.message}</div>`;
+let refreshQueued = false;
+function refresh() {
+  if (refreshQueued) return;
+  refreshQueued = true;
+  requestAnimationFrame(() => {
+    refreshQueued = false;
+    fillSeasonSelect($("#rSeason"), ui.rSeason);
+    fillSeasonSelect($("#wSeason"), ui.wSeason);
+    fillSeasonSelect($("#cSeason"), ui.cSeason);
+    fillSeasonSelect($("#aSeason"), ui.aSeason, SEASON);
+    $("#cRoster").textContent = APPS.filter((a) => seasonOf(a) === SEASON && !isCancel(a)).length;
+    $("#cWinter").textContent = WINTER.filter((a) => seasonOf(a) === SEASON && !isCancel(a)).length;
+    $("#cNotice").textContent = NOTICES.filter((n) => seasonOf(n) === SEASON).length;
+    renderRoster(); renderWinter(); renderNoticeList(); renderCourses(); renderArchive();
+    if (!settingsDirty) renderSettings();
   });
 }
 
-document.getElementById('searchInput').addEventListener('input', renderApplications);
-
-function categoryOf(courseStr){
-  const m = /^\[(.+?)\]/.exec(courseStr || "");
-  return m ? m[1] : "기타";
+/* ================= 1. 특강 명단 ================= */
+function buildColumns(season) {
+  const list = COURSES.filter((c) => seasonOf(c) === season);
+  const cols = [];
+  const counters = {};
+  list.forEach((c) => {
+    const h = hallOf(c.category).id;
+    counters[h] = (counters[h] || 0) + 1;
+    (c.variants || [{}]).forEach((v, vi) => cols.push({ key: `${c.id}#${vi}`, c, v, vi, no: counters[h], hall: h, apps: [] }));
+  });
+  const byKey = Object.fromEntries(cols.map((x) => [x.key, x]));
+  const byLabel = {};
+  cols.forEach((x) => { byLabel[variantLabel(x.c, x.vi)] = x; byLabel[legacyCourseLabel(x.c, x.v)] = x; });
+  const orphan = { key: "orphan", c: { title: "미배정 신청", category: "", variants: [] }, v: {}, vi: 0, no: "?", hall: "etc", apps: [] };
+  APPS.filter((a) => seasonOf(a) === season).forEach((a) => {
+    const col = byKey[a.courseKey] || byLabel[a.course] || orphan;
+    col.apps.push(a);
+  });
+  cols.forEach((x) => x.apps.sort((a, b) => tsOf(a) - tsOf(b)));
+  orphan.apps.sort((a, b) => tsOf(a) - tsOf(b));
+  return { cols, orphan };
 }
 
-function escapeHtml(str){
-  return String(str ?? '').replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-}
+function renderRoster() {
+  const season = ui.rSeason;
+  const { cols, orphan } = buildColumns(season);
+  const term = ui.rSearch.trim();
+  const seasonApps = APPS.filter((a) => seasonOf(a) === season);
+  const active = seasonApps.filter((a) => !isCancel(a));
+  const students = new Set(active.map((a) => `${a.studentName}|${a.phone || ""}`));
+  $("#rStats").innerHTML = `
+    <div class="stat"><b>${active.length}</b><span>수강 신청</span></div>
+    <div class="stat"><b>${students.size}</b><span>학생 수</span></div>
+    <div class="stat"><b>${seasonApps.length - active.length}</b><span>취소</span></div>
+    <div class="stat"><b>${active.filter((a) => a.enrolled === "외부생").length}</b><span>외부생</span></div>
+    <div class="stat"><b>${cols.length}</b><span>개설 반</span></div>`;
+  $("#rSheet").href = SHEET_URL;
 
-/* ============================================================
-   신청 현황 탭
-============================================================ */
-function renderApplications(){
-  document.getElementById('updatedAt').textContent = `실시간 동기화 중 · 마지막 갱신 ${new Date().toLocaleTimeString('ko-KR')}`;
+  // 검색 결과
+  const sr = $("#rSearchRes");
+  if (term) {
+    const names = [...new Set(seasonApps.filter((a) => (a.studentName || "").includes(term)).map((a) => a.studentName))];
+    const wNames = WINTER.filter((w) => seasonOf(w) === season && (w.studentName || "").includes(term));
+    const all = [...new Set([...names, ...wNames.map((w) => w.studentName)])];
+    sr.classList.add("show");
+    sr.innerHTML = all.length ? all.map((n) => {
+      const mine = seasonApps.filter((a) => a.studentName === n);
+      const w = wNames.filter((x) => x.studentName === n);
+      return `<div class="sr"><b>${esc(n)}</b> — ${mine.map((a) => `${esc(a.course)}${isCancel(a) ? " <span class='badge red'>취소</span>" : ""}`).join(", ") || "특강 없음"}${w.length ? ` · <span class="badge dark">윈터스쿨 ${esc((w[0].days || []).join(""))}</span>` : ""}</div>`;
+    }).join("") : `<div class="sr">‘${esc(term)}’ 학생이 없습니다.</div>`;
+  } else sr.classList.remove("show");
 
-  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-  const rows = ALL_APPLICATIONS.filter(r=>{
-    if(!keyword) return true;
-    return (r.studentName||'').toLowerCase().includes(keyword) || (r.school||'').toLowerCase().includes(keyword);
-  });
-
-  const courseSet = new Set(ALL_APPLICATIONS.map(r=>r.course));
-  document.getElementById('summaryRow').innerHTML = `
-    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.length}</div><div class="label">총 신청 건수</div></div>
-    <div class="summary-card"><div class="num">${courseSet.size}</div><div class="label">신청된 강좌 수</div></div>
-    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.filter(r=>r.enrolled==='재원생').length}</div><div class="label">재원생</div></div>
-    <div class="summary-card"><div class="num">${ALL_APPLICATIONS.filter(r=>r.enrolled==='외부생').length}</div><div class="label">외부생</div></div>
-  `;
-
-  const root = document.getElementById('groupsRoot');
-  if(!ALL_APPLICATIONS.length){ root.innerHTML = `<div class="empty-state">아직 접수된 신청이 없습니다.</div>`; return; }
-  if(!rows.length){ root.innerHTML = `<div class="empty-state">검색 결과가 없습니다.</div>`; return; }
-
-  const groups = {};
-  rows.forEach(r=>{
-    const key = r.course || '(특강 미선택)';
-    if(!groups[key]) groups[key] = [];
-    groups[key].push(r);
-  });
-  const sortedKeys = Object.keys(groups).sort((a,b)=>{
-    const ca = CATEGORY_ORDER.indexOf(categoryOf(a));
-    const cb = CATEGORY_ORDER.indexOf(categoryOf(b));
-    if(ca !== cb) return (ca<0?99:ca) - (cb<0?99:cb);
-    return a.localeCompare(b, 'ko');
-  });
-
-  root.innerHTML = sortedKeys.map(course=>{
-    const list = groups[course];
-    return `
-      <details class="course-group" open>
-        <summary><span><span class="arrow">▶</span> &nbsp;${escapeHtml(course)}</span><span class="count">${list.length}명</span></summary>
-        <table class="roster">
-          <colgroup>
-            <col class="col-name"><col class="col-school"><col class="col-grade">
-            <col class="col-phone"><col class="col-enrolled"><col class="col-del">
-          </colgroup>
-          <tr>
-            <th>이름</th><th>학교</th><th>학년</th>
-            <th>연락처</th><th>재원여부</th><th></th>
-          </tr>
-          ${list.map(r=>`
-            <tr>
-              <td>${escapeHtml(r.studentName)}</td>
-              <td>${escapeHtml(r.school)}</td>
-              <td>${escapeHtml(r.grade)}</td>
-              <td>${escapeHtml(r.phone||'')}</td>
-              <td><span class="tag-enrolled ${r.enrolled==='재원생'?'in':'out'}">${escapeHtml(r.enrolled)}</span></td>
-              <td><button class="del-row-btn" data-docid="${r.id}">삭제</button></td>
-            </tr>`).join('')}
-        </table>
-      </details>`;
-  }).join('');
-
-  // 삭제 버튼 이벤트 (이벤트 위임)
-  root.querySelectorAll('.del-row-btn').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const name = btn.closest('tr').querySelector('td').textContent;
-      if(!confirm(`'${name}' 학생의 신청 내역을 삭제할까요? 복구할 수 없습니다.`)) return;
-      btn.disabled = true; btn.textContent = '삭제 중...';
-      try{
-        await deleteDoc(doc(db, "applications", btn.dataset.docid));
-      }catch(err){
-        alert('삭제 중 문제가 발생했습니다: ' + err.message);
-        btn.disabled = false; btn.textContent = '삭제';
-      }
-    });
-  });
-}
-
-/* ============================================================
-   강좌 관리 탭
-============================================================ */
-let dragSrcId = null;
-let pendingOrder = null; // 변경된 순서 임시 저장
-
-function getSortedCourses(){
-  return [...ALL_COURSES].sort((a,b)=>{
-    const ca = CATEGORY_ORDER.indexOf(a.category);
-    const cb = CATEGORY_ORDER.indexOf(b.category);
-    if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
-    return (a.order??9999)-(b.order??9999);
-  });
-}
-
-function renderCourseList(){
-  document.getElementById('seedBanner').style.display = ALL_COURSES.length===0 ? 'flex' : 'none';
-
-  const root = document.getElementById('courseListRoot');
-  if(!ALL_COURSES.length){ root.innerHTML=''; return; }
-
-  const sorted = pendingOrder
-    ? pendingOrder.map(id=> ALL_COURSES.find(c=>c.id===id)).filter(Boolean)
-    : getSortedCourses();
-
-  root.innerHTML = sorted.map(c=>`
-    <div class="course-row" draggable="true" data-id="${c.id}">
-      <span class="drag-handle" title="드래그하여 순서 변경">⠿</span>
-      <div style="flex:1;min-width:0;">
-        <span class="cbadge">${escapeHtml(c.category)}</span>
-        <span class="ctitle">${escapeHtml(c.title)}</span>
-        <div class="ctarget">${escapeHtml(c.target)}</div>
-      </div>
-      <button class="btn-sm" data-edit="${c.id}">수정</button>
-    </div>
-  `).join('');
-
-  // 수정 버튼
-  root.querySelectorAll('[data-edit]').forEach(btn=>{
-    btn.addEventListener('click', ()=> openCourseModal(btn.dataset.edit));
-  });
-
-  // 드래그 앤 드롭
-  initDragDrop(root);
-}
-
-function initDragDrop(root){
-  let dragEl = null;
-
-  root.querySelectorAll('.course-row').forEach(row=>{
-    row.addEventListener('dragstart', (e)=>{
-      dragEl = row;
-      dragSrcId = row.dataset.id;
-      setTimeout(()=> row.classList.add('dragging'), 0);
-      e.dataTransfer.effectAllowed = 'move';
-    });
-
-    row.addEventListener('dragend', ()=>{
-      row.classList.remove('dragging');
-      root.querySelectorAll('.course-row').forEach(r=> r.classList.remove('drag-over'));
-      dragEl = null;
-    });
-
-    row.addEventListener('dragover', (e)=>{
-      e.preventDefault();
-      if(row === dragEl) return;
-      root.querySelectorAll('.course-row').forEach(r=> r.classList.remove('drag-over'));
-      row.classList.add('drag-over');
-    });
-
-    row.addEventListener('drop', (e)=>{
-      e.preventDefault();
-      if(row === dragEl || !dragEl) return;
-      row.classList.remove('drag-over');
-
-      // DOM 순서 변경
-      const rows = [...root.querySelectorAll('.course-row')];
-      const fromIdx = rows.indexOf(dragEl);
-      const toIdx = rows.indexOf(row);
-      if(fromIdx < toIdx){
-        row.after(dragEl);
-      } else {
-        row.before(dragEl);
-      }
-
-      // 새 순서를 pendingOrder로 저장하고 배너 표시
-      pendingOrder = [...root.querySelectorAll('.course-row')].map(r=> r.dataset.id);
-      document.getElementById('orderSaveBanner').classList.add('show');
-    });
-  });
-}
-
-// 순서 저장
-document.getElementById('orderSaveBtn').addEventListener('click', async ()=>{
-  if(!pendingOrder) return;
-  const btn = document.getElementById('orderSaveBtn');
-  btn.disabled = true; btn.textContent = '저장 중...';
-  try{
-    // 각 강좌의 order 필드를 인덱스 값으로 일괄 업데이트
-    const updates = pendingOrder.map((id, idx)=>
-      setDoc(doc(db, "courses", id), { order: idx }, { merge: true })
-    );
-    await Promise.all(updates);
-    pendingOrder = null;
-    document.getElementById('orderSaveBanner').classList.remove('show');
-  }catch(err){
-    alert('순서 저장 중 문제가 발생했습니다: ' + err.message);
-  }finally{
-    btn.disabled = false; btn.textContent = '순서 저장';
+  const root = $("#rosterRoot");
+  if (!cols.length && !orphan.apps.length) {
+    root.innerHTML = `<div class="empty">${esc(seasonName(season))} 강좌가 없습니다. [강좌 관리]에서 강좌를 등록해주세요.</div>`;
+    return;
   }
-});
+  const halls = HALLS.filter((h) => ui.rHall === "all" || ui.rHall === h.id);
+  let html = halls.map((h) => {
+    const hc = cols.filter((x) => x.hall === h.id);
+    if (!hc.length) return "";
+    return `<div class="hall-h"><img src="${h.logo}" alt="">${h.name} <span class="hint">${hc.length}개 반 · ${hc.reduce((s, x) => s + x.apps.filter((a) => !isCancel(a)).length, 0)}명</span></div>
+      <div class="cols">${hc.map((x) => colHtml(x, term)).join("")}</div>`;
+  }).join("");
+  if (orphan.apps.length) html += `<div class="hall-h">미배정 <span class="hint">강좌가 삭제되었거나 이름이 바뀐 신청</span></div><div class="cols">${colHtml(orphan, term)}</div>`;
+  root.innerHTML = html;
 
-// 순서 변경 취소
-document.getElementById('orderCancelBtn').addEventListener('click', ()=>{
-  pendingOrder = null;
-  document.getElementById('orderSaveBanner').classList.remove('show');
-  renderCourseList();
-});
+  $$("[data-app]", root).forEach((el) => el.onclick = () => editApp(el.dataset.app));
+  $$("[data-ox]", root).forEach((el) => el.onclick = async () => {
+    const a = APPS.find((x) => x.id === el.dataset.ox);
+    await updateDoc(doc(db, "applications", a.id), { status: isCancel(a) ? "active" : "cancel" });
+  });
+  $$("[data-colmeta]", root).forEach((el) => el.onclick = () => editColMeta(el.dataset.colmeta));
+  $$("[data-quick]", root).forEach((inp) => inp.addEventListener("keydown", async (e) => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    const name = inp.value.trim(); if (!name) return;
+    const x = cols.find((c) => c.key === inp.dataset.quick);
+    inp.value = "";
+    await addDoc(collection(db, "applications"), {
+      season, courseId: x.c.id, variantIdx: x.vi, courseKey: x.key, course: variantLabel(x.c, x.vi), category: x.c.category,
+      variantLabel: x.v.label || "", studentName: name, school: "", grade: "", phone: "", enrolled: "재원생", regularClass: "",
+      status: "active", staffMemo: "", memo: "", source: "staff", createdAt: serverTimestamp(), timestamp: new Date().toLocaleString("ko-KR")
+    });
+    toast(`${name} 학생을 추가했습니다.`, "ok");
+  }));
+}
 
-document.getElementById('newCourseBtn').addEventListener('click', ()=> openCourseModal(null));
+function colHtml(x, term) {
+  const v = x.v || {};
+  const act = x.apps.filter((a) => !isCancel(a)).length;
+  const cancel = x.apps.length - act;
+  const cap = +v.capacity || 0;
+  const hit = term && x.apps.some((a) => (a.studentName || "").includes(term));
+  const dupKey = {};
+  x.apps.forEach((a) => { const k = `${a.studentName}|${a.phone}`; dupKey[k] = (dupKey[k] || 0) + 1; });
+  return `<div class="col ${x.hall} ${term && !hit ? "dim" : ""}">
+    <div class="col-h"><span class="no">${x.no}</span><div class="tt">${esc(x.c.title)}${(x.c.variants || []).length > 1 || v.label ? `<small>${esc(v.label || "")}</small>` : ""}</div>
+      ${x.key !== "orphan" ? `<button class="btn btn-xs btn-ghost no-print" data-colmeta="${x.key}" title="담당/강의실/정원">⋯</button>` : ""}</div>
+    ${x.key !== "orphan" ? `<div class="col-meta">
+      <div class="k">요일</div><div>${esc(v.days ? v.days.join("") : (v.label || ""))}</div><div class="k">회차</div><div>${v.count ? v.count + "회" : esc(v.time || "-")}</div>
+      <div class="k">시간</div><div>${esc(v.days ? v.time : "") || "-"}</div><div class="k">개강</div><div>${esc(variantPeriod(v).split(" ~")[0] || "-")}</div>
+      <div class="k">담당</div><div>${esc(v.teacher || "-")}</div><div class="k">강의실</div><div>${esc(v.room || "-")}</div>
+    </div>` : ""}
+    <div class="col-stat">수강 <b>${act}</b>${cap ? ` / ${cap}` : ""}<span class="meter"><i class="${cap && act >= cap ? "full" : ""}" style="width:${cap ? Math.min(100, act / cap * 100) : (act ? 100 : 0)}%"></i></span>취소 ${cancel}${v.closed ? ` <span class="badge red">마감</span>` : ""}</div>
+    <table class="rt"><tbody>
+      ${x.apps.map((a, i) => `<tr class="${isCancel(a) ? "x" : ""} ${term && (a.studentName || "").includes(term) ? "hit" : ""}">
+        <td class="n">${i + 1}</td>
+        <td class="nm" data-app="${a.id}" title="${esc(a.studentName)}">${esc(a.studentName)}<i class="dot ${a.enrolled === "재원생" ? "in" : ""}"></i>${dupKey[`${a.studentName}|${a.phone}`] > 1 ? `<span class="dup">중복</span>` : ""}</td>
+        <td class="sc" title="${esc(a.school)} ${esc(a.grade)}">${esc(a.school || "")} ${esc(a.grade || "")}</td>
+        <td class="rc" title="${esc(a.regularClass || a.enrolled || "")}">${esc(a.regularClass || (a.enrolled === "외부생" ? "외부생" : ""))}</td>
+        <td class="ox"><button class="oxb ${isCancel(a) ? "x" : ""}" data-ox="${a.id}" title="수강/취소 전환">${isCancel(a) ? "X" : "O"}</button></td>
+        <td class="mm">${a.staffMemo ? `<span class="memo-tag" title="${esc(a.staffMemo)}">${esc(a.staffMemo)}</span>` : (a.memo ? `<span class="badge amber" title="${esc(a.memo)}">요청</span>` : "")}</td>
+      </tr>`).join("") || `<tr><td colspan="6" class="hint" style="text-align:center;padding:14px">신청자가 없습니다</td></tr>`}
+    </tbody></table>
+    ${x.key !== "orphan" ? `<div class="col-add"><input data-quick="${x.key}" placeholder="＋ 학생 이름 입력 후 Enter"></div>` : ""}
+  </div>`;
+}
 
-function openCourseModal(id){
-  const c = id ? ALL_COURSES.find(x=>x.id===id) : {
-    category:"고등", title:"", textbook:"자체교재", target:"", feature:"", note:"",
-    variants:[{label:"월수금반", time:"", period:""}], sessions:[]
-  };
-  const modal = document.getElementById('modalBody');
-  modal.innerHTML = `
-    <button class="modal-close" id="modalClose">✕</button>
-    <h2>${id ? '강좌 수정' : '새 강좌 추가'}</h2>
-    <div class="field">
-      <label>카테고리</label>
-      <select id="f-category">
-        ${CATEGORY_ORDER.map(cat=>`<option value="${cat}" ${c.category===cat?'selected':''}>${cat}</option>`).join('')}
-      </select>
+function courseOptions(season, selKey) {
+  const { cols } = buildColumns(season);
+  return cols.map((x) => `<option value="${x.key}" ${x.key === selKey ? "selected" : ""}>[${esc(x.c.category)}] ${esc(variantLabel(x.c, x.vi))}</option>`).join("");
+}
+
+function editApp(id) {
+  const a = APPS.find((x) => x.id === id);
+  if (!a) return;
+  const season = seasonOf(a);
+  const { cols } = buildColumns(season);
+  const cur = cols.find((x) => x.apps.includes(a));
+  openModal(`
+    <h2>신청 정보 <span class="badge ${isCancel(a) ? "red" : "green"}">${isCancel(a) ? "취소" : "수강"}</span></h2>
+    <div class="fg">
+      <div class="field"><label>학생 이름</label><input class="input" id="eName" value="${esc(a.studentName)}"></div>
+      <div class="field"><label>학교</label><input class="input" id="eSchool" value="${esc(a.school || "")}"></div>
+      <div class="field"><label>학년</label><select class="input" id="eGrade"><option value=""></option>${GRADES.map((g) => `<option ${g === a.grade ? "selected" : ""}>${g}</option>`).join("")}</select></div>
+      <div class="field"><label>학부모 연락처</label><input class="input" id="ePhone" value="${esc(a.phone || "")}"></div>
+      <div class="field"><label>재원 여부</label><select class="input" id="eEnr">${["재원생", "외부생"].map((v) => `<option ${v === a.enrolled ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label>정규반</label><input class="input" id="eReg" value="${esc(a.regularClass || "")}" placeholder="예: [GS05]공수1상_월금"></div>
+      <div class="field full"><label>특강 (반 이동)</label><select class="input" id="eCourse">${courseOptions(season, cur ? cur.key : "")}${!cur ? `<option value="" selected>미배정: ${esc(a.course || "")}</option>` : ""}</select></div>
+      <div class="field"><label>상태</label><select class="input" id="eStatus"><option value="active">O 수강</option><option value="cancel" ${isCancel(a) ? "selected" : ""}>X 취소</option></select></div>
+      <div class="field"><label>회차수강 / 관리 메모</label><input class="input" id="eMemo" value="${esc(a.staffMemo || "")}" placeholder="예: 1~6회, 2,3,5회"></div>
+      <div class="field full"><label>학부모 요청사항</label><textarea class="input" id="eReq" rows="2">${esc(a.memo || "")}</textarea></div>
     </div>
-    <div class="field"><label>강좌명</label><input type="text" id="f-title" value="${escapeHtml(c.title)}"></div>
-    <div class="field"><label>교재</label><input type="text" id="f-textbook" value="${escapeHtml(c.textbook)}"></div>
-    <div class="field"><label>수업대상</label><input type="text" id="f-target" value="${escapeHtml(c.target)}"></div>
-    <div class="field">
-      <label>대상/특징 설명</label>
-      <textarea id="f-feature">${escapeHtml(c.feature)}</textarea>
-      <div class="hint">줄바꿈으로 문단을 구분할 수 있어요.</div>
-    </div>
-    <div class="field"><label>휴강 안내 (선택)</label><input type="text" id="f-note" value="${escapeHtml(c.note||'')}" placeholder="예: 학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다."></div>
-    <div class="field">
-      <label>회차 및 시간 / 개강~종강</label>
-      <div id="variantRows"></div>
-      <button type="button" class="add-variant-btn" id="addVariantBtn">+ 일정 추가</button>
-    </div>
-    <div class="field">
-      <label>회차별 진도계획</label>
-      <textarea id="f-sessions" style="min-height:120px;">${(c.sessions||[]).join('\n')}</textarea>
-      <div class="hint">한 줄에 하나씩, 1회부터 순서대로 입력하세요.</div>
-    </div>
-    <div class="modal-actions">
-      <button class="save-btn" id="saveCourseBtn">저장</button>
-      ${id ? '<button class="delete-btn" id="deleteCourseBtn">삭제</button>' : ''}
-    </div>
-  `;
-
-  const variantRowsEl = document.getElementById('variantRows');
-  function addVariantRow(v){
-    const row = document.createElement('div');
-    row.className = 'variant-edit-row';
-    row.innerHTML = `
-      <input type="text" placeholder="예: 월수금반" class="v-label" value="${escapeHtml(v?.label||'')}">
-      <input type="text" placeholder="시간 (예: 주3회 12:30~16:30)" class="v-time" value="${escapeHtml(v?.time||'')}">
-      <input type="text" placeholder="개강~종강 (예: 7/24(금) ~ 8/14(금))" class="v-period" value="${escapeHtml(v?.period||'')}">
-      <button type="button">✕</button>
-    `;
-    row.querySelector('button').addEventListener('click', ()=> row.remove());
-    variantRowsEl.appendChild(row);
-  }
-  (c.variants && c.variants.length ? c.variants : [{}]).forEach(addVariantRow);
-  document.getElementById('addVariantBtn').addEventListener('click', ()=> addVariantRow());
-
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('saveCourseBtn').addEventListener('click', async ()=>{
-    const variants = [...variantRowsEl.querySelectorAll('.variant-edit-row')].map(row=>({
-      label: row.querySelector('.v-label').value.trim(),
-      time: row.querySelector('.v-time').value.trim(),
-      period: row.querySelector('.v-period').value.trim()
-    })).filter(v=>v.label || v.time || v.period);
-
-    const sessions = document.getElementById('f-sessions').value
-      .split('\n').map(s=>s.trim()).filter(Boolean);
-
-    const data = {
-      category: document.getElementById('f-category').value,
-      title: document.getElementById('f-title').value.trim(),
-      textbook: document.getElementById('f-textbook').value.trim(),
-      target: document.getElementById('f-target').value.trim(),
-      feature: document.getElementById('f-feature').value.trim(),
-      note: document.getElementById('f-note').value.trim(),
-      variants, sessions,
-      order: c.order ?? Date.now()
+    <p class="hint">신청: ${esc(fmtTs(a))} · ${a.source === "staff" ? "관리자 직접 추가" : "웹 신청"}</p>
+    <div class="acts"><button class="btn btn-danger left" id="eDel">삭제</button><button class="btn" data-close>닫기</button><button class="btn btn-dark" id="eSave">저장</button></div>`);
+  attachPhone($("#ePhone"));
+  $("#eSave").onclick = async () => {
+    const key = $("#eCourse").value;
+    const col = cols.find((x) => x.key === key);
+    const upd = {
+      studentName: $("#eName").value.trim(), school: $("#eSchool").value.trim(), grade: $("#eGrade").value,
+      phone: $("#ePhone").value.trim(), enrolled: $("#eEnr").value, regularClass: $("#eReg").value.trim(),
+      status: $("#eStatus").value, staffMemo: $("#eMemo").value.trim(), memo: $("#eReq").value.trim()
     };
+    if (col) Object.assign(upd, { courseId: col.c.id, variantIdx: col.vi, courseKey: col.key, course: variantLabel(col.c, col.vi), category: col.c.category, variantLabel: col.v.label || "" });
+    await updateDoc(doc(db, "applications", a.id), upd);
+    closeModal(); toast("저장했습니다.", "ok");
+  };
+  $("#eDel").onclick = async () => {
+    if (!confirm(`${a.studentName} 학생의 '${a.course}' 신청을 완전히 삭제할까요?\n(수강 취소는 상태를 X로 바꾸면 이름이 남습니다)`)) return;
+    await deleteDoc(doc(db, "applications", a.id)); closeModal(); toast("삭제했습니다.");
+  };
+}
+function attachPhone(inp) { inp.addEventListener("input", (e) => e.target.value = formatPhone(e.target.value)); }
 
-    if(!data.title){ alert('강좌명을 입력해주세요.'); return; }
+function editColMeta(key) {
+  const [cid, viS] = key.split("#"); const vi = +viS;
+  const c = COURSES.find((x) => x.id === cid); if (!c) return;
+  const v = (c.variants || [])[vi] || {};
+  openModal(`<h2>${esc(variantLabel(c, vi))}</h2>
+    <div class="fg">
+      <div class="field"><label>담당 선생님</label><input class="input" id="mT" value="${esc(v.teacher || "")}"></div>
+      <div class="field"><label>강의실</label><input class="input" id="mR" value="${esc(v.room || "")}"></div>
+      <div class="field"><label>정원 (0 = 제한 없음)</label><input class="input" id="mC" type="number" min="0" value="${+v.capacity || 0}"></div>
+      <div class="field"><label>신청 마감</label><label class="pill-check" style="width:max-content"><input type="checkbox" id="mX" ${v.closed ? "checked" : ""}>신청페이지에서 마감 표시</label></div>
+    </div>
+    <div class="acts"><button class="btn" data-close>닫기</button><button class="btn btn-dark" id="mSave">저장</button></div>`);
+  $("#mSave").onclick = async () => {
+    const variants = (c.variants || []).map((x, i) => i === vi ? { ...x, teacher: $("#mT").value.trim(), room: $("#mR").value.trim(), capacity: +$("#mC").value || 0, closed: $("#mX").checked } : x);
+    await updateDoc(doc(db, "courses", c.id), { variants });
+    closeModal(); toast("저장했습니다.", "ok");
+  };
+}
 
-    const btn = document.getElementById('saveCourseBtn');
-    btn.disabled = true; btn.textContent = '저장 중...';
-    try{
-      if(id){
-        await setDoc(doc(db, "courses", id), data);
-      }else{
-        await addDoc(collection(db, "courses"), data);
-      }
-      closeModal();
-    }catch(err){
-      alert('저장 중 문제가 발생했습니다: ' + err.message);
-    }finally{
-      btn.disabled = false; btn.textContent = '저장';
-    }
+$("#rSeason").onchange = (e) => { ui.rSeason = e.target.value; refresh(); };
+$$("#rHall button").forEach((b) => b.onclick = () => { $$("#rHall button").forEach((x) => x.classList.toggle("on", x === b)); ui.rHall = b.dataset.h; renderRoster(); });
+$("#rSearch").oninput = (e) => { ui.rSearch = e.target.value; renderRoster(); };
+$("#rCsv").onclick = () => {
+  const { cols, orphan } = buildColumns(ui.rSeason);
+  const rows = [["시즌", "구분", "특강", "반", "번호", "학생이름", "학교", "학년", "학부모연락처", "재원여부", "정규반", "상태", "회차/메모", "요청사항", "신청일시", "경로"]];
+  [...cols, orphan].forEach((x) => x.apps.forEach((a, i) => rows.push([
+    seasonName(ui.rSeason), x.c.category, x.c.title, x.v.label || "", i + 1, a.studentName, a.school, a.grade, a.phone, a.enrolled, a.regularClass,
+    isCancel(a) ? "취소" : "수강", a.staffMemo, a.memo, fmtTs(a), a.source === "staff" ? "관리자" : "웹"])));
+  downloadCSV(`${ui.rSeason}_특강명단.csv`, rows);
+};
+
+/* ================= 2. 윈터스쿨 ================= */
+const WD = ["월", "화", "수", "목", "금"];
+function renderWinter() {
+  const season = ui.wSeason;
+  const term = ui.wSearch.trim();
+  const list = WINTER.filter((w) => seasonOf(w) === season).sort((a, b) => tsOf(a) - tsOf(b));
+  const act = list.filter((w) => !isCancel(w));
+  const w = SETTINGS.winter;
+  $("#wInfo").textContent = season === SEASON ? `${w.title} · ${w.time} · ${fmtRange(w.start, w.end)}${w.room ? ` · ${w.room}` : ""}${breakText(w.breaks) ? ` · 휴무 ${breakText(w.breaks)}` : ""}` : "";
+  $("#wStats").innerHTML = `<div class="stat"><b>${act.length}</b><span>신청 학생</span></div>` +
+    WD.map((d) => `<div class="stat"><b>${act.filter((x) => (x.days || []).includes(d)).length}</b><span>${d}요일</span></div>`).join("") +
+    `<div class="stat"><b>${act.filter((x) => x.enrolled === "외부생").length}</b><span>외부생</span></div>`;
+  $("#wCols").innerHTML = WD.map((d) => {
+    const dl = list.filter((x) => (x.days || []).includes(d));
+    return `<div class="wcol"><div class="wcol-h">${d}요일 <span>${dl.filter((x) => !isCancel(x)).length}명</span></div>
+      <table class="wt"><tbody>${dl.map((x, i) => `<tr class="${isCancel(x) ? "x" : ""} ${term && (x.studentName || "").includes(term) ? "hit" : ""}">
+        <td class="n">${i + 1}</td>
+        <td class="nm" data-w="${x.id}">${esc(x.studentName)}<small>${esc(x.school || "")}${esc(x.grade ? " " + x.grade : "")}</small></td>
+        <td class="pd">${esc(x.period === "일부 기간" ? (x.periodMemo || "일부 기간") : "전체 기간")}${x.staffMemo ? `<br><span class="memo-tag" style="max-width:100%">${esc(x.staffMemo)}</span>` : ""}</td>
+        <td class="en"><span class="badge ${x.enrolled === "재원생" ? "green" : "blue"}">${x.enrolled === "재원생" ? "재원" : "외부"}</span></td>
+      </tr>`).join("") || `<tr><td class="hint" style="text-align:center;padding:14px">신청자 없음</td></tr>`}</tbody></table></div>`;
+  }).join("");
+  $("#wTable").innerHTML = `<thead><tr><th>#</th><th>학생</th><th>학교/학년</th><th>연락처</th><th>재원</th><th>요일</th><th>기간</th><th>메모</th><th>상태</th><th>신청일시</th></tr></thead><tbody>
+    ${list.map((x, i) => `<tr style="${isCancel(x) ? "color:#B8B8BE;text-decoration:line-through" : ""}">
+      <td>${i + 1}</td><td><a href="javascript:void 0" data-w="${x.id}"><b>${esc(x.studentName)}</b></a></td><td>${esc(x.school || "")} ${esc(x.grade || "")}</td><td>${esc(x.phone || "")}</td><td>${esc(x.enrolled || "")}</td>
+      <td><b>${esc((x.days || []).join(""))}</b></td><td>${esc(x.period === "일부 기간" ? x.periodMemo || "일부" : "전체")}</td><td>${esc([x.staffMemo, x.memo].filter(Boolean).join(" / "))}</td>
+      <td>${isCancel(x) ? "취소" : "신청"}</td><td>${esc(fmtTs(x))}</td></tr>`).join("") || `<tr><td colspan="10" class="empty">윈터스쿨 신청자가 없습니다.</td></tr>`}</tbody>`;
+  $$("[data-w]").forEach((el) => el.onclick = () => editWinter(el.dataset.w));
+}
+function editWinter(id) {
+  const x = id ? WINTER.find((w) => w.id === id) : { studentName: "", school: "", grade: "", phone: "", enrolled: "재원생", days: [], period: "전체 기간", periodMemo: "", staffMemo: "", memo: "", status: "active" };
+  if (!x) return;
+  openModal(`<h2>${id ? "윈터스쿨 신청 정보" : "윈터스쿨 학생 추가"}</h2>
+    <div class="fg">
+      <div class="field"><label>학생 이름</label><input class="input" id="wN" value="${esc(x.studentName)}"></div>
+      <div class="field"><label>학교</label><input class="input" id="wS" value="${esc(x.school || "")}"></div>
+      <div class="field"><label>학년</label><select class="input" id="wG"><option value=""></option>${GRADES.map((g) => `<option ${g === x.grade ? "selected" : ""}>${g}</option>`).join("")}</select></div>
+      <div class="field"><label>연락처</label><input class="input" id="wP" value="${esc(x.phone || "")}"></div>
+      <div class="field"><label>재원 여부</label><select class="input" id="wE">${["재원생", "외부생"].map((v) => `<option ${v === x.enrolled ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label>상태</label><select class="input" id="wSt"><option value="active">신청</option><option value="cancel" ${isCancel(x) ? "selected" : ""}>취소</option></select></div>
+      <div class="field full"><label>참여 요일</label>${dayPick("wDay", x.days || [], WD)}</div>
+      <div class="field"><label>기간</label><select class="input" id="wPd">${["전체 기간", "일부 기간"].map((v) => `<option ${v === x.period ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label>일부 기간 메모</label><input class="input" id="wPm" value="${esc(x.periodMemo || "")}" placeholder="예: 1/18~2/5, 총 12회"></div>
+      <div class="field full"><label>관리 메모</label><input class="input" id="wM" value="${esc(x.staffMemo || "")}"></div>
+      ${x.memo ? `<div class="field full"><label>학부모 요청사항</label><div class="hint" style="font-size:13.5px">${esc(x.memo)}</div></div>` : ""}
+    </div>
+    <div class="acts">${id ? `<button class="btn btn-danger left" id="wDel">삭제</button>` : ""}<button class="btn" data-close>닫기</button><button class="btn btn-dark" id="wSave">저장</button></div>`);
+  attachPhone($("#wP"));
+  $("#wSave").onclick = async () => {
+    const data = {
+      studentName: $("#wN").value.trim(), school: $("#wS").value.trim(), grade: $("#wG").value, phone: $("#wP").value.trim(),
+      enrolled: $("#wE").value, status: $("#wSt").value, days: picked("wDay"), period: $("#wPd").value, periodMemo: $("#wPm").value.trim(), staffMemo: $("#wM").value.trim()
+    };
+    if (!data.studentName) return toast("이름을 입력해주세요.", "err");
+    if (!data.days.length) return toast("요일을 선택해주세요.", "err");
+    if (id) await updateDoc(doc(db, "winterSchool", id), data);
+    else await addDoc(collection(db, "winterSchool"), { ...data, season: ui.wSeason, memo: "", source: "staff", createdAt: serverTimestamp(), timestamp: new Date().toLocaleString("ko-KR") });
+    closeModal(); toast("저장했습니다.", "ok");
+  };
+  if (id) $("#wDel").onclick = async () => {
+    if (!confirm(`${x.studentName} 학생의 윈터스쿨 신청을 완전히 삭제할까요?`)) return;
+    await deleteDoc(doc(db, "winterSchool", id)); closeModal(); toast("삭제했습니다.");
+  };
+}
+$("#wSeason").onchange = (e) => { ui.wSeason = e.target.value; refresh(); };
+$("#wSearch").oninput = (e) => { ui.wSearch = e.target.value; renderWinter(); };
+$("#wAdd").onclick = () => editWinter(null);
+$("#wCsv").onclick = () => {
+  const rows = [["학생이름", "학교", "학년", "연락처", "재원여부", "월", "화", "수", "목", "금", "기간", "기간메모", "관리메모", "요청사항", "상태", "신청일시"]];
+  WINTER.filter((w) => seasonOf(w) === ui.wSeason).sort((a, b) => tsOf(a) - tsOf(b)).forEach((x) => rows.push([
+    x.studentName, x.school, x.grade, x.phone, x.enrolled, ...WD.map((d) => (x.days || []).includes(d) ? "O" : ""), x.period, x.periodMemo, x.staffMemo, x.memo, isCancel(x) ? "취소" : "신청", fmtTs(x)]));
+  downloadCSV(`${ui.wSeason}_윈터스쿨.csv`, rows);
+};
+
+/* ================= 3. 반별 안내문 ================= */
+let draft = null;          // 편집 중인 안내문
+let draftId = null;
+const noticeUrl = (id) => new URL(`notice.html?id=${encodeURIComponent(id)}`, location.href).href;
+const applyUrlOf = (n) => {
+  const keys = (n.specials || []).filter((s) => s.courseId && !String(s.courseId).startsWith("seed")).map((s) => `${s.courseId}#${s.vi}`);
+  return new URL(`index.html${keys.length ? `?pick=${encodeURIComponent(keys.join(","))}` : ""}#apply`, location.href).href;
+};
+const smsText = (n, id) => `[CMS 서초영재교과관] ${n.className || ""} 학부모님, 안녕하세요.\n${noticeTitle(n)}을 보내드립니다.\n아래 링크에서 겨울방학 학습 계획과 특강 일정을 확인하시고, 안내문 하단의 [특강 신청하러 가기]로 신청 부탁드립니다.\n\n▶ 안내문: ${noticeUrl(id)}\n\n문의: 02-595-1280`;
+
+function renderNoticeList() {
+  const list = NOTICES.filter((n) => seasonOf(n) === SEASON).sort((a, b) => (a.className || "").localeCompare(b.className || "", "ko"));
+  $("#nList").innerHTML = list.map((n) => `<div class="card ncard">
+      <div><span class="badge ${n.hall === "premium" ? "blue" : "green"}">${n.hall === "premium" ? "프리미엄관" : "영재관"}</span></div>
+      <div class="nt1">${esc(n.className || "(반 이름 없음)")}</div>
+      <div class="nt2">${esc(noticeTitle(n))}</div>
+      <div class="nt2">특강: ${esc((n.specials || []).map((s) => s.title).join(", ") || "-")}${n.winter && n.winter.on ? " · 윈터스쿨" : ""}</div>
+      <div class="nt2">${esc(n.author || "")} ${n.updatedAt && n.updatedAt.toDate ? "· " + n.updatedAt.toDate().toLocaleDateString("ko-KR") : ""}</div>
+      <div class="ac">
+        <button class="btn btn-xs btn-dark" data-nedit="${n.id}">편집</button>
+        <a class="btn btn-xs" href="${noticeUrl(n.id)}" target="_blank">열기 ↗</a>
+        <button class="btn btn-xs" data-nlink="${n.id}">링크 복사</button>
+        <button class="btn btn-xs" data-nsms="${n.id}">문자 문구 복사</button>
+        <button class="btn btn-xs" data-ndup="${n.id}">복제</button>
+        <button class="btn btn-xs btn-danger" data-ndel="${n.id}">삭제</button>
+      </div></div>`).join("") || `<div class="empty card" style="grid-column:1/-1">아직 만든 안내문이 없습니다. [＋ 새 안내문]으로 시작하세요.</div>`;
+  $$("[data-nedit]").forEach((b) => b.onclick = () => openEditor(b.dataset.nedit));
+  $$("[data-nlink]").forEach((b) => b.onclick = async () => { await copyText(noticeUrl(b.dataset.nlink)); toast("안내문 링크를 복사했습니다.", "ok"); });
+  $$("[data-nsms]").forEach((b) => b.onclick = async () => { const n = NOTICES.find((x) => x.id === b.dataset.nsms); await copyText(smsText(n, n.id)); toast("문자 발송용 문구를 복사했습니다.", "ok"); });
+  $$("[data-ndup]").forEach((b) => b.onclick = () => { const n = NOTICES.find((x) => x.id === b.dataset.ndup); openEditor(null, { ...JSON.parse(JSON.stringify(stripMeta(n))), className: `${n.className} (복사)`, title: "" }); });
+  $$("[data-ndel]").forEach((b) => b.onclick = async () => { const n = NOTICES.find((x) => x.id === b.dataset.ndel); if (!confirm(`'${n.className}' 안내문을 삭제할까요? 이미 보낸 링크는 열리지 않게 됩니다.`)) return; await deleteDoc(doc(db, "notices", n.id)); toast("삭제했습니다."); });
+}
+function stripMeta(n) { const { id, createdAt, updatedAt, author, ...rest } = n; return rest; }
+
+function blankNotice() {
+  const w = SETTINGS.winter;
+  return {
+    season: SEASON, className: "", hall: "gifted", title: "", slogan: NOTICE_DEFAULTS.slogan, planRange: "1월 ~ 2월",
+    headline: "", question: NOTICE_DEFAULTS.question, points: "", highlightTitle: "", highlightBody: "", closing: "",
+    regular: [], specials: [],
+    winter: { on: true, title: w.title, time: w.time, start: w.start, end: w.end, breaks: w.breaks || [], goal: NOTICE_DEFAULTS.winterGoal, goalDetail: NOTICE_DEFAULTS.winterGoalDetail },
+    holidays: JSON.parse(JSON.stringify(NOTICE_DEFAULTS.holidays)), footnote: NOTICE_DEFAULTS.footnote
+  };
+}
+function sampleNotice() {
+  const n = blankNotice();
+  const c = COURSES.find((x) => seasonOf(x) === SEASON && x.title === "초5 약수와 배수");
+  Object.assign(n, {
+    className: "FIT초5-1", hall: "gifted",
+    headline: "초등 수학의 고비를 맞는 5학년! 수포자가 될 수 없죠!",
+    points: "초등 5학년은 수학 격차가 벌어지기 시작하는 가장 중요한 시기입니다.\n특히, 아이들이 가장 어려워하는 단원인 약수와 배수 / 약분·통분은 중1 수학까지 연결되는 핵심 개념!",
+    highlightTitle: "하지만 이 단원을 놓친다면?",
+    highlightBody: "중학교 진입 전부터 수학에 자신감을 잃고, 수포자가 될 위험이 높아집니다!",
+    closing: "수학을 ‘다시 잡을 수 있는’ 유일한 골든 타임!\n지금 이 기회를 놓치면, 방학이 끝난 뒤 수학 격차는 더 크게 벌어집니다.\n이번 겨울방학 약수·배수·약분·통분은 무조건 완벽히 다지는 것으로. 달려보아요!",
+    regular: [
+      { name: "5-1 기본", days: ["월", "수"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-24", goal: "5-1 기본 베이스 다지기" },
+      { name: "4-2 심화", days: ["목"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-25", goal: "4-2 심화 적용력 키우기" }
+    ]
   });
+  if (c) n.specials = [specialFrom(c, 0, "약수와 배수 + 약분과 통분", "핵심 유형 / 문장제 문제 / 활용 문제까지 확실하게 다루면서 중1 예습까지 이어지도록 완벽하게 마스터!")];
+  return n;
+}
+function specialFrom(c, vi, goal, goalDetail) {
+  const v = (c.variants || [])[vi] || {};
+  return {
+    courseId: c.id, vi, title: c.title, short: c.title.length > 8 ? c.title.slice(0, 8) : c.title, label: v.label || "",
+    days: v.days || [], time: v.time || "", start: v.start || "", end: v.end || "", count: v.count || 0, period: v.period || "",
+    sessions: [...(c.sessions || [])], breaks: c.breaks || [],
+    goal: goal ?? (c.feature || "").split(/(?<=[.!])\s/)[0], goalDetail: goalDetail ?? ""
+  };
+}
 
-  if(id){
-    document.getElementById('deleteCourseBtn').addEventListener('click', async ()=>{
-      if(!confirm(`'${c.title}' 강좌를 삭제할까요? 이미 접수된 신청 내역에는 영향이 없습니다.`)) return;
-      try{
-        await deleteDoc(doc(db, "courses", id));
-        closeModal();
-      }catch(err){
-        alert('삭제 중 문제가 발생했습니다: ' + err.message);
-      }
+function openEditor(id, preset) {
+  draftId = id;
+  const src = id ? NOTICES.find((n) => n.id === id) : null;
+  draft = preset ? preset : src ? JSON.parse(JSON.stringify(stripMeta(src))) : blankNotice();
+  draft.winter = draft.winter || { on: false };
+  $("#nListView").style.display = "none"; $("#nEditView").style.display = "block";
+  $("#nLinkBox").innerHTML = id ? linkBoxHtml(id) : "";
+  bindLinkBox();
+  renderNForm(); renderNPreview();
+  window.scrollTo(0, 0);
+}
+function linkBoxHtml(id) {
+  return `<div class="linkbox"><b>발송 링크</b><code>${esc(noticeUrl(id))}</code>
+    <button class="btn btn-xs" data-lb="link">링크 복사</button><button class="btn btn-xs" data-lb="sms">문자 문구 복사</button><a class="btn btn-xs" href="${noticeUrl(id)}" target="_blank">열기 ↗</a></div>`;
+}
+function bindLinkBox() {
+  $$("[data-lb]").forEach((b) => b.onclick = async () => {
+    if (b.dataset.lb === "link") { await copyText(noticeUrl(draftId)); toast("링크를 복사했습니다.", "ok"); }
+    else { await copyText(smsText(draft, draftId)); toast("문자 발송용 문구를 복사했습니다.", "ok"); }
+  });
+}
+$("#nNew").onclick = () => openEditor(null);
+$("#nBack").onclick = () => { if (!confirm("편집을 마치고 목록으로 갈까요? 저장하지 않은 내용은 사라집니다.")) return; $("#nEditView").style.display = "none"; $("#nListView").style.display = "block"; };
+$("#nSample").onclick = () => { if (!confirm("FIT초5-1 예시 내용으로 채울까요? (지금 입력한 내용은 바뀝니다)")) return; draft = sampleNotice(); renderNForm(); renderNPreview(); };
+$("#nPrint").onclick = () => window.print();
+$("#nSave").onclick = async () => {
+  if (!draft.className.trim()) return toast("반 이름을 입력해주세요.", "err");
+  const data = { ...draft, season: draft.season || SEASON, updatedAt: serverTimestamp(), author: auth.currentUser?.email || "" };
+  try {
+    if (draftId) await setDoc(doc(db, "notices", draftId), data);
+    else { const ref = await addDoc(collection(db, "notices"), { ...data, createdAt: serverTimestamp() }); draftId = ref.id; }
+    $("#nLinkBox").innerHTML = linkBoxHtml(draftId); bindLinkBox();
+    toast("저장했습니다. 발송 링크를 복사해 학부모님께 보내세요.", "ok");
+  } catch (e) { console.error(e); toast("저장에 실패했습니다: " + e.message, "err"); }
+};
+
+function renderNForm() {
+  const n = draft;
+  const seasonCourses = COURSES.filter((c) => seasonOf(c) === SEASON);
+  const opts = seasonCourses.map((c) => (c.variants || []).map((v, vi) => `<option value="${c.id}#${vi}">[${esc(c.category)}] ${esc(variantLabel(c, vi))}</option>`).join("")).join("");
+  $("#nEditTitle").textContent = n.className ? `${n.className} 안내문` : "새 안내문";
+  $("#nForm").innerHTML = `
+    <div class="sec"><b>기본 정보</b>
+      <div class="fg">
+        <div class="field"><label>반 이름 *</label><input class="input sm" data-k="className" value="${esc(n.className)}" placeholder="예: FIT초5-1"></div>
+        <div class="field"><label>관 (로고)</label><select class="input sm" data-k="hall"><option value="gifted">영재관</option><option value="premium" ${n.hall === "premium" ? "selected" : ""}>프리미엄관</option></select></div>
+        <div class="field full"><label>제목 <span class="hint">(비우면 자동)</span></label><input class="input sm" data-k="title" value="${esc(n.title)}" placeholder="${esc(noticeTitle({ ...n, title: "" }))}"></div>
+      </div>
+    </div>
+    <div class="sec"><b>도입 문구</b>
+      <div class="field"><label>헤드라인</label><textarea class="input" rows="2" data-k="headline" placeholder="예: 초등 수학의 고비를 맞는 5학년! 수포자가 될 수 없죠!">${esc(n.headline)}</textarea></div>
+      <div class="field"><label>질문</label><input class="input sm" data-k="question" value="${esc(n.question)}"></div>
+      <div class="field"><label>체크 포인트 <span class="hint">(한 줄에 하나씩 → ✔ 목록)</span></label><textarea class="input" rows="3" data-k="points">${esc(n.points)}</textarea></div>
+      <div class="field"><label>강조 박스 제목</label><input class="input sm" data-k="highlightTitle" value="${esc(n.highlightTitle)}" placeholder="예: 하지만 이 단원을 놓친다면?"></div>
+      <div class="field"><label>강조 박스 내용</label><textarea class="input" rows="2" data-k="highlightBody">${esc(n.highlightBody)}</textarea></div>
+      <div class="field"><label>마무리 문구</label><textarea class="input" rows="3" data-k="closing">${esc(n.closing)}</textarea></div>
+    </div>
+    <div class="sec"><b>정규수업</b>
+      <div id="regRows">${(n.regular || []).map((r, i) => `<div class="rowed" data-reg="${i}">
+        <div class="fg">
+          <div class="field"><label>과정명</label><input class="input sm" data-r="name" value="${esc(r.name)}"></div>
+          <div class="field"><label>시간</label><input class="input sm" data-r="time" value="${esc(r.time)}" placeholder="15:00~17:30"></div>
+          <div class="field full"><label>요일</label>${dayPick(`rd${i}`, r.days || [])}</div>
+          <div class="field"><label>시작일</label><input class="input sm" type="date" data-r="start" value="${esc(r.start)}"></div>
+          <div class="field"><label>종료일</label><input class="input sm" type="date" data-r="end" value="${esc(r.end)}"></div>
+          <div class="field full"><label>목표</label><input class="input sm" data-r="goal" value="${esc(r.goal)}"></div>
+        </div><button class="btn btn-xs btn-danger" data-regdel="${i}" style="margin-top:8px">삭제</button></div>`).join("")}</div>
+      <button class="btn btn-sm" id="regAdd">＋ 정규수업 추가</button>
+    </div>
+    <div class="sec"><b>특강</b>
+      <div id="spRows">${(n.specials || []).map((s, i) => `<div class="rowed" data-sp="${i}">
+        <div style="font-weight:800;margin-bottom:6px">${esc(s.title)} <span class="hint">${esc(s.label)} · ${esc((s.days || []).join(""))} ${esc(s.time)} · ${esc(s.period || fmtRange(s.start, s.end))}</span></div>
+        <div class="field"><label>목표 (굵게)</label><input class="input sm" data-s="goal" value="${esc(s.goal)}"></div>
+        <div class="field"><label>목표 상세</label><textarea class="input" rows="2" data-s="goalDetail">${esc(s.goalDetail)}</textarea></div>
+        <div class="field"><label>달력 표시 이름 <span class="hint">(특강 2개 이상일 때)</span></label><input class="input sm" data-s="short" value="${esc(s.short || "")}"></div>
+        <button class="btn btn-xs" data-spsync="${i}">강좌 정보 다시 불러오기</button> <button class="btn btn-xs btn-danger" data-spdel="${i}">삭제</button></div>`).join("")}</div>
+      <select class="input sm" id="spAdd"><option value="">＋ 특강 선택해서 추가</option>${opts}</select>
+      ${!seasonCourses.length ? `<p class="hint">이번 시즌 강좌가 아직 없습니다. [강좌 관리]에서 먼저 업로드해주세요.</p>` : ""}
+    </div>
+    <div class="sec"><b>윈터스쿨</b>
+      <label class="pill-check" style="margin-bottom:10px"><input type="checkbox" id="wOn" ${n.winter.on ? "checked" : ""}>안내문에 윈터스쿨 포함</label>
+      <div class="field"><label>목표 (굵게)</label><input class="input sm" data-w="goal" value="${esc(n.winter.goal || "")}"></div>
+      <div class="field"><label>목표 상세</label><textarea class="input" rows="2" data-w="goalDetail">${esc(n.winter.goalDetail || "")}</textarea></div>
+      <div class="hint">시간/기간은 [설정 &gt; 윈터스쿨] 값을 사용합니다: ${esc(SETTINGS.winter.time)} · ${esc(fmtRange(SETTINGS.winter.start, SETTINGS.winter.end))} <button class="btn btn-xs" id="wSync">설정값 다시 적용</button></div>
+    </div>
+    <div class="sec"><b>휴무 기간 (달력 표시)</b>
+      <div id="holRows">${(n.holidays || []).map((h, i) => `<div class="fg" data-hol="${i}" style="grid-template-columns:1fr 1fr 1fr auto;margin-bottom:6px">
+        <input class="input sm" type="date" data-h="from" value="${esc(h.from)}"><input class="input sm" type="date" data-h="to" value="${esc(h.to)}"><input class="input sm" data-h="label" value="${esc(h.label)}" placeholder="설 연휴"><button class="btn btn-xs btn-danger" data-holdel="${i}">✕</button></div>`).join("")}</div>
+      <button class="btn btn-sm" id="holAdd">＋ 휴무 추가</button>
+    </div>
+    <div class="sec"><b>기타</b>
+      <div class="field"><label>특강 구성 안내 문구</label><input class="input sm" data-k="footnote" value="${esc(n.footnote)}"></div>
+      <div class="field"><label>학습 계획 기간 표기</label><input class="input sm" data-k="planRange" value="${esc(n.planRange || "")}"></div>
+      <div class="field"><label>상단 문구</label><input class="input sm" data-k="slogan" value="${esc(n.slogan || "")}"></div>
+    </div>`;
+  const f = $("#nForm");
+  $$("[data-k]", f).forEach((el) => el.addEventListener("input", () => { draft[el.dataset.k] = el.value; renderNPreview(); if (el.dataset.k === "className") $("#nEditTitle").textContent = `${el.value} 안내문`; }));
+  $$("[data-reg]", f).forEach((row) => {
+    const i = +row.dataset.reg;
+    $$("[data-r]", row).forEach((el) => el.addEventListener("input", () => { draft.regular[i][el.dataset.r] = el.value; renderNPreview(); }));
+    $$(`input[name="rd${i}"]`, row).forEach((el) => el.addEventListener("change", () => { draft.regular[i].days = picked(`rd${i}`, row); renderNPreview(); }));
+  });
+  $$("[data-regdel]", f).forEach((b) => b.onclick = () => { draft.regular.splice(+b.dataset.regdel, 1); renderNForm(); renderNPreview(); });
+  $("#regAdd").onclick = () => { draft.regular.push({ name: "", days: [], time: "15:00~17:30", start: "", end: "", goal: "" }); renderNForm(); };
+  $$("[data-sp]", f).forEach((row) => {
+    const i = +row.dataset.sp;
+    $$("[data-s]", row).forEach((el) => el.addEventListener("input", () => { draft.specials[i][el.dataset.s] = el.value; renderNPreview(); }));
+  });
+  $$("[data-spdel]", f).forEach((b) => b.onclick = () => { draft.specials.splice(+b.dataset.spdel, 1); renderNForm(); renderNPreview(); });
+  $$("[data-spsync]", f).forEach((b) => b.onclick = () => {
+    const s = draft.specials[+b.dataset.spsync];
+    const c = COURSES.find((x) => x.id === s.courseId);
+    if (!c) return toast("원본 강좌를 찾을 수 없습니다.", "err");
+    draft.specials[+b.dataset.spsync] = { ...specialFrom(c, s.vi, s.goal, s.goalDetail), short: s.short };
+    renderNForm(); renderNPreview(); toast("강좌 정보를 다시 불러왔습니다.", "ok");
+  });
+  $("#spAdd").onchange = (e) => {
+    if (!e.target.value) return;
+    const [cid, vi] = e.target.value.split("#");
+    const c = COURSES.find((x) => x.id === cid);
+    draft.specials.push(specialFrom(c, +vi));
+    renderNForm(); renderNPreview();
+  };
+  $("#wOn").onchange = (e) => { draft.winter.on = e.target.checked; if (e.target.checked && !draft.winter.time) syncWinterToDraft(); renderNPreview(); };
+  $$("[data-w]", f).forEach((el) => el.addEventListener("input", () => { draft.winter[el.dataset.w] = el.value; renderNPreview(); }));
+  $("#wSync").onclick = () => { syncWinterToDraft(); renderNPreview(); toast("윈터스쿨 설정값을 적용했습니다.", "ok"); };
+  $$("[data-hol]", f).forEach((row) => {
+    const i = +row.dataset.hol;
+    $$("[data-h]", row).forEach((el) => el.addEventListener("input", () => { draft.holidays[i][el.dataset.h] = el.value; renderNPreview(); }));
+  });
+  $$("[data-holdel]", f).forEach((b) => b.onclick = () => { draft.holidays.splice(+b.dataset.holdel, 1); renderNForm(); renderNPreview(); });
+  $("#holAdd").onclick = () => { draft.holidays.push({ from: "", to: "", label: "휴무" }); renderNForm(); };
+}
+function syncWinterToDraft() {
+  const w = SETTINGS.winter;
+  Object.assign(draft.winter, { title: w.title, time: w.time, start: w.start, end: w.end, breaks: w.breaks || [] });
+}
+function renderNPreview() {
+  $("#nPreview").innerHTML = renderNotice(draft, { applyUrl: applyUrlOf(draft) });
+}
+
+/* ================= 4. 강좌 관리 ================= */
+let pendingOrder = null;
+function renderCourses() {
+  const season = ui.cSeason;
+  const list = COURSES.filter((c) => seasonOf(c) === season);
+  $("#cSeed").style.display = season === SEASON ? "" : "none";
+  $("#cInfo").innerHTML = season === SEASON && SEED_NOTES.length ? `<div class="infobox"><b>안내문 원본 확인 필요 항목</b> (초기 업로드 데이터 기준)<ul>${SEED_NOTES.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : "";
+  if (!list.length) {
+    $("#cList").innerHTML = `<div class="empty card">${esc(seasonName(season))} 강좌가 없습니다.${season === SEASON ? " [겨울 초기 강좌 업로드]를 누르면 안내문 한글파일의 강좌 18개가 등록됩니다." : ""}</div>`;
+    return;
+  }
+  $("#cList").innerHTML = CATEGORIES.map((cat) => {
+    const cl = list.filter((c) => c.category === cat);
+    if (!cl.length) return "";
+    return `<div class="cm-cat">${cat} <span class="hint">${cl.length}개</span></div><div class="cm-group" data-cat="${cat}">${cl.map((c) => `
+      <div class="cm-row" draggable="true" data-id="${c.id}">
+        <span class="hd" title="드래그해서 순서 변경">⠿</span>
+        <div><div class="ti">${esc(c.title)} ${c.subtitle ? `<span class="hint">${esc(c.subtitle)}</span>` : ""}</div>
+          <div class="vs">${(c.variants || []).map((v) => `${esc(v.label || "")} ${esc(variantTime(v))} · ${esc(variantPeriod(v))}${v.teacher ? ` · ${esc(v.teacher)}` : ""}${v.closed ? " · 마감" : ""}`).join("<br>")}</div></div>
+        <div class="ac"><button class="btn btn-xs" data-cedit="${c.id}">수정</button><button class="btn btn-xs" data-ccopy="${c.id}">복제</button><button class="btn btn-xs btn-danger" data-cdel="${c.id}">삭제</button></div>
+      </div>`).join("")}</div>`;
+  }).join("");
+  $$("[data-cedit]").forEach((b) => b.onclick = () => editCourse(COURSES.find((c) => c.id === b.dataset.cedit)));
+  $$("[data-ccopy]").forEach((b) => b.onclick = () => { const c = COURSES.find((x) => x.id === b.dataset.ccopy); const { id, ...rest } = c; editCourse({ ...JSON.parse(JSON.stringify(rest)), title: `${c.title} (복사)` }, true); });
+  $$("[data-cdel]").forEach((b) => b.onclick = async () => {
+    const c = COURSES.find((x) => x.id === b.dataset.cdel);
+    const n = APPS.filter((a) => a.courseId === c.id).length;
+    if (!confirm(`'${c.title}' 강좌를 삭제할까요?${n ? `\n이 강좌 신청 ${n}건은 '미배정'으로 이동합니다.` : ""}`)) return;
+    await deleteDoc(doc(db, "courses", c.id)); toast("삭제했습니다.");
+  });
+  initDrag();
+}
+function initDrag() {
+  let dragEl = null;
+  $$(".cm-row").forEach((row) => {
+    row.addEventListener("dragstart", () => { dragEl = row; row.classList.add("dragging"); });
+    row.addEventListener("dragend", () => { row.classList.remove("dragging"); $$(".cm-row").forEach((r) => r.classList.remove("over")); });
+    row.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (!dragEl || dragEl === row || dragEl.parentNode !== row.parentNode) return;
+      $$(".cm-row").forEach((r) => r.classList.remove("over")); row.classList.add("over");
+      const rect = row.getBoundingClientRect();
+      row.parentNode.insertBefore(dragEl, e.clientY < rect.top + rect.height / 2 ? row : row.nextSibling);
+      pendingOrder = $$(".cm-row").map((r) => r.dataset.id);
+      $("#cOrderSave").style.display = "";
     });
-  }
+  });
+}
+$("#cOrderSave").onclick = async () => {
+  if (!pendingOrder) return;
+  const batch = writeBatch(db);
+  pendingOrder.forEach((id, i) => batch.update(doc(db, "courses", id), { order: i }));
+  await batch.commit();
+  pendingOrder = null; $("#cOrderSave").style.display = "none"; toast("순서를 저장했습니다.", "ok");
+};
+$("#cSeason").onchange = (e) => { ui.cSeason = e.target.value; refresh(); };
+$("#cAdd").onclick = () => editCourse({ season: ui.cSeason, category: "고등", title: "", variants: [{ label: "월금반", days: ["월", "금"], time: "", count: 0, start: "", end: "" }], sessions: [], breaks: [] }, true);
+$("#cSeed").onclick = async () => {
+  const exist = COURSES.filter((c) => seasonOf(c) === SEASON).length;
+  if (!confirm(exist ? `이미 ${exist}개 강좌가 있습니다. 그래도 안내문 강좌 ${SEED_2027_WINTER.length}개를 추가로 업로드할까요? (중복 주의)` : `안내문 한글파일 기준 강좌 ${SEED_2027_WINTER.length}개를 ${SEASON_LABEL}로 업로드할까요?`)) return;
+  const batch = writeBatch(db);
+  SEED_2027_WINTER.forEach((c, i) => batch.set(doc(collection(db, "courses")), { ...c, season: SEASON, order: exist + i }));
+  await batch.commit();
+  toast("겨울 강좌를 업로드했습니다.", "ok");
+};
 
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+function editCourse(c, isNew = false) {
+  const variants = (c.variants && c.variants.length ? c.variants : [{}]).map((v) => ({ ...v }));
+  const breaks = (c.breaks || []).map((b) => ({ ...b }));
+  const vHtml = (v, i) => `<div class="ved" data-v="${i}">
+      <button class="btn btn-xs btn-danger rm" data-vdel="${i}">반 삭제</button>
+      <div class="fg">
+        <div class="field"><label>반 이름</label><input class="input sm" data-f="label" value="${esc(v.label || "")}" placeholder="월금반"></div>
+        <div class="field"><label>시간</label><input class="input sm" data-f="time" value="${esc(v.time || "")}" placeholder="12:30~16:30"></div>
+        <div class="field"><label>총 회차</label><input class="input sm" type="number" min="0" data-f="count" value="${+v.count || 0}"></div>
+        <div class="field"><label>정원</label><input class="input sm" type="number" min="0" data-f="capacity" value="${+v.capacity || 0}"></div>
+        <div class="field" style="grid-column:span 2"><label>요일</label>${dayPick(`vd${i}`, v.days || [])}</div>
+        <div class="field"><label>개강일</label><input class="input sm" type="date" data-f="start" value="${esc(v.start || "")}"></div>
+        <div class="field"><label>종강일</label><input class="input sm" type="date" data-f="end" value="${esc(v.end || "")}"></div>
+        <div class="field" style="grid-column:span 2"><label>기간 표기 <span class="hint">(비우면 개강~종강 자동)</span></label><input class="input sm" data-f="period" value="${esc(v.period || "")}"></div>
+        <div class="field"><label>담당</label><input class="input sm" data-f="teacher" value="${esc(v.teacher || "")}"></div>
+        <div class="field"><label>강의실</label><input class="input sm" data-f="room" value="${esc(v.room || "")}"></div>
+      </div>
+      <label class="check" style="margin-top:8px;font-size:13px"><input type="checkbox" data-f="closed" ${v.closed ? "checked" : ""}> 신청 마감</label>
+      <div class="hint" data-vcheck style="margin-top:6px"></div>
+    </div>`;
+  openModal(`<h2>${isNew ? "강좌 추가" : "강좌 수정"} <span class="badge">${esc(seasonName(seasonOf(c)))}</span></h2>
+    <div class="fg">
+      <div class="field"><label>구분</label><select class="input" id="kCat">${CATEGORIES.map((x) => `<option ${x === c.category ? "selected" : ""}>${x}</option>`).join("")}</select></div>
+      <div class="field"><label>교재</label><input class="input" id="kBook" value="${esc(c.textbook || "")}"></div>
+      <div class="field full"><label>강좌명</label><input class="input" id="kTitle" value="${esc(c.title || "")}"></div>
+      <div class="field full"><label>부제 <span class="hint">(선택)</span></label><input class="input" id="kSub" value="${esc(c.subtitle || "")}"></div>
+      <div class="field full"><label>수업대상</label><textarea class="input" id="kTarget" rows="2">${esc(c.target || "")}</textarea></div>
+      <div class="field full"><label>특징</label><textarea class="input" id="kFeat" rows="3">${esc(c.feature || "")}</textarea></div>
+    </div>
+    <div class="mini-h">반 / 일정 <button class="btn btn-xs" id="vAdd">＋ 반 추가</button></div>
+    <div id="vWrap">${variants.map(vHtml).join("")}</div>
+    <div class="mini-h">휴강 기간 <button class="btn btn-xs" id="bAdd">＋ 추가</button></div>
+    <div id="bWrap"></div>
+    <div class="field" style="margin-top:8px"><label>휴강/특이사항 안내 문구</label><input class="input" id="kNote" value="${esc(c.note || "")}" placeholder="설 연휴 2/6(토) ~ 2/10(수) 기간은 휴강입니다."></div>
+    <div class="mini-h">회차별 진도 <span class="hint">(한 줄에 1회차)</span></div>
+    <textarea class="input" id="kSess" rows="8">${esc((c.sessions || []).join("\n"))}</textarea>
+    <div class="acts"><button class="btn" data-close>취소</button><button class="btn btn-dark" id="kSave">저장</button></div>`, true);
+
+  const readVariants = () => $$("#vWrap .ved").map((el, i) => {
+    const get = (f) => $(`[data-f="${f}"]`, el);
+    const prev = variants[+el.dataset.v] || {};
+    return { ...prev, label: get("label").value.trim(), time: get("time").value.trim(), count: +get("count").value || 0, capacity: +get("capacity").value || 0,
+      days: picked(`vd${el.dataset.v}`, el), start: get("start").value, end: get("end").value, period: get("period").value.trim(),
+      teacher: get("teacher").value.trim(), room: get("room").value.trim(), closed: get("closed").checked };
+  });
+  const drawBreaks = () => {
+    $("#bWrap").innerHTML = breaks.map((b, i) => `<div class="fg" style="grid-template-columns:1fr 1fr auto;margin-bottom:6px" data-b="${i}">
+      <input class="input sm" type="date" value="${esc(b.from || "")}" data-bf="from"><input class="input sm" type="date" value="${esc(b.to || "")}" data-bf="to"><button class="btn btn-xs btn-danger" data-bdel="${i}">✕</button></div>`).join("") || `<div class="hint">없음</div>`;
+    $$("[data-b]").forEach((row) => $$("[data-bf]", row).forEach((inp) => inp.oninput = () => { breaks[+row.dataset.b][inp.dataset.bf] = inp.value; checkV(); }));
+    $$("[data-bdel]").forEach((b) => b.onclick = () => { breaks.splice(+b.dataset.bdel, 1); drawBreaks(); checkV(); });
+  };
+  const checkV = () => {
+    const vs = readVariants();
+    $$("#vWrap .ved").forEach((el, i) => {
+      const r = computeSessions(vs[i], breaks.filter((b) => b.from));
+      const box = $("[data-vcheck]", el);
+      if (!r) { box.textContent = ""; return; }
+      const last = r.dates[r.dates.length - 1];
+      box.innerHTML = r.exact ? `✅ 요일·휴강 기준 ${r.dates.length}회 계산 → 종강일과 일치 (신청페이지에 회차별 날짜 표시)` :
+        `⚠️ 계산된 ${r.dates.length}회차 마지막 날짜: ${last ? fmtMD(last) : "-"} — 종강일과 다릅니다. (회차별 날짜는 표시되지 않음)`;
+    });
+  };
+  drawBreaks(); checkV();
+  $("#vWrap").addEventListener("input", checkV); $("#vWrap").addEventListener("change", checkV);
+  $("#bAdd").onclick = () => { breaks.push({ from: "", to: "" }); drawBreaks(); };
+  $("#vAdd").onclick = () => { const cur = readVariants(); variants.splice(0, variants.length, ...cur, { label: "", days: [], time: "", count: 0 }); $("#vWrap").innerHTML = variants.map(vHtml).join(""); bindVdel(); checkV(); };
+  const bindVdel = () => $$("[data-vdel]").forEach((b) => b.onclick = () => {
+    const cur = readVariants(); if (cur.length <= 1) return toast("반은 최소 1개 필요합니다.", "err");
+    cur.splice(+b.dataset.vdel, 1); variants.splice(0, variants.length, ...cur); $("#vWrap").innerHTML = variants.map(vHtml).join(""); bindVdel(); checkV();
+  });
+  bindVdel();
+  $("#kSave").onclick = async () => {
+    const data = {
+      season: seasonOf(c), category: $("#kCat").value, title: $("#kTitle").value.trim(), subtitle: $("#kSub").value.trim(), textbook: $("#kBook").value.trim(),
+      target: $("#kTarget").value.trim(), feature: $("#kFeat").value.trim(), variants: readVariants(), breaks: breaks.filter((b) => b.from),
+      note: $("#kNote").value.trim(), sessions: $("#kSess").value.split("\n").map((s) => s.trim()).filter(Boolean)
+    };
+    if (!data.title) return toast("강좌명을 입력해주세요.", "err");
+    if (isNew || !c.id) {
+      data.order = COURSES.filter((x) => seasonOf(x) === data.season).length;
+      await addDoc(collection(db, "courses"), data);
+    } else await updateDoc(doc(db, "courses", c.id), data);
+    closeModal(); toast("저장했습니다.", "ok");
+  };
 }
 
-function closeModal(){
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow = '';
+/* ================= 5. 지난 특강 ================= */
+function renderArchive() {
+  const season = ui.aSeason;
+  const list = COURSES.filter((c) => seasonOf(c) === season);
+  const { cols } = buildColumns(season);
+  const apps = APPS.filter((a) => seasonOf(a) === season);
+  $("#aStats").innerHTML = `<div class="stat"><b>${list.length}</b><span>특강</span></div><div class="stat"><b>${cols.length}</b><span>반</span></div><div class="stat"><b>${apps.filter((a) => !isCancel(a)).length}</b><span>신청</span></div>`;
+  if (!list.length) { $("#aList").innerHTML = `<div class="empty card">${esc(seasonName(season))} 강좌 기록이 없습니다.</div>`; return; }
+  $("#aList").innerHTML = CATEGORIES.map((cat) => {
+    const cl = list.filter((c) => c.category === cat);
+    if (!cl.length) return "";
+    return `<div class="cm-cat">${cat}</div><div class="agrid">${cl.map((c) => {
+      const n = cols.filter((x) => x.c.id === c.id).reduce((s, x) => s + x.apps.filter((a) => !isCancel(a)).length, 0);
+      return `<div class="card acard">
+        <div><span class="badge">${esc(c.category)}</span> <span class="badge green">신청 ${n}명</span></div>
+        <h3>${esc(c.title)}</h3>
+        <div class="t2">${esc(c.target || "")}</div>
+        <div class="t2">${(c.variants || []).map((v) => `<b>${esc(v.label || "")}</b> ${esc(variantTime(v))} · ${esc(variantPeriod(v))}`).join("<br>")}</div>
+        <div class="ac"><button class="btn btn-xs" data-adetail="${c.id}">자세히</button><button class="btn btn-xs btn-dark" data-acopy="${c.id}">이번 시즌으로 복사</button></div>
+      </div>`;
+    }).join("")}</div>`;
+  }).join("");
+  $$("[data-adetail]").forEach((b) => b.onclick = () => {
+    const c = COURSES.find((x) => x.id === b.dataset.adetail);
+    openModal(`<span class="badge">${esc(c.category)}</span> <span class="badge">${esc(seasonName(seasonOf(c)))}</span>
+      <h2 style="margin-top:10px">${esc(c.title)}</h2>
+      ${c.feature ? `<p style="background:var(--bg);padding:12px 14px;border-radius:12px">${nl2br(c.feature)}</p>` : ""}
+      <table class="dt"><tr><th>교재</th><td>${esc(c.textbook || "-")}</td></tr><tr><th>대상</th><td>${nl2br(c.target || "-")}</td></tr>
+      <tr><th>일정</th><td>${(c.variants || []).map((v) => `<b>${esc(v.label || "")}</b> ${esc(variantTime(v))} · ${esc(variantPeriod(v))}`).join("<br>")}</td></tr>
+      ${c.note ? `<tr><th>비고</th><td>${esc(c.note)}</td></tr>` : ""}</table>
+      ${(c.sessions || []).length ? `<div class="mini-h">회차별 진도</div><div class="tl">${c.sessions.map((s, i) => `<div><b>${i + 1}회</b>${esc(s)}</div>`).join("")}</div>` : ""}
+      <div class="acts"><button class="btn" data-close>닫기</button><button class="btn btn-dark" id="aCopy2">이번 시즌으로 복사</button></div>`);
+    $("#aCopy2").onclick = () => copyToSeason(c);
+  });
+  $$("[data-acopy]").forEach((b) => b.onclick = () => copyToSeason(COURSES.find((x) => x.id === b.dataset.acopy)));
 }
-document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeModal(); });
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+function copyToSeason(c) {
+  const { id, order, ...rest } = JSON.parse(JSON.stringify(c));
+  rest.season = SEASON;
+  rest.variants = (rest.variants || []).map((v) => ({ ...v, closed: false }));
+  editCourse(rest, true);
+  toast(`${SEASON_LABEL} 강좌로 복사합니다. 일정을 수정한 뒤 저장하세요.`);
+}
+$("#aSeason").onchange = (e) => { ui.aSeason = e.target.value; refresh(); };
 
-/* ============================================================
-   초기 강좌 데이터 19개 시드
-============================================================ */
-const SEED_COURSES = [
-{ category:"고등", title:"공통수학1 극심화(월수금)", textbook:"자체교재", target:"3GST, GST미적2상",
-  feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"] },
-{ category:"고등", title:"공통수학1 극심화(화목)", textbook:"자체교재", target:"3GST, GST미적2상",
-  feature:"예비고1학생들 중 공통수학1의 심화학습이 필요한 학생\nCMS만의 비법이 담긴 예비고1수업. 모든 문제를 푸는 사고의 틀을 만들어주는 예비고1 필수과정입니다.",
-  variants:[{label:"화목반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["다항식의 연산","항등식과 나머지정리","인수분해","복소수","이차방정식","이차방정식 - 이차함수","이차함수"] },
-{ category:"고등", title:"삼각함수 & 수열", textbook:"자체교재", target:"GS공수2상, GS공수2하",
-  feature:"고2 대수과정 진입학생 또는 경시수업을 준비하는 학생\n고2 대수과정중 가장 높은 진입장벽을 가진 단원 중 삼각함수와 수열을 집중 공략하는 특강입니다. 경시를 준비한다면 필수 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["삼각비","삼각함수","삼각함수의 그래프","삼각형과 삼각함수","등차수열","등비수열","수열의 합 (시그마)"] },
-{ category:"고등", title:"미분 첫걸음", textbook:"자체교재", target:"GS대수상, GS미적분1",
-  feature:"미적분1의 개념, 유형수업이 필요한 학생\n미적분1의 근본적인 개념에 집중하여 미분의 본질을 제대로 이해하는 특강. 미적분1을 처음 시작하거나 개념을 탄탄히 가져가려는 학생이라면 반드시 들어야 하는 특강입니다.",
-  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/13(목)"}],
-  note:"7월 26일(일), 7월 30일(목) 특강수업은 정상 진행됩니다.",
-  sessions:["함수의 극한","함수의 연속","함수계수와 도함수","도함수의 활용(1)","도함수의 활용(2)","도함수의 활용(3)","도함수의 활용(4)"] },
-{ category:"고등", title:"공통수학1 메이저클래스", textbook:"자체교재", target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
-  feature:"공통수학1의 응용 심화 연습이 필요한 학생\n공통수학1의 핵심 개념을 하나의 흐름으로 완전히 이해하고, 탄탄한 개념을 바탕으로 응용·심화까지 혼자 힘으로 해결해 내는 힘을 만드는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:00~16:00", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["다항식 + 항등식과 나머지정리","인수분해 + 복소수","이차방정식","이차방정식과 이차함수","여러 가지 방정식(1)","여러 가지 방정식(2)","여러 가지 부등식"] },
-{ category:"고등", title:"공통수학1 마스터클래스", textbook:"자체교재", target:"GS공수1상, GS공수1하, GS공수2상, GS공수2하",
-  feature:"공통수학1의 고난도 유형 연습이 필요한 학생\n공통수학1 핵심 단원의 고난도 문항들을 여러 번 경험하는 것이 중요합니다. 한 번만 풀어봐도 부족함 없는 문제들을 경험하여 공통수학1을 마스터하는 특강입니다.",
-  variants:[{label:"화목일반", time:"주3회 12:30~16:30", period:"7/23(목) ~ 8/16(일)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["다항식과 인수분해","항등식과 나머지정리","실수와 복소수","일차·이차방정식과 판별식","이차방정식과 이차함수","여러 가지 방정식","여러 가지 부등식"] },
-{ category:"고등", title:"중등기하마스터", textbook:"자체교재", target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
-  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 기하 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:30~16:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"] },
-{ category:"중등", title:"중2-2 응용+심화", textbook:"자체교재", target:"GSTOP2-2, GS2-2",
-  feature:"중 2-2 실전 연습이 필요한 학생\n중등 기하의 꽃, 2-2 과정의 필수 유형을 연습하고 심화 문항까지 풀 수 있는, 사고력과 응용력을 기를 수 있는 특강입니다.",
-  variants:[{label:"화목토반", time:"화목 11:00~14:30 / 토 9:00~12:30", period:"7/25(토) ~ 8/15(토)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["삼각형의 성질","사각형의 성질","도형의 닮음","닮음의 활용","피타고라스의 정리","경우의 수","확률"] },
-{ category:"중등", title:"중2-1 응용+심화", textbook:"자체교재", target:"GS2-2, FIT2-2",
-  feature:"중2-1 대수 심화 과정을 제대로 잡고 싶은 학생\n중고등 과정을 진행하는 데 필요한 중2 대수 과정의 필수 유형을 복습하고, 심화 적용력을 키울 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 11:00~14:30", period:"8/3(월) ~ 8/17(월)"}], note:"",
-  sessions:["유리수와 순환소수","식의 계산","일차부등식","연립방정식","연립방정식의 활용","일차함수(1)","일차함수(2)"] },
-{ category:"중등", title:"중1~중2 대수총정리", textbook:"자체교재", target:"GS2-1, FIT2-1, GS2-2, FIT2-2",
-  feature:"중1-1, 2-1 대수를 확실히 정리하고 중요 유형 연습이 필요한 학생\n중1과 중2 과정을 자연스럽게 연결하여 중등 대수의 흐름을 정리할 수 있는 특강입니다.",
-  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
-  sessions:["문자와 식","지수법칙","일차방정식","일차부등식","연립방정식","방정식·부등식의 활용","일차함수"] },
-{ category:"중등", title:"중1-1 기본+응용(월수금)", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
-  feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"월·금 11:00~14:30 / 수 14:30~18:00", period:"8/3(월) ~ 8/17(월)"}], note:"",
-  sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"] },
-{ category:"중등", title:"중1-1 기본+응용(화목토)", textbook:"개념+유형 파워 (유형편)", target:"GS1-1, FIT1-1",
-  feature:"중1-1 응용 유형 연습이 필요한 학생 / 중등 과정 시작 베이스를 확실히 다져놓고 싶은 학생\n앞으로의 중고등 대수의 기본이 되는 중1-1 응용 유형을 단계별로 학습하며, 전반적인 대수 감각을 이번 기회에 확실히 키울 수 있는 특강입니다.",
-  variants:[{label:"화목토반", time:"화·목 11:00~14:30 / 토 16:00~19:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
-  sessions:["문자와 식","일차식의 계산","일차방정식","일차방정식의 활용","좌표평면과 그래프","정비례와 반비례","총정리"] },
-{ category:"중등", title:"중1-1 미리보기", textbook:"수학의 단비 1-1", target:"FIT6-2, FIT1-1",
-  feature:"중1-1 연산 & 핵심 유형 연습이 필요한 학생\n중1-1에서 다루는 개념을 미리 배우고 연습하여 중등 연산력을 키우고, 핵심 유형 연습을 통해 기본 베이스 감각을 키워놓는 특강입니다.",
-  variants:[{label:"화목토반", time:"주3회 11:00~14:30", period:"8/4(화) ~ 8/18(화)"}], note:"",
-  sessions:["정수와 유리수","정수와 유리수의 계산","문자와 식","일차식의 계산","일차방정식","좌표평면과 그래프","정비례와 반비례"] },
-{ category:"초등", title:"초6 서술", textbook:"기적의 수학 문장제 11권", target:"G6-1, G6-2, FIT6-1, FIT6-2",
-  feature:"중등 진입 전, 서술 연습을 확실히 잡고 싶은 학생\n초6 과정의 중요 유형을 학습하며, 초등 마무리 시점에서 서술+풀이 쓰는 연습을 확실히 할 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/14(금)"}], note:"",
-  sessions:["분수의 나눗셈","분수의 나눗셈 / 각기둥과 각뿔","각기둥과 각뿔 / 소수의 나눗셈","소수의 나눗셈 / 비와 비율","비와 비율 / 직육면체의 부피와 겉넓이","직육면체의 부피와 겉넓이 / 총정리"] },
-{ category:"초등", title:"비와 비례", textbook:"바빠 비와비례", target:"FIT5-1, FIT5-2, G5-1",
-  feature:"중등 수학의 고득점을 결정하는 '비와 비례' 집중 완성\n중·고등 과정에서 가장 중요한 영역인 '함수' 기초 베이스를 확실히 다지면서 6학년 비와 비율·비례식 과정까지 마스터하는 특강입니다.",
-  variants:[{label:"화목금반", time:"주3회 12:00~14:30", period:"8/4(화) ~ 8/14(금)"}], note:"",
-  sessions:["비와 비율(1)","비와 비율(2)","백분율","비의 성질","비례식과 비례배분","정비례와 반비례"] },
-{ category:"초등", title:"초5 약수와 배수", textbook:"바빠 약수와 배수", target:"초5 핵심 단원 예습·복습을 원하는 초4~6과정 학생",
-  feature:"고학년 수학의 핵심 '약수와 배수' 집중 완성\n약수와 배수부터 약분과 통분까지 단계적으로 학습 진행. 문장제와 활용 문제까지 다루면서 초등 고학년 수학 베이스를 확실하게 다질 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}], note:"",
-  sessions:["약수와 배수","약수와 배수","최대공약수 & 최소공배수","최대공약수 & 최소공배수","약분과 통분"] },
-{ category:"초등", title:"초4-1심화 핵심 정리", textbook:"최상위 수학S", target:"초3~4학년 또는 초4과정을 배우는 학생",
-  feature:"초 4-1 심화를 방학 동안 완성하고 싶은 학생\n초등 고학년을 준비하는 심화의 시작인 4-1 과정의 주요 핵심 단원을 확실하게 다질 수 있는 특강입니다.",
-  variants:[{label:"화목반", time:"주2회 12:00~14:30", period:"8/4(화) ~ 8/13(목)"}], note:"",
-  sessions:["큰 수","각도","곱셈과 나눗셈","평면도형의 이동"] },
-{ category:"초등", title:"초3 서술", textbook:"자체교재", target:"초2~3학년 또는 초3과정을 배우는 학생",
-  feature:"풀이 과정을 잘 쓰는 것에 어려움을 겪는 학생 / 서술 방법을 익히고 연습하고 싶은 학생\n초등 저학년 시기에 풀이 과정을 잘 잡는 것은 매우 중요! 서술 연습을 하며, 사고를 단계적으로 정리하는 힘을 키우는 특강입니다.",
-  variants:[{label:"월수반", time:"주2회 12:00~14:30", period:"8/3(월) ~ 8/12(수)"}],
-  note:"8/5(수)는 휴강입니다.",
-  sessions:["길이와 시간","들이와 무게","분수와 소수"] },
-{ category:"프리미엄관", title:"KJMO 대비 특강", textbook:"자체교재", target:"초4~중1 중 초·중등 심화 과정이 완료된 학생",
-  feature:"KMO·영재고·과학고 진학을 목표로 하는 최상위권 학생, 고난도 문제를 끝까지 밀어붙이는 힘을 기르고 싶은 학생\n경시 수학 4대 영역의 완벽한 개념 해체, 답을 도출하는 '생각의 힘' 훈련, 완벽한 오답 분석 및 실전 감각을 깨우는 모의 평가",
-  variants:[{label:"화목반", time:"주2회 12:30~16:30", period:"7/14(화) ~ 8/27(목)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["수와 연산(1)","수와 연산(2) / 평면도형(1)","평면도형(2)","문자와 식(1)","문자와 식(2) / 경우의 수와 규칙성(1)","경우의 수와 규칙성(1) / 모의 기출","기출 FINAL"] },
-{ category:"프리미엄관", title:"중1-2 내신대비 특강", textbook:"자체교재", target:"중1 2학기 내신이 진행되는 학생",
-  feature:"중등 기하 기초를 다지고 싶은 학생\n중1과정 내신 대비",
-  variants:[{label:"월수금반", time:"주3회 11:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["기본도형(1)","기본도형(2)","평면도형","입체도형(1)","입체도형(2)","통계(1)","통계(2)"] },
-{ category:"프리미엄관", title:"중등 기하 특강", textbook:"자체교재", target:"GS3-1, FIT3-1, GS3-2, GS공통수학1상",
-  feature:"중등기하의 응용·심화 문항의 연습이 필요한 학생\n중2, 중3 주요 단원에 대한 응용력을 길러 중등기하의 실력을 확실히 다질 수 있는 특강입니다.",
-  variants:[{label:"월수금반", time:"주3회 10:30~14:30", period:"7/24(금) ~ 8/14(금)"}],
-  note:"학원 방학 7/26(일) ~ 8/1(토) 기간은 휴강입니다.",
-  sessions:["삼각형","사각형","닮음(1)","닮음(2)","피타고라스 정리","삼각비","원"] }
-];
-
-document.getElementById('seedBtn').addEventListener('click', async ()=>{
-  if(!confirm('19개 기본 강좌 데이터를 업로드할까요? 이미 강좌가 있다면 중복으로 추가될 수 있어요.')) return;
-  const btn = document.getElementById('seedBtn');
-  btn.disabled = true; btn.textContent = '업로드 중...';
-  try{
-    for(let i=0;i<SEED_COURSES.length;i++){
-      await addDoc(collection(db, "courses"), { ...SEED_COURSES[i], order:i });
-    }
-    alert('업로드가 완료되었습니다.');
-  }catch(err){
-    alert('업로드 중 문제가 발생했습니다: ' + err.message);
-  }finally{
-    btn.disabled = false; btn.textContent = '초기 강좌 데이터 업로드';
-  }
-});
+/* ================= 6. 설정 ================= */
+let settingsDirty = false;
+function renderSettings() {
+  const s = SETTINGS, w = s.winter;
+  $("#sForm").innerHTML = `
+    <div class="card set-card"><h3>신청 접수</h3>
+      <label class="check"><input type="checkbox" id="sOpen" ${s.applyOpen ? "checked" : ""}> 신청페이지에서 신청서 받기 (끄면 '신청 마감' 표시)</label>
+      <div class="field" style="margin-top:14px"><label>특강 안내 상단 공지</label><input class="input" id="sNote" value="${esc(s.heroNote || "")}"></div>
+    </div>
+    <div class="card set-card"><h3>윈터스쿨</h3>
+      <label class="check" style="margin-bottom:12px"><input type="checkbox" id="sWOn" ${w.enabled ? "checked" : ""}> 윈터스쿨 운영 (신청서에 표시)</label>
+      <div class="fg">
+        <div class="field"><label>이름</label><input class="input" id="sWT" value="${esc(w.title)}"></div>
+        <div class="field"><label>부제</label><input class="input" id="sWS" value="${esc(w.subtitle)}"></div>
+        <div class="field"><label>시간</label><input class="input" id="sWTime" value="${esc(w.time)}"></div>
+        <div class="field"><label>장소</label><input class="input" id="sWR" value="${esc(w.room || "")}" placeholder="예: 6강의실 / 9강의실"></div>
+        <div class="field"><label>시작일</label><input class="input" type="date" id="sWA" value="${esc(w.start)}"></div>
+        <div class="field"><label>종료일</label><input class="input" type="date" id="sWZ" value="${esc(w.end)}"></div>
+        <div class="field"><label>휴무 시작</label><input class="input" type="date" id="sWBA" value="${esc((w.breaks || [])[0]?.from || "")}"></div>
+        <div class="field"><label>휴무 끝</label><input class="input" type="date" id="sWBZ" value="${esc((w.breaks || [])[0]?.to || "")}"></div>
+        <div class="field full"><label>소개 문구</label><textarea class="input" id="sWD" rows="3">${esc(w.desc)}</textarea></div>
+      </div>
+    </div>
+    <div class="card set-card"><h3>바로가기</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-sm" href="index.html" target="_blank">신청페이지</a><a class="btn btn-sm" href="${SHEET_URL}" target="_blank">구글시트</a></div>
+      <p class="hint">구글시트에는 웹 신청이 들어올 때마다 「${SEASON}_특강신청」, 「${SEASON}_윈터스쿨」 탭에 자동 기록됩니다. (관리자 화면에서 수정한 내용은 시트에 반영되지 않으니, 최종 명단은 CSV 다운로드를 이용하세요.)</p>
+    </div>
+    <button class="btn btn-dark" id="sSave">설정 저장</button>`;
+  $("#sForm").oninput = () => { settingsDirty = true; };
+  $("#sSave").onclick = async () => {
+    const bA = $("#sWBA").value, bZ = $("#sWBZ").value;
+    const data = {
+      applyOpen: $("#sOpen").checked, heroNote: $("#sNote").value.trim(),
+      winter: { enabled: $("#sWOn").checked, title: $("#sWT").value.trim(), subtitle: $("#sWS").value.trim(), time: $("#sWTime").value.trim(), room: $("#sWR").value.trim(),
+        start: $("#sWA").value, end: $("#sWZ").value, breaks: bA ? [{ from: bA, to: bZ || bA }] : [], desc: $("#sWD").value.trim() }
+    };
+    await setDoc(doc(db, "settings", "site"), data, { merge: true });
+    settingsDirty = false; toast("설정을 저장했습니다.", "ok");
+  };
+}
 </script>
 </body>
 </html>

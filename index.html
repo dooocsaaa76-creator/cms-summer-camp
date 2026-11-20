@@ -3,712 +3,757 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 여름방학 특강 | CMS 서초영재관</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Song+Myung&family=Gowun+Dodum&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>2027 겨울방학 특강 | CMS 서초영재관</title>
+<meta name="description" content="CMS 서초영재관 · 프리미엄관 2027 겨울방학 특강 안내 및 신청">
+<meta property="og:title" content="2027 겨울방학 특강 | CMS 서초영재관">
+<meta property="og:description" content="특강별 대상·교재·회차별 진도를 확인하고 바로 신청하세요.">
+<meta property="og:image" content="assets/logo_slogan.png">
+<link rel="icon" href="assets/logo_master.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/common.css">
 <style>
-  /* ===================== 디자인 토큰 ===================== */
-  :root{
-    --ink:#16243E;
-    --ink-soft:#33425C;
-    --paper:#F3F5F1;
-    --paper-grid:#DCE3DD;
-    --card:#FFFFFF;
-    --teal:#1F7A6C;
-    --teal-dark:#14564C;
-    --teal-pale:#E3F1EC;
-    --red:#D64545;
-    --red-pale:#FBE7E4;
-    --yellow:#F4B73F;
-    --muted:#5C6B66;
-    --line:#D9E0DA;
-    --radius:14px;
-    --shadow: 0 8px 24px rgba(22,36,62,0.08);
-    --font-display:'Song Myung', serif;
-    --font-body:'Gowun Dodum', sans-serif;
-    --font-mono:'JetBrains Mono', monospace;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:var(--font-body);
-    line-height:1.6;
-    background-image:
-      linear-gradient(var(--paper-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
-    background-size:28px 28px;
-  }
-  a{color:var(--teal-dark);}
-  img{max-width:100%;display:block;}
-  :focus-visible{outline:3px solid var(--yellow); outline-offset:2px;}
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:saturate(1.6) blur(12px);border-bottom:1px solid var(--line);}
+  .topbar-in{max-width:1180px;margin:0 auto;height:64px;padding:0 20px;display:flex;align-items:center;gap:18px;}
+  .topbar .logo{height:26px;width:auto;}
+  .topbar .divider{width:1px;height:18px;background:var(--line);}
+  .topbar .season{font-weight:700;font-size:15px;color:var(--ink);}
+  .topbar nav{margin-left:auto;display:flex;align-items:center;gap:6px;}
+  .topbar nav a.lnk{font-size:14px;font-weight:600;color:var(--ink-2);text-decoration:none;padding:8px 12px;border-radius:9px;}
+  .topbar nav a.lnk:hover{background:var(--line-2);}
+  .cart-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:10px;background:#fff;color:var(--charcoal);font-size:12px;padding:0 6px;}
 
-  /* ===================== HERO ===================== */
-  .hero{
-    position:relative;
-    padding:64px 20px 48px;
-    text-align:center;
-    background:
-      radial-gradient(circle at 18% 20%, rgba(31,122,108,0.10), transparent 45%),
-      radial-gradient(circle at 82% 75%, rgba(214,69,69,0.08), transparent 40%);
-    border-bottom:2px solid var(--ink);
-    overflow:hidden;
-  }
-  .hero .eyebrow{
-    display:inline-block;
-    font-family:var(--font-mono);
-    font-size:13px;
-    letter-spacing:.12em;
-    color:var(--teal-dark);
-    background:var(--teal-pale);
-    border:1px solid var(--teal);
-    padding:4px 12px;
-    border-radius:999px;
-    margin-bottom:18px;
-  }
-  .hero h1{
-    font-family:var(--font-display);
-    font-size:clamp(34px,6vw,58px);
-    margin:0 0 12px;
-    letter-spacing:-0.01em;
-  }
-  .hero h1 span{color:var(--teal-dark);}
-  .hero p.lead{
-    max-width:620px;
-    margin:0 auto 28px;
-    color:var(--ink-soft);
-    font-size:17px;
-  }
-  .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-  .btn{
-    font-family:var(--font-body);
-    font-size:15px;
-    font-weight:700;
-    border:2px solid var(--ink);
-    border-radius:999px;
-    padding:12px 26px;
-    cursor:pointer;
-    background:var(--card);
-    color:var(--ink);
-    transition:transform .15s ease, background .15s ease, color .15s ease;
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-  }
-  .btn:hover{transform:translateY(-2px);}
-  .btn-primary{background:var(--ink);color:#fff;}
-  .btn-primary:hover{background:var(--teal-dark);border-color:var(--teal-dark);}
-  .btn-ghost{background:transparent;}
+  /* ---------- hero ---------- */
+  .hero{background:#fff;border-bottom:1px solid var(--line);}
+  .hero-in{max-width:1180px;margin:0 auto;padding:56px 20px 48px;display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--green-d);background:var(--green-p);padding:6px 12px;border-radius:999px;}
+  .hero h1{font-size:46px;line-height:1.18;letter-spacing:-0.035em;margin:18px 0 14px;font-weight:800;}
+  .hero h1 em{font-style:normal;color:var(--green);}
+  .hero p.lead{font-size:16.5px;color:var(--ink-2);margin:0 0 24px;max-width:600px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;}
+  .hero-meta .m{display:flex;flex-direction:column;padding:12px 16px;border:1px solid var(--line);border-radius:14px;min-width:132px;background:var(--bg);}
+  .hero-meta .m b{font-size:12px;color:var(--muted);font-weight:600;}
+  .hero-meta .m span{font-size:15px;font-weight:700;}
+  .hero-art{display:flex;align-items:center;justify-content:center;}
+  .hero-art img{width:100%;max-width:320px;mix-blend-mode:multiply;}
+  .hero-cta{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;}
+  .hero-cta .btn{height:50px;padding:0 24px;font-size:15.5px;border-radius:14px;}
 
-  /* ===================== FILTER BAR ===================== */
-  .filterbar{
-    position:sticky;top:0;z-index:30;
-    background:rgba(243,245,241,0.92);
-    backdrop-filter:blur(6px);
-    border-bottom:1px solid var(--line);
-    padding:12px 16px;
-  }
-  .filterbar-inner{
-    max-width:1100px;margin:0 auto;
-    display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;
-  }
-  .chip{
-    font-family:var(--font-mono);
-    font-size:13px;
-    border:1.5px solid var(--ink);
-    border-radius:999px;
-    padding:7px 16px;
-    background:var(--card);
-    cursor:pointer;
-    color:var(--ink);
-    transition:all .15s ease;
-  }
-  .chip.active{background:var(--ink);color:#fff;}
-  .chip:hover{background:var(--ink);color:#fff;}
+  /* ---------- sections ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+  section.block{padding:56px 0 8px;}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap;}
+  .sec-head h2{font-size:28px;letter-spacing:-0.03em;margin:0;font-weight:800;}
+  .sec-head p{margin:6px 0 0;color:var(--muted);font-size:14.5px;}
 
-  /* ===================== MAIN / CATALOG ===================== */
-  main{max-width:1100px;margin:0 auto;padding:36px 20px 80px;}
-  .cat-block{margin-bottom:52px;}
-  .cat-heading{
-    display:flex;align-items:baseline;gap:10px;
-    font-family:var(--font-display);
-    font-size:26px;
-    border-bottom:2px solid var(--ink);
-    padding-bottom:10px;
-    margin-bottom:20px;
-  }
-  .cat-heading .count{
-    font-family:var(--font-mono);font-size:13px;color:var(--muted);font-weight:400;
-  }
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+  /* hall tabs */
+  .halls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .hall-tab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border:1.5px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;text-align:left;transition:all .15s;}
+  .hall-tab img{height:34px;width:auto;}
+  .hall-tab .cnt{font-size:13px;font-weight:700;color:var(--muted);}
+  .hall-tab.on{border-color:var(--charcoal);box-shadow:0 0 0 3px rgba(65,65,67,.08);}
+  .hall-tab[data-hall="gifted"].on{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,165,126,.12);}
+  .hall-tab[data-hall="premium"].on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,167,225,.12);}
 
-  .card{
-    background:var(--card);
-    border:1.5px solid var(--ink);
-    border-radius:var(--radius);
-    padding:20px;
-    box-shadow:var(--shadow);
-    display:flex;flex-direction:column;gap:10px;
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  .card:hover{transform:translateY(-3px);box-shadow:0 14px 28px rgba(22,36,62,.14);}
-  .card .badge{
-    align-self:flex-start;
-    font-family:var(--font-mono);
-    font-size:11px;
-    background:var(--teal-pale);
-    color:var(--teal-dark);
-    border:1px solid var(--teal);
-    border-radius:6px;
-    padding:2px 8px;
-  }
-  .card h3{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.3;}
-  .card .target{font-size:14px;color:var(--ink-soft);}
-  .card .meta{
-    font-family:var(--font-mono);
-    font-size:12.5px;
-    color:var(--muted);
-    display:flex;flex-direction:column;gap:3px;
-    border-top:1px dashed var(--line);
-    padding-top:10px;
-    margin-top:auto;
-  }
-  .card .meta b{color:var(--ink);}
-  .card-actions{display:flex;gap:8px;margin-top:6px;}
-  .btn-sm{
-    font-size:13px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--ink);
-    background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:700;
-  }
-  .btn-sm.detail{color:var(--ink);}
-  .btn-sm.detail:hover{background:var(--ink);color:#fff;}
-  .btn-sm.apply{background:var(--teal-dark);color:#fff;border-color:var(--teal-dark);}
-  .btn-sm.apply:hover{background:var(--ink);border-color:var(--ink);}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;}
+  .chip.on{background:var(--charcoal);border-color:var(--charcoal);color:#fff;}
+  .notice-line{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#9A5B00;background:var(--amber-p);border-radius:12px;padding:10px 14px;margin-bottom:18px;}
 
-  /* ===================== 썸머스쿨 배너 ===================== */
-  .summer-banner{
-    background:var(--ink);color:#fff;border-radius:var(--radius);
-    padding:28px 26px;margin-bottom:56px;
-    display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;
-  }
-  .summer-banner h3{font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--yellow);}
-  .summer-banner p{margin:2px 0;font-size:14.5px;color:#dfe6e2;}
-  .summer-banner a.btn{background:var(--yellow);border-color:var(--yellow);color:var(--ink);}
+  .cat-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;margin:28px 0 12px;}
+  .cat-title .n{font-size:13px;color:var(--muted);font-weight:600;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;}
+  .ccard{display:flex;flex-direction:column;padding:22px;transition:transform .15s, box-shadow .15s, border-color .15s;}
+  .ccard:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(20,20,30,.09);}
+  .ccard.picked{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,165,126,.12);}
+  .ccard .top{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+  .ccard h3{font-size:19px;line-height:1.35;margin:0;letter-spacing:-0.025em;font-weight:800;}
+  .ccard .sub{font-size:13px;color:var(--muted);margin-top:2px;}
+  .ccard .tgt{font-size:13.5px;color:var(--ink-2);margin:10px 0 14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .vlist{display:flex;flex-direction:column;gap:6px;margin-top:auto;}
+  .vrow{display:flex;align-items:center;gap:10px;font-size:13.5px;background:var(--bg);border-radius:10px;padding:8px 12px;}
+  .vrow .vl{font-weight:800;min-width:56px;}
+  .vrow .vt{color:var(--ink-2);}
+  .vrow .vp{margin-left:auto;color:var(--muted);font-size:12.5px;white-space:nowrap;}
+  .ccard .acts{display:flex;gap:8px;margin-top:14px;}
+  .ccard .acts .btn{flex:1;}
 
-  /* ===================== MODAL (상세보기) ===================== */
-  .overlay{
-    position:fixed;inset:0;background:rgba(22,36,62,.55);
-    display:none;align-items:flex-start;justify-content:center;
-    padding:28px 16px;overflow-y:auto;z-index:100;
-  }
-  .overlay.open{display:flex;}
-  .modal{
-    background:var(--card);max-width:680px;width:100%;
-    border-radius:18px;border:2px solid var(--ink);
-    padding:28px 26px 26px;position:relative;
-    animation:pop .18s ease;
-  }
-  @keyframes pop{from{transform:translateY(10px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  .modal-close{
-    position:absolute;top:16px;right:16px;
-    background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink);
-    width:34px;height:34px;border-radius:50%;
-  }
-  .modal-close:hover{background:var(--paper-grid);}
-  .modal .badge{font-family:var(--font-mono);font-size:11px;background:var(--teal-pale);color:var(--teal-dark);border:1px solid var(--teal);border-radius:6px;padding:2px 8px;}
-  .modal h2{font-family:var(--font-display);font-size:26px;margin:10px 0 4px;}
-  .modal .feature{color:var(--ink-soft);font-size:14.5px;margin-bottom:18px;white-space:pre-line;}
+  /* table view */
+  .ttable{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:14px;}
+  .ttable th{background:var(--bg);font-size:12.5px;color:var(--muted);font-weight:700;text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);}
+  .ttable td{padding:12px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle;}
+  .ttable tr:last-child td{border-bottom:0;}
+  .ttable td.t{font-weight:700;}
+  .ttable td.t a{text-decoration:none;cursor:pointer;}
+  .ttable td.t a:hover{text-decoration:underline;}
+  .table-wrap{overflow-x:auto;border-radius:16px;}
 
-  .infotable{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;}
-  .infotable th{
-    text-align:left;font-family:var(--font-mono);font-size:12px;color:var(--muted);
-    width:96px;vertical-align:top;padding:8px 10px 8px 0;
-  }
-  .infotable td{padding:8px 0;border-top:1px dashed var(--line);}
-  .infotable tr:first-child td{border-top:none;}
-  .variant-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
-  .variant-pill{
-    font-family:var(--font-mono);font-size:12.5px;background:var(--paper);
-    border:1px solid var(--line);border-radius:8px;padding:6px 10px;line-height:1.5;
-  }
-  .variant-pill b{color:var(--teal-dark);}
-  .note-pill{
-    display:inline-block;font-size:12.5px;color:var(--red);background:var(--red-pale);
-    border-radius:8px;padding:4px 10px;margin-top:4px;
-  }
+  /* winter school */
+  .winter{display:grid;grid-template-columns:1.1fr .9fr;gap:0;overflow:hidden;}
+  .winter .w-l{padding:34px;}
+  .winter .w-r{background:linear-gradient(135deg,#2f3a45,#414143);color:#fff;padding:34px;display:flex;flex-direction:column;justify-content:center;gap:14px;}
+  .winter h3{font-size:26px;margin:8px 0 10px;letter-spacing:-0.03em;}
+  .winter p{color:var(--ink-2);margin:0 0 18px;}
+  .w-r .wi{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:12px;font-size:15px;}
+  .w-r .wi b{opacity:.7;font-weight:600;}
+  .week{display:flex;gap:6px;margin-top:4px;}
+  .week span{flex:1;text-align:center;padding:10px 0;border-radius:10px;background:rgba(255,255,255,.1);font-weight:700;font-size:14px;}
 
-  /* 회차별 진도 타임라인 (시그니처 요소) */
-  .timeline-label{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;}
-  .timeline{
-    display:flex;gap:0;overflow-x:auto;padding:6px 2px 14px;
-    scrollbar-width:thin;
-  }
-  .tl-node{
-    flex:0 0 auto;width:118px;text-align:center;position:relative;padding-top:6px;
-  }
-  .tl-node:not(:last-child)::after{
-    content:"";position:absolute;top:24px;left:50%;width:100%;height:2px;
-    background:repeating-linear-gradient(90deg,var(--teal) 0 6px, transparent 6px 10px);
-    z-index:0;
-  }
-  .tl-num{
-    width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;
-    font-family:var(--font-mono);font-weight:700;font-size:13px;
-    display:flex;align-items:center;justify-content:center;margin:0 auto 8px;
-    position:relative;z-index:1;
-  }
-  .tl-topic{font-size:12.5px;color:var(--ink-soft);padding:0 6px;line-height:1.4;}
+  /* apply form */
+  .apply{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+  .form-card{padding:32px;}
+  .form-card h3{font-size:15px;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+  .form-card h3 .no{width:24px;height:24px;border-radius:7px;background:var(--charcoal);color:#fff;font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .fsec{padding-bottom:26px;margin-bottom:26px;border-bottom:1px dashed var(--line);}
+  .fsec:last-of-type{border-bottom:0;margin-bottom:10px;padding-bottom:0;}
+  .radios{display:flex;gap:8px;flex-wrap:wrap;}
+  .picked-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+  .picked-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--green);background:var(--green-p);border-radius:12px;}
+  .picked-item .pi-t{font-weight:700;font-size:14.5px;}
+  .picked-item .pi-s{font-size:12.5px;color:var(--ink-2);}
+  .picked-item .x{margin-left:auto;border:0;background:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;color:var(--ink-2);flex:none;}
+  .picked-empty{padding:16px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:13.5px;text-align:center;margin-bottom:10px;}
+  .winter-box{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--bg);}
+  .switch-row{display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:700;}
+  .switch{position:relative;width:46px;height:28px;flex:none;}
+  .switch input{opacity:0;width:0;height:0;}
+  .switch span{position:absolute;inset:0;background:#d4d4da;border-radius:999px;transition:.2s;}
+  .switch span::after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .switch input:checked + span{background:var(--green);}
+  .switch input:checked + span::after{transform:translateX(18px);}
+  .winter-detail{display:none;margin-top:16px;gap:14px;flex-direction:column;}
+  .winter-box.on .winter-detail{display:flex;}
+  .consent{background:var(--bg);border-radius:12px;padding:14px 16px;font-size:12.5px;color:var(--ink-2);line-height:1.7;margin-bottom:12px;}
+  .consent b{color:var(--ink);}
+  .check{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer;}
+  .check input{width:18px;height:18px;accent-color:var(--green);}
+  .submit{height:54px;font-size:16px;border-radius:14px;margin-top:20px;}
+  .side{position:sticky;top:84px;display:flex;flex-direction:column;gap:14px;}
+  .side .card{padding:22px;}
+  .side h4{margin:0 0 10px;font-size:15px;}
+  .side ol{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2);}
+  .side ol li{margin-bottom:6px;}
+  .closed-box{padding:40px;text-align:center;}
 
-  .modal-apply{
-    width:100%;margin-top:6px;padding:13px;border-radius:10px;border:none;
-    background:var(--teal-dark);color:#fff;font-family:var(--font-body);font-weight:700;font-size:15px;cursor:pointer;
-  }
-  .modal-apply:hover{background:var(--ink);}
+  /* modal detail */
+  .m-head{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
+  .m-title{font-size:26px;letter-spacing:-0.03em;margin:0;line-height:1.3;font-weight:800;padding-right:40px;}
+  .m-sub{color:var(--muted);font-size:14px;margin-top:4px;}
+  .m-feature{font-size:15px;color:var(--ink-2);margin:16px 0 20px;padding:14px 16px;background:var(--bg);border-radius:12px;}
+  .m-info{display:grid;grid-template-columns:110px 1fr;border-top:1px solid var(--line);}
+  .m-info > div{padding:12px 4px;border-bottom:1px solid var(--line-2);font-size:14.5px;}
+  .m-info .k{color:var(--muted);font-weight:700;font-size:13px;}
+  .m-var{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .m-var .vl{font-weight:800;}
+  .m-var .vt{font-size:13.5px;color:var(--ink-2);}
+  .m-var .btn{margin-left:auto;}
+  .m-note{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:#9A5B00;background:var(--amber-p);padding:6px 10px;border-radius:8px;margin-top:6px;}
+  .tl-head{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px;gap:8px;flex-wrap:wrap;}
+  .tl-head b{font-size:15px;}
+  .tl{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+  .tl-n{border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+  .tl-n .no{font-size:12px;font-weight:800;color:var(--green-d);}
+  .tl-n .dt{font-size:11.5px;color:var(--muted);float:right;}
+  .tl-n .tp{font-size:13.5px;font-weight:600;margin-top:2px;line-height:1.4;}
+  .done-list{margin:16px 0;padding:0;list-style:none;}
+  .done-list li{padding:10px 14px;background:var(--bg);border-radius:10px;margin-bottom:6px;font-size:14px;}
 
-  /* ===================== 신청서 ===================== */
-  #apply{
-    background:var(--card);border:2px solid var(--ink);border-radius:18px;
-    padding:36px 30px;margin-top:20px;scroll-margin-top:90px;
-  }
-  #apply h2{font-family:var(--font-display);font-size:28px;margin:0 0 6px;}
-  #apply .sub{color:var(--muted);font-size:14.5px;margin-bottom:26px;}
-  .config-warning{
-    display:none;background:var(--red-pale);color:var(--red);border:1px solid var(--red);
-    border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:20px;font-family:var(--font-mono);
-  }
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 20px;}
-  .form-grid .full{grid-column:1/-1;}
-  .field label{
-    display:block;font-size:13.5px;font-weight:700;margin-bottom:6px;color:var(--ink);
-  }
-  .field .req{color:var(--red);}
-  .field input[type=text],
-  .field input[type=tel],
-  .field select{
-    width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;
-    font-family:var(--font-body);font-size:14.5px;background:#fff;color:var(--ink);
-  }
-  .field input:focus, .field select:focus{border-color:var(--teal);}
-  .field .hint{font-size:12px;color:var(--muted);margin-top:4px;}
-  .radio-row{display:flex;gap:18px;padding-top:6px;}
-  .radio-row label{display:flex;align-items:center;gap:6px;font-weight:400;font-size:14.5px;cursor:pointer;}
-  .consent-box{
-    background:var(--paper);border:1px solid var(--line);border-radius:10px;
-    padding:14px 16px;font-size:12.5px;color:var(--ink-soft);margin-top:6px;line-height:1.6;
-  }
-  .consent-check{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:14px;font-weight:700;cursor:pointer;}
-  .consent-check input{margin-top:3px;}
-  .submit-row{margin-top:26px;}
-  .submit-btn{
-    width:100%;padding:16px;border:none;border-radius:10px;background:var(--ink);
-    color:#fff;font-family:var(--font-body);font-weight:700;font-size:16px;cursor:pointer;
-    transition:background .15s ease;
-  }
-  .submit-btn:hover{background:var(--teal-dark);}
-  .submit-btn:disabled{background:#9aa6a3;cursor:not-allowed;}
-  .status-msg{margin-top:14px;font-size:14.5px;padding:12px 14px;border-radius:8px;display:none;}
-  .status-msg.ok{display:block;background:var(--teal-pale);color:var(--teal-dark);}
-  .status-msg.err{display:block;background:var(--red-pale);color:var(--red);}
+  footer{margin-top:72px;background:#fff;border-top:1px solid var(--line);}
+  .foot{max-width:1180px;margin:0 auto;padding:30px 20px 40px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px;}
+  .foot img{height:22px;opacity:.8;}
+  .foot .staff{margin-left:auto;color:var(--muted);text-decoration:none;}
+  .foot .staff:hover{text-decoration:underline;}
 
-  /* ===================== FOOTER ===================== */
-  footer{
-    text-align:center;padding:40px 20px 60px;color:var(--muted);font-size:13.5px;
+  @media (max-width:900px){
+    .hero-in{grid-template-columns:1fr;padding:36px 16px 32px;gap:20px;}
+    .hero-art{display:none;}
+    .hero h1{font-size:34px;}
+    .apply{grid-template-columns:1fr;}
+    .side{position:static;}
+    .winter{grid-template-columns:1fr;}
   }
-  footer a{color:var(--teal-dark);font-weight:700;}
-
-  @media(max-width:640px){
-    .form-grid{grid-template-columns:1fr;}
-    #apply{padding:26px 18px;}
-    .hero{padding:48px 16px 36px;}
+  @media (max-width:640px){
+    .wrap{padding:0 16px;}
+    .topbar-in{padding:0 16px;gap:10px;}
+    .topbar .divider,.topbar nav a.lnk{display:none;}
+    .topbar .season{font-size:14px;}
+    .halls{grid-template-columns:1fr 1fr;gap:8px;}
+    .hall-tab{padding:12px;flex-direction:column;align-items:flex-start;}
+    .hall-tab img{height:24px;}
+    .grid{grid-template-columns:1fr;}
+    .fgrid{grid-template-columns:1fr;}
+    .form-card{padding:22px 18px;}
+    .winter .w-l,.winter .w-r{padding:24px;}
+    .sec-head h2{font-size:23px;}
+    .m-info{grid-template-columns:84px 1fr;}
+    .hero-meta .m{min-width:calc(50% - 5px);}
   }
 </style>
 </head>
 <body>
 
-<header class="hero">
-  <span class="eyebrow">CMS 서초영재관 · GS / FIT / G / BM</span>
-  <h1>2026 <span>여름방학 특강</span></h1>
-  <p class="lead">방학은 부족했던 빈틈을 채우고 다음 단계로 도약할 수 있는<br>
-  <span style="white-space:nowrap;">가장 확실한 '골든타임'입니다.</span><br>
-  과정을 살펴보고, 우리 아이에게 꼭 맞는 특강을 신청해보세요.</p>
-  <div class="hero-actions">
-    <a href="#catalog" class="btn btn-primary">특강 둘러보기 ↓</a>
-    <a href="#apply" class="btn btn-ghost">바로 신청하기</a>
+<header class="topbar">
+  <div class="topbar-in">
+    <img class="logo" src="assets/logo_master.png" alt="CMS">
+    <span class="divider"></span>
+    <span class="season">2027 겨울방학 특강</span>
+    <nav>
+      <a class="lnk" href="#courses">특강 안내</a>
+      <a class="lnk" href="#winter">윈터스쿨</a>
+      <a class="btn btn-dark btn-sm" href="#apply">신청하기 <span class="cart-count" id="cartCount">0</span></a>
+    </nav>
   </div>
 </header>
 
-<nav class="filterbar">
-  <div class="filterbar-inner" id="filterChips"></div>
-</nav>
-
-<main>
-  <section id="catalog"></section>
-
-  <div class="summer-banner">
+<section class="hero">
+  <div class="hero-in">
     <div>
-      <h3>★ CMS 썸머스쿨</h3>
-      <p>오전부터 시작되는 CMS 썸머스쿨 — CMS 전문가와 함께하는 자기주도학습 프로그램</p>
-      <p>7/27(월) ~ 8/14(금) · 매일 오전 9시~12시</p>
+      <span class="eyebrow">CMS 서초영재관 · 프리미엄관</span>
+      <h1>2027 <em>겨울방학</em> 특강</h1>
+      <p class="lead">부족한 과정은 채우고, 다음 과정으로 나아갈 발판을 만드는 겨울방학. 반드시 짚고 넘어가야 할 필수 단원을 특강별로 확인하고 신청하세요.</p>
+      <div class="hero-meta" id="heroMeta">
+        <div class="m"><b>개설 특강</b><span id="metaCount">-</span></div>
+        <div class="m"><b>특강 기간</b><span id="metaPeriod">-</span></div>
+        <div class="m"><b>문의</b><span>02-595-1280</span></div>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-green" href="#courses">특강 둘러보기</a>
+        <a class="btn" href="#apply">바로 신청하기</a>
+      </div>
     </div>
-    <a class="btn" href="https://blog.naver.com/cms_seocho/224316998517" target="_blank" rel="noopener">썸머스쿨 안내 보기</a>
+    <div class="hero-art"><img src="assets/logo_slogan.png" alt="CMS 잠재력을 탁월함으로"></div>
   </div>
+</section>
 
-  <section id="apply">
-    <h2>특강 신청서</h2>
-    <p class="sub">* 표시는 필수 입력 항목입니다. 제출 시 입력하신 정보는 학원의 구글 시트로 안전하게 전달됩니다.</p>
-    <div class="config-warning" id="configWarning" style="display:none;"></div>
+<main class="wrap">
+  <section class="block" id="courses">
+    <div class="sec-head">
+      <div>
+        <h2>특강 안내</h2>
+        <p>카드를 눌러 교재 · 수업대상 · 회차별 진도를 확인하고 <b>신청 담기</b>를 눌러주세요. 여러 특강을 한 번에 신청할 수 있습니다.</p>
+      </div>
+      <div class="seg" id="viewSeg">
+        <button class="on" data-view="card">카드 보기</button>
+        <button data-view="table">한눈에 보기</button>
+      </div>
+    </div>
+    <div class="halls" id="halls"></div>
+    <div class="notice-line" id="heroNote" style="display:none"></div>
+    <div class="toolbar"><div class="chips" id="chips"></div></div>
+    <div id="catalog"><div class="empty">강좌 정보를 불러오는 중입니다…</div></div>
+  </section>
 
-    <form id="applyForm">
-      <div class="form-grid">
-        <div class="field">
-          <label for="studentName">학생 이름 <span class="req">*</span></label>
-          <input type="text" id="studentName" name="studentName" required placeholder="홍길동">
-        </div>
-        <div class="field">
-          <label for="school">학교 <span class="req">*</span></label>
-          <input type="text" id="school" name="school" required placeholder="예시: OO초 or OO중">
-        </div>
-        <div class="field">
-          <label for="grade">학년 <span class="req">*</span></label>
-          <select id="grade" name="grade" required>
-            <option value="" disabled selected>선택</option>
-            <option>초1이하</option><option>초2</option><option>초3</option>
-            <option>초4</option><option>초5</option><option>초6</option>
-            <option>중1</option><option>중2</option><option>중3</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="phone">학부모 연락처 <span class="req">*</span></label>
-          <input type="tel" id="phone" name="phone" inputmode="numeric" maxlength="13" required placeholder="010-1234-5678">
-          <div class="hint">형식: 010-1234-5678</div>
-        </div>
-        <div class="field full">
-          <label>재원 여부 <span class="req">*</span></label>
-          <div class="radio-row">
-            <label><input type="radio" name="enrolled" value="재원생" required> 재원생</label>
-            <label><input type="radio" name="enrolled" value="외부생" required> 외부생</label>
+  <section class="block" id="winter">
+    <div class="sec-head"><div><h2>윈터스쿨</h2><p>오전 자기주도학습 프로그램 · 특강과 별도로 신청할 수 있습니다.</p></div></div>
+    <div class="card winter" id="winterCard"></div>
+  </section>
+
+  <section class="block" id="apply">
+    <div class="sec-head"><div><h2>특강 신청서</h2><p><span class="req">*</span> 표시는 필수 입력 항목입니다. 제출하신 정보는 학원 담당자에게만 전달됩니다.</p></div></div>
+    <div class="apply">
+      <form class="card form-card" id="applyForm" novalidate>
+        <div class="fsec">
+          <h3><span class="no">1</span>학생 정보</h3>
+          <div class="fgrid">
+            <div class="field"><label for="studentName">학생 이름<span class="req">*</span></label><input class="input" id="studentName" placeholder="홍길동" required autocomplete="off"></div>
+            <div class="field"><label for="school">학교<span class="req">*</span></label><input class="input" id="school" placeholder="예: 서이초, 원촌중" required></div>
+            <div class="field"><label for="grade">학년<span class="req">*</span></label><select class="input" id="grade" required></select></div>
+            <div class="field"><label for="phone">학부모 연락처<span class="req">*</span></label><input class="input" id="phone" inputmode="numeric" placeholder="010-1234-5678" required><span class="hint">숫자만 입력하면 자동으로 하이픈이 들어갑니다.</span></div>
+            <div class="field"><span class="label">재원 여부<span class="req">*</span></span>
+              <div class="radios">
+                <label class="pill-check"><input type="radio" name="enrolled" value="재원생">재원생</label>
+                <label class="pill-check"><input type="radio" name="enrolled" value="외부생">외부생</label>
+              </div>
+            </div>
+            <div class="field" id="regularWrap" style="display:none"><label for="regularClass">현재 수강반 <span class="hint">(선택)</span></label><input class="input" id="regularClass" placeholder="예: GS공수1상, FIT초5-1"></div>
           </div>
         </div>
-        <div class="field full">
-          <label for="course">특강 신청 <span class="req">*</span></label>
-          <select id="course" name="course" required>
-            <option value="" disabled selected>선택</option>
-          </select>
-          <div class="hint">위에서 '자세히 보기 → 이 특강 신청하기'를 누르면 자동으로 선택됩니다.</div>
+
+        <div class="fsec">
+          <h3><span class="no">2</span>특강 신청</h3>
+          <div class="picked-list" id="pickedList"></div>
+          <select class="input" id="addCourse"><option value="">＋ 특강 선택해서 추가하기</option></select>
+          <p class="hint" style="margin:8px 0 0">위 특강 안내에서 <b>신청 담기</b>를 누르면 자동으로 추가됩니다. 윈터스쿨만 신청하셔도 됩니다.</p>
         </div>
-        <div class="field full">
-          <div class="consent-box">
-            <b>■ 개인정보 수집·이용 동의</b><br>
-            1. 수집하는 개인정보 항목: 자녀 학년, 휴대폰 번호<br>
-            2. 수집 및 이용 목적: 설명회 안내, 예약 확인, 향후 설명회 및 개강·교육 등의 정보 제공<br>
-            3. 보유 및 이용 기간: 설명회 종료 후 1년간, 수신 거부 요청 시까지 보유·이용
+
+        <div class="fsec">
+          <h3><span class="no">3</span>윈터스쿨 신청 <span class="badge">선택</span></h3>
+          <div class="winter-box" id="winterBox">
+            <label class="switch-row"><span class="switch"><input type="checkbox" id="winterOn"><span></span></span><span id="winterSwitchLabel">윈터스쿨도 함께 신청합니다</span></label>
+            <div class="winter-detail">
+              <div class="hint" id="winterInfoLine"></div>
+              <div class="field"><span class="label">참여 요일<span class="req">*</span></span>
+                <div class="radios" id="winterDays"></div>
+              </div>
+              <div class="field"><span class="label">참여 기간</span>
+                <div class="radios">
+                  <label class="pill-check"><input type="radio" name="wperiod" value="전체 기간" checked>전체 기간</label>
+                  <label class="pill-check"><input type="radio" name="wperiod" value="일부 기간">일부 기간</label>
+                </div>
+                <input class="input" id="winterMemo" placeholder="일부 기간인 경우 날짜를 적어주세요 (예: 1/18 ~ 2/5, 2/1 결석)" style="display:none;margin-top:8px">
+              </div>
+            </div>
           </div>
-          <label class="consent-check">
-            <input type="checkbox" id="consent" name="consent" required>
-            개인정보 수집 및 이용에 동의합니다. <span class="req">*</span>
-          </label>
         </div>
-      </div>
-      <div class="submit-row">
-        <button type="submit" class="submit-btn" id="submitBtn">신청서 제출</button>
-        <div class="status-msg" id="statusMsg"></div>
-      </div>
-    </form>
+
+        <div class="fsec">
+          <h3><span class="no">4</span>요청사항 <span class="badge">선택</span></h3>
+          <textarea class="input" id="memo" rows="3" placeholder="일부 회차만 수강, 상담 희망 등 전달하실 내용이 있으면 적어주세요."></textarea>
+        </div>
+
+        <div class="consent">
+          <b>■ 개인정보 수집·이용 동의</b><br>
+          1. 수집 항목: 학생 이름, 학교, 학년, 학부모 휴대폰 번호<br>
+          2. 수집·이용 목적: 특강 신청 접수 및 반 배정, 수업 관련 안내<br>
+          3. 보유·이용 기간: 특강 종료 후 1년, 또는 삭제 요청 시까지
+        </div>
+        <label class="check"><input type="checkbox" id="consent"> 개인정보 수집 및 이용에 동의합니다.<span class="req">*</span></label>
+        <button class="btn btn-dark btn-block submit" id="submitBtn" type="submit">신청서 제출</button>
+      </form>
+
+      <aside class="side">
+        <div class="card">
+          <h4>신청 안내</h4>
+          <ol>
+            <li>특강 안내에서 원하는 특강을 <b>신청 담기</b> 합니다.</li>
+            <li>학생 정보를 입력하고 제출합니다.</li>
+            <li>담당 선생님이 확인 후 개별 안내드립니다.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h4>꼭 확인해 주세요</h4>
+          <ol>
+            <li>모집 인원에 따라 마감 또는 폐강될 수 있습니다.</li>
+            <li>재원생은 진행 과정과의 연계를 위해 특강이 필수로 진행됩니다.</li>
+            <li id="sideNote">설 연휴 기간은 휴강입니다.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h4>문의</h4>
+          <div style="font-size:22px;font-weight:800;letter-spacing:-0.02em">02-595-1280</div>
+          <div class="hint">CMS 서초영재교과관 안내데스크</div>
+        </div>
+      </aside>
+    </div>
   </section>
 </main>
 
 <footer>
-  CMS 서초영재관 카카오채널에서 1:1 문의가 가능합니다 — <a href="http://pf.kakao.com/_uhxcexb" target="_blank" rel="noopener">pf.kakao.com/_uhxcexb</a><br>
-  이 페이지는 Google Forms 응답을 대체하며, 제출된 신청 내역은 연동된 구글 시트에 자동 저장됩니다.<br>
-  <a href="admin.html" style="font-size:12px;color:var(--muted);">관리자 페이지</a>
+  <div class="foot">
+    <img src="assets/logo_master.png" alt="CMS">
+    <span>CMS 서초영재관 · 서초영재교과관 &nbsp;|&nbsp; 02-595-1280</span>
+    <a class="staff" href="admin.html">관리자</a>
+  </div>
 </footer>
 
-<div class="overlay" id="overlay">
-  <div class="modal" id="modalBody"></div>
-</div>
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
-  getFirestore, collection, doc, addDoc, setDoc, onSnapshot, query, orderBy, serverTimestamp
+  collection, addDoc, onSnapshot, query, where, doc, getDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import {
+  db, SEASON, CATEGORIES, HALLS, hallOf, GRADES, WEEKDAYS, esc, nl2br, mergeSettings,
+  variantTime, variantPeriod, variantLabel, computeSessions, fmtMD, fmtMDshort, parseDate, sortCourses,
+  attachPhoneFormat, backupToSheet, toast, fmtRange, breakText
+} from "./js/common.js";
+import { SEED_2027_WINTER } from "./js/seed-2027winter.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDCI98mwQ4lz3h0yzFfooTqXjrsdzyQArU",
-  authDomain: "cms-summer-camp.firebaseapp.com",
-  projectId: "cms-summer-camp",
-  storageBucket: "cms-summer-camp.firebasestorage.app",
-  messagingSenderId: "506548644045",
-  appId: "1:506548644045:web:6fb7f90d37d5891747a184"
-};
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-/* ============================================================
-   CONFIG — 구글시트 백업 기록용 Apps Script 웹앱 URL
-   (신청 데이터는 Firestore에 우선 저장되고, 구글시트에는 백업으로 함께 기록됩니다)
-============================================================ */
-const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyEOOvOMQhblJUSTMJyBCQ2zKJyq8r5PUJz-g9s9h0HxbLlhQ3sYVDZjV9-8WP-iKwyFw/exec"
-};
-
-/* ============================================================
-   강좌 데이터
-============================================================ */
 let COURSES = [];
-let coursesLoaded = false;
+let SETTINGS = mergeSettings(null);
+let usingSeed = false;
+let state = { hall: "gifted", cat: "전체", view: "card" };
+const picked = new Set();               // "courseId#variantIdx"
 
-function startCoursesListener(){
-  onSnapshot(collection(db, "courses"), (snap)=>{
-    COURSES = snap.docs.map(d=>({ ...d.data(), id: d.id }));
-    COURSES.sort((a,b)=>{
-      const ca = CATEGORIES.indexOf(a.category);
-      const cb = CATEGORIES.indexOf(b.category);
-      if(ca!==cb) return (ca<0?99:ca)-(cb<0?99:cb);
-      return (a.order||0)-(b.order||0);
-    });
-    coursesLoaded = true;
-    const activeChip = document.querySelector('.chip.active');
-    renderCatalog(activeChip ? activeChip.dataset.cat : "전체");
-    renderCourseSelect();
-  }, (err)=>{
-    document.getElementById('catalog').innerHTML =
-      `<div style="text-align:center;color:var(--muted);padding:60px 20px;">강좌 정보를 불러오지 못했습니다. 잠시 후 새로고침 해주세요.</div>`;
+/* ---------------- data ---------------- */
+function loadCourses() {
+  const q = query(collection(db, "courses"), where("season", "==", SEASON));
+  onSnapshot(q, (snap) => {
+    const list = snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+    if (!list.length) {
+      // 아직 Firestore에 겨울 강좌가 업로드되지 않았으면 안내문 원본 데이터로 표시
+      usingSeed = true;
+      COURSES = SEED_2027_WINTER.map((c, i) => ({ ...c, id: `seed-${i}`, order: i, season: SEASON }));
+    } else {
+      usingSeed = false;
+      COURSES = list;
+    }
+    sortCourses(COURSES);
+    for (const k of [...picked]) if (!findPick(k)) picked.delete(k);
+    renderAll();
+  }, (err) => {
     console.error(err);
+    usingSeed = true;
+    COURSES = sortCourses(SEED_2027_WINTER.map((c, i) => ({ ...c, id: `seed-${i}`, order: i, season: SEASON })));
+    renderAll();
   });
 }
-
-
-const CATEGORIES = ["고등","중등","초등","프리미엄관"];
-
-/* ============================================================
-   렌더링
-============================================================ */
-function courseOptionLabel(course, variant){
-  const suffix = course.variants.length > 1 ? `(${variant.label.replace('반','')})` : '';
-  return `[${course.category}] ${course.title}${suffix}`;
+async function loadSettings() {
+  try {
+    const s = await getDoc(doc(db, "settings", "site"));
+    SETTINGS = mergeSettings(s.exists() ? s.data() : null);
+  } catch (e) { SETTINGS = mergeSettings(null); }
+  renderWinter();
+  renderFormState();
+}
+function findPick(key) {
+  const [id, vi] = key.split("#");
+  const c = COURSES.find((x) => x.id === id);
+  if (!c) return null;
+  const v = (c.variants || [])[+vi];
+  return v ? { c, v, vi: +vi } : null;
 }
 
-function renderChips(){
-  const wrap = document.getElementById('filterChips');
-  const all = ["전체", ...CATEGORIES];
-  wrap.innerHTML = all.map((c,i)=>`<button class="chip${i===0?' active':''}" data-cat="${c}">${c}</button>`).join('');
-  wrap.querySelectorAll('.chip').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      wrap.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      renderCatalog(btn.dataset.cat);
-    });
-  });
+/* ---------------- render: catalog ---------------- */
+function renderAll() {
+  renderMeta();
+  renderHalls();
+  renderChips();
+  renderCatalog();
+  renderAddSelect();
+  renderPicked();
+  applyQueryPick();
 }
 
-function renderCatalog(filter){
-  const root = document.getElementById('catalog');
-  const cats = filter === "전체" ? CATEGORIES : [filter];
-  root.innerHTML = cats.map(cat=>{
-    const list = COURSES.filter(c=>c.category===cat);
-    if(!list.length) return '';
-    return `
-      <div class="cat-block">
-        <div class="cat-heading">${cat}과정 특강 <span class="count">${list.length}개 과정</span></div>
-        <div class="grid">
-          ${list.map(c=>{
-            const v = c.variants[0];
-            const multi = c.variants.length>1 ? ` 외 ${c.variants.length-1}개 일정` : '';
-            return `
-            <div class="card">
-              <span class="badge">${c.category}</span>
-              <h3>${c.title}</h3>
-              <div class="target">${c.target}</div>
-              <div class="meta">
-                <span><b>회차/시간</b> &nbsp;${v.time}${multi}</span>
-                <span><b>개강~종강</b> &nbsp;${v.period}</span>
-              </div>
-              <div class="card-actions">
-                <button class="btn-sm detail" data-id="${c.id}">자세히 보기</button>
-              </div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-  }).join('');
-
-  root.querySelectorAll('.btn-sm.detail').forEach(btn=>{
-    btn.addEventListener('click', ()=>openModal(btn.dataset.id));
-  });
+function renderMeta() {
+  let n = 0, min = null, max = null;
+  COURSES.forEach((c) => (c.variants || []).forEach((v) => {
+    n++;
+    if (v.start && (!min || v.start < min)) min = v.start;
+    if (v.end && (!max || v.end > max)) max = v.end;
+  }));
+  $("#metaCount").textContent = `${COURSES.length}개 특강 · ${n}개 반`;
+  const a = parseDate(min), b = parseDate(max);
+  $("#metaPeriod").textContent = a && b ? `${fmtMDshort(a)} ~ ${fmtMDshort(b)}` : "-";
 }
 
-function openModal(id){
-  const c = COURSES.find(x=>x.id===id);
-  if(!c) return;
-  const modal = document.getElementById('modalBody');
-  modal.innerHTML = `
-    <button class="modal-close" id="modalClose" aria-label="닫기">✕</button>
-    <span class="badge">${c.category}</span>
-    <h2>${c.title}</h2>
-    <div class="feature">${c.feature}</div>
-    <table class="infotable">
-      <tr><th>교재</th><td>${c.textbook}</td></tr>
-      <tr><th>수업대상</th><td>${c.target}</td></tr>
-      <tr><th>회차 및 시간</th><td>
-        ${c.variants.map(v=>`<div class="variant-row"><span class="variant-pill"><b>${v.label}</b> · ${v.time}</span></div>`).join('')}
-      </td></tr>
-      <tr><th>개강 및 종강</th><td>
-        ${c.variants.map(v=>`<div class="variant-row"><span class="variant-pill"><b>${v.label}</b> · ${v.period}</span></div>`).join('')}
-        ${c.note ? `<div class="note-pill">⏸ ${c.note}</div>` : ''}
-      </td></tr>
-    </table>
-    <div class="timeline-label">회차별 진도계획</div>
-    <div class="timeline">
-      ${c.sessions.map((s,i)=>`
-        <div class="tl-node">
-          <div class="tl-num">${i+1}회</div>
-          <div class="tl-topic">${s}</div>
-        </div>`).join('')}
-    </div>
-    <button class="modal-apply" id="modalApplyBtn">이 특강 신청하기</button>
-  `;
-  document.getElementById('modalClose').addEventListener('click', closeModal);
-  document.getElementById('modalApplyBtn').addEventListener('click', ()=>{
-    closeModal();
-    // 옵션이 여러 개면 첫 번째 일정으로 선택, 사용자가 신청서에서 변경 가능
-    const select = document.getElementById('course');
-    const targetLabel = courseOptionLabel(c, c.variants[0]);
-    for(const opt of select.options){
-      if(opt.value === targetLabel){ select.value = targetLabel; break; }
-    }
-    document.getElementById('apply').scrollIntoView({behavior:'smooth', block:'start'});
-    document.getElementById('school') && document.getElementById('studentName').focus();
-  });
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow='hidden';
+function renderHalls() {
+  $("#halls").innerHTML = HALLS.map((h) => {
+    const cnt = COURSES.filter((c) => h.cats.includes(c.category)).length;
+    return `<button class="hall-tab ${state.hall === h.id ? "on" : ""}" data-hall="${h.id}">
+      <img src="${h.logo}" alt="CMS ${h.name}"><span class="cnt">${h.name} · ${cnt}개</span></button>`;
+  }).join("");
+  $$("#halls .hall-tab").forEach((b) => b.onclick = () => { state.hall = b.dataset.hall; state.cat = "전체"; renderHalls(); renderChips(); renderCatalog(); });
+  const note = SETTINGS.heroNote;
+  $("#heroNote").style.display = note ? "flex" : "none";
+  $("#heroNote").innerHTML = note ? `⏸ ${esc(note)}` : "";
 }
 
-function closeModal(){
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow='';
+function renderChips() {
+  const hall = HALLS.find((h) => h.id === state.hall);
+  const cats = hall.cats.length > 1 ? ["전체", ...hall.cats] : [];
+  $("#chips").innerHTML = cats.map((c) => `<button class="chip ${state.cat === c ? "on" : ""}" data-cat="${c}">${c}</button>`).join("");
+  $$("#chips .chip").forEach((b) => b.onclick = () => { state.cat = b.dataset.cat; renderChips(); renderCatalog(); });
 }
-document.getElementById('overlay').addEventListener('click', (e)=>{
-  if(e.target.id==='overlay') closeModal();
-});
-document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
 
-function renderCourseSelect(){
-  const select = document.getElementById('course');
-  const keepFirst = select.querySelector('option[value=""]');
-  select.innerHTML = '';
-  if(keepFirst) select.appendChild(keepFirst);
-  else {
-    const placeholder = document.createElement('option');
-    placeholder.value=''; placeholder.disabled=true; placeholder.selected=true; placeholder.textContent='선택';
-    select.appendChild(placeholder);
+function visibleCats() {
+  const hall = HALLS.find((h) => h.id === state.hall);
+  return state.cat === "전체" ? hall.cats : [state.cat];
+}
+const catBadge = (c) => `<span class="badge ${hallOf(c.category).id === "premium" ? "blue" : "green"}">${esc(c.category)}</span>`;
+const isPicked = (c) => (c.variants || []).some((_, i) => picked.has(`${c.id}#${i}`));
+const allClosed = (c) => (c.variants || []).length && (c.variants || []).every((v) => v.closed);
+
+function renderCatalog() {
+  const root = $("#catalog");
+  const cats = visibleCats();
+  if (!COURSES.length) { root.innerHTML = `<div class="empty">등록된 특강이 없습니다.</div>`; return; }
+  if (state.view === "table") {
+    const rows = [];
+    cats.forEach((cat) => COURSES.filter((c) => c.category === cat).forEach((c) => (c.variants || []).forEach((v, vi) => {
+      const key = `${c.id}#${vi}`;
+      rows.push(`<tr>
+        <td>${catBadge(c)}</td>
+        <td class="t"><a data-detail="${c.id}">${esc(c.title)}</a>${c.subtitle ? `<div class="hint">${esc(c.subtitle)}</div>` : ""}</td>
+        <td><b>${esc(v.label || "")}</b></td>
+        <td>${esc(v.days ? `${v.days.join("·")} ${v.time || ""}` : v.time || "")}</td>
+        <td>${v.count ? `${v.count}회` : "-"}</td>
+        <td>${esc(variantPeriod(v))}</td>
+        <td style="text-align:right">${v.closed ? `<span class="badge red">마감</span>` :
+          `<button class="btn btn-xs ${picked.has(key) ? "btn-green" : ""}" data-toggle="${key}">${picked.has(key) ? "담김 ✓" : "담기"}</button>`}</td>
+      </tr>`);
+    })));
+    root.innerHTML = `<div class="table-wrap"><table class="ttable"><thead><tr><th>구분</th><th>특강</th><th>반</th><th>요일 / 시간</th><th>회차</th><th>개강 ~ 종강</th><th></th></tr></thead><tbody>${rows.join("") || `<tr><td colspan="7" class="empty">특강이 없습니다.</td></tr>`}</tbody></table></div>`;
+  } else {
+    root.innerHTML = cats.map((cat) => {
+      const list = COURSES.filter((c) => c.category === cat);
+      if (!list.length) return "";
+      return `<div class="cat-title">${esc(cat === "프리미엄관" ? "프리미엄관" : cat + "과정")} 특강 <span class="n">${list.length}개</span></div>
+      <div class="grid">${list.map((c) => {
+        const multi = (c.variants || []).length > 1;
+        const pk = isPicked(c);
+        return `<article class="card ccard ${pk ? "picked" : ""}">
+          <div class="top">${catBadge(c)}${multi ? `<span class="badge">${c.variants.length}개 반</span>` : ""}${allClosed(c) ? `<span class="badge red">마감</span>` : ""}</div>
+          <h3>${esc(c.title)}</h3>
+          ${c.subtitle ? `<div class="sub">${esc(c.subtitle)}</div>` : ""}
+          <div class="tgt">${esc(c.target || "")}</div>
+          <div class="vlist">${(c.variants || []).map((v) => `
+            <div class="vrow"><span class="vl">${esc(v.label || "")}</span><span class="vt">${esc(v.days ? `${v.days.join("·")} ${v.time || ""}` : v.time || "")}</span><span class="vp">${esc(variantPeriod(v))}</span></div>`).join("")}
+          </div>
+          <div class="acts">
+            <button class="btn btn-sm" data-detail="${c.id}">자세히 보기</button>
+            ${allClosed(c) ? `<button class="btn btn-sm" disabled>마감</button>` :
+              `<button class="btn btn-sm ${pk ? "btn-green" : "btn-dark"}" data-pick="${c.id}">${pk ? "담김 ✓" : "신청 담기 +"}</button>`}
+          </div>
+        </article>`;
+      }).join("")}</div>`;
+    }).join("") || `<div class="empty">특강이 없습니다.</div>`;
   }
-  CATEGORIES.forEach(cat=>{
-    const list = COURSES.filter(c=>c.category===cat);
-    if(!list.length) return;
-    const og = document.createElement('optgroup');
-    og.label = cat;
-    list.forEach(c=>{
-      c.variants.forEach(v=>{
-        const opt = document.createElement('option');
-        opt.value = courseOptionLabel(c, v);
-        opt.textContent = courseOptionLabel(c, v);
-        og.appendChild(opt);
-      });
-    });
-    select.appendChild(og);
-  });
+  $$("[data-detail]", root).forEach((b) => b.onclick = () => openDetail(b.dataset.detail));
+  $$("[data-pick]", root).forEach((b) => b.onclick = () => quickPick(b.dataset.pick));
+  $$("[data-toggle]", root).forEach((b) => b.onclick = () => togglePick(b.dataset.toggle));
 }
 
-/* ============================================================
-   신청서 제출 → 구글시트(Apps Script) 전송
-============================================================ */
-function initPhoneFormat(){
-  const phone = document.getElementById('phone');
-  phone.addEventListener('input', (e)=>{
-    let digits = e.target.value.replace(/\D/g,'').slice(0,11);
-    let formatted = digits;
-    if(digits.length > 7){
-      formatted = `${digits.slice(0,3)}-${digits.slice(3,7)}-${digits.slice(7)}`;
-    } else if(digits.length > 3){
-      formatted = `${digits.slice(0,3)}-${digits.slice(3)}`;
+function quickPick(id) {
+  const c = COURSES.find((x) => x.id === id);
+  const open = (c.variants || []).map((v, i) => ({ v, i })).filter((x) => !x.v.closed);
+  if (open.length === 1) togglePick(`${c.id}#${open[0].i}`);
+  else openDetail(id, true);
+}
+function togglePick(key, forceOn = false) {
+  const p = findPick(key);
+  if (!p) return;
+  if (picked.has(key) && !forceOn) { picked.delete(key); toast(`'${variantLabel(p.c, p.vi)}' 신청 목록에서 뺐습니다.`); }
+  else { picked.add(key); toast(`'${variantLabel(p.c, p.vi)}' 담았습니다. 아래 신청서에서 확인하세요.`, "ok"); }
+  renderCatalog(); renderPicked(); renderAddSelect();
+  if ($("#overlay").classList.contains("open")) { const id = key.split("#")[0]; openDetail(id); }
+}
+
+/* ---------------- detail modal ---------------- */
+function openDetail(id, chooseMode = false) {
+  const c = COURSES.find((x) => x.id === id);
+  if (!c) return;
+  const variants = c.variants || [];
+  const sched = variants.map((v) => computeSessions(v, c.breaks));
+  const firstExact = sched.findIndex((s) => s && s.exact);
+  const sessions = c.sessions || [];
+  $("#modal").innerHTML = `
+    <button class="modal-close" data-close aria-label="닫기">✕</button>
+    <div class="m-head">${catBadge(c)}${chooseMode ? `<span class="badge amber">반을 선택해 주세요</span>` : ""}</div>
+    <h2 class="m-title">${esc(c.title)}</h2>
+    ${c.subtitle ? `<div class="m-sub">${esc(c.subtitle)}</div>` : ""}
+    ${c.feature ? `<div class="m-feature">${nl2br(c.feature)}</div>` : ""}
+    <div class="m-info">
+      <div class="k">교재</div><div>${esc(c.textbook || "-")}</div>
+      <div class="k">수업대상</div><div>${nl2br(c.target || "-")}</div>
+      <div class="k">반 / 일정</div><div>
+        ${variants.map((v, i) => {
+          const key = `${c.id}#${i}`;
+          return `<div class="m-var"><span class="vl">${esc(v.label || "")}</span>
+            <span class="vt">${esc(variantTime(v))}<br>${esc(variantPeriod(v))}</span>
+            ${v.closed ? `<span class="badge red">마감</span>` :
+              `<button class="btn btn-sm ${picked.has(key) ? "btn-green" : "btn-dark"}" data-toggle="${key}">${picked.has(key) ? "담김 ✓" : "이 반 신청 담기"}</button>`}
+          </div>`;
+        }).join("")}
+        ${c.note ? `<div class="m-note">⏸ ${esc(c.note)}</div>` : ""}
+      </div>
+    </div>
+    ${sessions.length ? `
+      <div class="tl-head"><b>회차별 진도계획</b>
+        ${firstExact >= 0 && variants.length > 1 ? `<div class="seg" id="tlSeg">${variants.map((v, i) => sched[i] && sched[i].exact ? `<button data-vi="${i}" class="${i === firstExact ? "on" : ""}">${esc(v.label)}</button>` : "").join("")}</div>` : ""}
+      </div>
+      <div class="tl" id="tl"></div>` : ""}
+  `;
+  const drawTl = (vi) => {
+    const s = vi >= 0 ? sched[vi] : null;
+    const el = $("#tl");
+    if (!el) return;
+    el.innerHTML = sessions.map((t, i) => `<div class="tl-n"><span class="no">${i + 1}회</span>${s && s.exact && s.dates[i] ? `<span class="dt">${fmtMD(s.dates[i])}</span>` : ""}<div class="tp">${esc(t)}</div></div>`).join("");
+  };
+  drawTl(firstExact);
+  $$("#tlSeg button").forEach((b) => b.onclick = () => { $$("#tlSeg button").forEach((x) => x.classList.remove("on")); b.classList.add("on"); drawTl(+b.dataset.vi); });
+  $$("[data-toggle]", $("#modal")).forEach((b) => b.onclick = () => togglePick(b.dataset.toggle));
+  $("[data-close]", $("#modal")).onclick = closeModal;
+  if (!$("#overlay").classList.contains("open")) {
+    $("#overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("#overlay").scrollTop = 0;
+  }
+}
+function closeModal() { $("#overlay").classList.remove("open"); document.body.style.overflow = ""; }
+$("#overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+/* ---------------- winter school ---------------- */
+function renderWinter() {
+  const w = SETTINGS.winter;
+  const card = $("#winterCard");
+  $("#winter").style.display = w.enabled ? "" : "none";
+  $("#winterBox").closest(".fsec").style.display = w.enabled ? "" : "none";
+  if (!w.enabled) return;
+  const period = fmtRange(w.start, w.end);
+  const br = breakText(w.breaks);
+  card.innerHTML = `
+    <div class="w-l">
+      <span class="badge dark">${esc(w.subtitle || "자기주도학습")}</span>
+      <h3>${esc(w.title || "윈터스쿨")}</h3>
+      <p>${nl2br(w.desc || "")}</p>
+      <a class="btn btn-dark" href="#apply" id="winterGo">윈터스쿨 신청하기</a>
+    </div>
+    <div class="w-r">
+      <div class="wi"><b>시간</b><span>${esc(w.time)}</span></div>
+      <div class="wi"><b>기간</b><span>${esc(period)}</span></div>
+      ${br ? `<div class="wi"><b>휴무</b><span>${esc(br)}</span></div>` : ""}
+      ${w.room ? `<div class="wi"><b>장소</b><span>${esc(w.room)}</span></div>` : ""}
+      <div class="week">${["월", "화", "수", "목", "금"].map((d) => `<span>${d}</span>`).join("")}</div>
+      <div style="font-size:13px;opacity:.75">원하는 요일만 골라서 참여할 수 있습니다.</div>
+    </div>`;
+  $("#winterGo").onclick = () => { $("#winterOn").checked = true; syncWinterBox(); };
+  $("#winterInfoLine").textContent = `${w.time} · ${period}${br ? ` · 휴무 ${br}` : ""}`;
+  $("#winterDays").innerHTML = ["월", "화", "수", "목", "금"].map((d) => `<label class="pill-check"><input type="checkbox" name="wday" value="${d}">${d}</label>`).join("")
+    + `<button type="button" class="btn btn-sm btn-ghost" id="wAll">매일(월~금)</button>`;
+  $("#wAll").onclick = () => $$("input[name=wday]").forEach((x) => x.checked = true);
+}
+function syncWinterBox() { $("#winterBox").classList.toggle("on", $("#winterOn").checked); }
+
+/* ---------------- form ---------------- */
+function renderAddSelect() {
+  const sel = $("#addCourse");
+  const groups = CATEGORIES.map((cat) => {
+    const opts = [];
+    COURSES.filter((c) => c.category === cat).forEach((c) => (c.variants || []).forEach((v, vi) => {
+      const key = `${c.id}#${vi}`;
+      if (v.closed || picked.has(key)) return;
+      opts.push(`<option value="${key}">${esc(variantLabel(c, vi))} · ${esc(v.days ? v.days.join("") + " " + (v.time || "") : v.time || "")}</option>`);
+    }));
+    return opts.length ? `<optgroup label="${cat}">${opts.join("")}</optgroup>` : "";
+  }).join("");
+  sel.innerHTML = `<option value="">＋ 특강 선택해서 추가하기</option>${groups}`;
+}
+function renderPicked() {
+  const list = [...picked].map(findPick).filter(Boolean);
+  $("#cartCount").textContent = list.length;
+  $("#pickedList").innerHTML = list.length ? list.map(({ c, v, vi }) => `
+    <div class="picked-item">
+      ${catBadge(c)}
+      <div><div class="pi-t">${esc(variantLabel(c, vi))}</div><div class="pi-s">${esc(variantTime(v))} · ${esc(variantPeriod(v))}</div></div>
+      <button type="button" class="x" data-unpick="${c.id}#${vi}" aria-label="삭제">✕</button>
+    </div>`).join("") : `<div class="picked-empty">아직 담은 특강이 없습니다.</div>`;
+  $$("[data-unpick]").forEach((b) => b.onclick = () => togglePick(b.dataset.unpick));
+}
+function renderFormState() {
+  const form = $("#applyForm");
+  const note = SETTINGS.heroNote;
+  if (note) $("#sideNote").textContent = note;
+  let box = $("#closedBox");
+  if (!SETTINGS.applyOpen) {
+    form.style.display = "none";
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "closedBox"; box.className = "card closed-box";
+      box.innerHTML = `<h3 style="margin:0 0 8px">특강 신청이 마감되었습니다</h3><p class="hint" style="font-size:14px">추가 문의는 02-595-1280 으로 연락 주세요.</p>`;
+      form.parentNode.insertBefore(box, form);
     }
-    e.target.value = formatted;
-  });
+  } else { form.style.display = ""; if (box) box.remove(); }
 }
 
-function initForm(){
-  const form = document.getElementById('applyForm');
-  const btn = document.getElementById('submitBtn');
-  const status = document.getElementById('statusMsg');
+/* 안내문 링크(?pick=courseId#0,courseId#1)로 들어오면 자동 담기 */
+let queryApplied = false;
+function applyQueryPick() {
+  if (queryApplied || usingSeed && !location.search.includes("pick")) return;
+  const p = new URLSearchParams(location.search).get("pick");
+  if (!p) { queryApplied = true; return; }
+  let added = 0;
+  p.split(",").forEach((k) => { if (findPick(k)) { picked.add(k); added++; } });
+  if (added || !usingSeed) {
+    queryApplied = true;
+    if (added) { renderCatalog(); renderPicked(); renderAddSelect(); setTimeout(() => $("#apply").scrollIntoView({ behavior: "smooth" }), 300); }
+  }
+}
 
-  form.addEventListener('submit', async (e)=>{
+function initForm() {
+  $("#grade").innerHTML = `<option value="">선택</option>` + GRADES.map((g) => `<option>${g}</option>`).join("");
+  attachPhoneFormat($("#phone"));
+  $("#addCourse").onchange = (e) => { if (e.target.value) togglePick(e.target.value, true); e.target.value = ""; };
+  $$("input[name=enrolled]").forEach((r) => r.onchange = () => { $("#regularWrap").style.display = r.value === "재원생" && r.checked ? "" : "none"; });
+  $("#winterOn").onchange = syncWinterBox;
+  $$("input[name=wperiod]").forEach((r) => r.onchange = () => { $("#winterMemo").style.display = $("input[name=wperiod]:checked").value === "일부 기간" ? "" : "none"; });
+
+  $("#applyForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    status.className='status-msg';
-    status.style.display='none';
+    const val = (id) => $(id).value.trim();
+    const studentName = val("#studentName"), school = val("#school"), grade = $("#grade").value, phone = val("#phone");
+    const enrolled = $("input[name=enrolled]:checked")?.value || "";
+    const winterOn = SETTINGS.winter.enabled && $("#winterOn").checked;
+    const wdays = $$("input[name=wday]:checked").map((x) => x.value);
+    const picks = [...picked].map(findPick).filter(Boolean);
+    const fail = (msg, el) => { toast(msg, "err"); if (el) el.focus(); };
 
-    const phone = document.getElementById('phone').value.trim();
-    if(!/^01[0-9]-?\d{3,4}-?\d{4}$/.test(phone)){
-      status.textContent = '학부모 연락처 형식을 확인해주세요. (예: 010-1234-5678)';
-      status.classList.add('err');
-      return;
-    }
+    if (!studentName) return fail("학생 이름을 입력해주세요.", $("#studentName"));
+    if (!school) return fail("학교를 입력해주세요.", $("#school"));
+    if (!grade) return fail("학년을 선택해주세요.", $("#grade"));
+    if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(phone)) return fail("학부모 연락처 형식을 확인해주세요. (예: 010-1234-5678)", $("#phone"));
+    if (!enrolled) return fail("재원 여부를 선택해주세요.");
+    if (!picks.length && !winterOn) return fail("신청할 특강을 담거나 윈터스쿨을 선택해주세요.", $("#addCourse"));
+    if (winterOn && !wdays.length) return fail("윈터스쿨 참여 요일을 선택해주세요.");
+    if (!$("#consent").checked) return fail("개인정보 수집·이용에 동의해주세요.", $("#consent"));
 
-    const data = {
-      timestamp: new Date().toLocaleString('ko-KR'),
-      studentName: document.getElementById('studentName').value.trim(),
-      school: document.getElementById('school').value.trim(),
-      grade: document.getElementById('grade').value,
-      phone: phone,
-      enrolled: form.querySelector('input[name="enrolled"]:checked')?.value || '',
-      course: document.getElementById('course').value,
-      consent: document.getElementById('consent').checked ? 'Y' : 'N'
+    const btn = $("#submitBtn");
+    btn.disabled = true; btn.textContent = "제출 중…";
+    const timestamp = new Date().toLocaleString("ko-KR");
+    const submissionId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+    const base = {
+      season: SEASON, studentName, school, grade, phone, enrolled,
+      regularClass: enrolled === "재원생" ? val("#regularClass") : "",
+      memo: val("#memo"), consent: "Y", status: "active", source: "web",
+      submissionId, timestamp
     };
-
-    btn.disabled = true;
-    btn.textContent = '제출 중...';
-
-    try{
-      // 1) Firestore에 즉시 저장 (관리자 페이지에 실시간 반영)
-      await addDoc(collection(db, "applications"), {
-        ...data,
-        createdAt: serverTimestamp()
-      });
-
-      // 2) 구글시트에도 백업 기록 (실패해도 신청 자체는 이미 성공한 상태이므로 무시)
-      if(!CONFIG.SCRIPT_URL.includes('PASTE_YOUR')){
-        fetch(CONFIG.SCRIPT_URL, {
-          method:'POST',
-          mode:'no-cors',
-          headers:{'Content-Type':'application/x-www-form-urlencoded'},
-          body:new URLSearchParams(data).toString()
-        }).catch(()=>{ /* 백업 실패는 신청 결과에 영향 없음 */ });
+    try {
+      const done = [];
+      for (const { c, v, vi } of picks) {
+        const data = {
+          ...base, courseId: c.id, variantIdx: vi, courseKey: `${c.id}#${vi}`,
+          course: variantLabel(c, vi), category: c.category, variantLabel: v.label || "", staffMemo: ""
+        };
+        await addDoc(collection(db, "applications"), { ...data, createdAt: serverTimestamp() });
+        backupToSheet({ type: "course", ...data, schedule: `${variantTime(v)} / ${variantPeriod(v)}` });
+        done.push(`${variantLabel(c, vi)} · ${variantTime(v)}`);
       }
-
-      status.textContent = `신청이 접수되었습니다! (${data.studentName} 학생 · ${data.course})`;
-      status.classList.add('ok');
-      status.style.display='block';
-      form.reset();
-    }catch(err){
+      if (winterOn) {
+        const wperiod = $("input[name=wperiod]:checked").value;
+        const data = { ...base, days: wdays, period: wperiod, periodMemo: wperiod === "일부 기간" ? val("#winterMemo") : "", staffMemo: "" };
+        await addDoc(collection(db, "winterSchool"), { ...data, createdAt: serverTimestamp() });
+        backupToSheet({ type: "winter", ...data, days: wdays.join(",") });
+        done.push(`윈터스쿨 · ${wdays.join("·")} (${wperiod}${data.periodMemo ? `: ${data.periodMemo}` : ""})`);
+      }
+      showDone(studentName, done);
+      $("#applyForm").reset();
+      picked.clear();
+      $("#regularWrap").style.display = "none"; $("#winterMemo").style.display = "none";
+      syncWinterBox(); renderPicked(); renderCatalog(); renderAddSelect();
+    } catch (err) {
       console.error(err);
-      status.textContent = '제출 중 문제가 발생했습니다. 잠시 후 다시 시도하거나 카카오채널로 문의해주세요.';
-      status.classList.add('err');
-      status.style.display='block';
-    }finally{
-      btn.disabled = false;
-      btn.textContent = '신청서 제출';
+      toast("제출 중 문제가 발생했습니다. 잠시 후 다시 시도하거나 02-595-1280 으로 문의해주세요.", "err");
+    } finally {
+      btn.disabled = false; btn.textContent = "신청서 제출";
     }
   });
 }
+function showDone(name, items) {
+  $("#modal").innerHTML = `
+    <button class="modal-close" data-close aria-label="닫기">✕</button>
+    <div style="width:56px;height:56px;border-radius:16px;background:var(--green-p);color:var(--green-d);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800">✓</div>
+    <h2 class="m-title" style="margin-top:16px">신청이 접수되었습니다</h2>
+    <p class="m-sub" style="font-size:15px">${esc(name)} 학생의 신청 내역입니다. 담당 선생님이 확인 후 안내드리겠습니다.</p>
+    <ul class="done-list">${items.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+    <button class="btn btn-dark btn-block" data-close>확인</button>`;
+  $$("[data-close]", $("#modal")).forEach((b) => b.onclick = closeModal);
+  $("#overlay").classList.add("open"); document.body.style.overflow = "hidden";
+}
 
-renderChips();
-document.getElementById('catalog').innerHTML = `<div style="text-align:center;color:var(--muted);padding:60px 20px;font-family:var(--font-mono);">강좌 정보를 불러오는 중입니다...</div>`;
-startCoursesListener();
+$$("#viewSeg button").forEach((b) => b.onclick = () => {
+  $$("#viewSeg button").forEach((x) => x.classList.remove("on")); b.classList.add("on");
+  state.view = b.dataset.view; renderCatalog();
+});
+
 initForm();
-initPhoneFormat();
+loadSettings();
+loadCourses();
 </script>
 </body>
 </html>
