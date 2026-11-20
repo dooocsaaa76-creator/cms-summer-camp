@@ -154,12 +154,14 @@ export function renderNotice(n, opts = {}) {
     ${planRows.length ? `${H("학습 계획", ` <small>(${esc(n.planRange || "1월 ~ 2월")})</small>`)}
       <table class="nt-tbl nt-plan"><thead><tr><th style="width:84px">수업</th><th>과정</th><th style="width:110px">요일 / 시간</th><th style="width:104px">개강 및 종강</th><th>목표</th></tr></thead><tbody>${planRows.join("")}</tbody></table>` : ""}
 
+    ${(tt || sessionsHtml || cal) ? `<section class="nt-p2">
     ${tt ? `${H("방학 기간 학습 시간표")}${tt}` : ""}
 
-    ${sessionsHtml ? `${H("특강 수업 구성")}${n.footnote ? `<p class="nt-foot">* ${esc(n.footnote)}</p>` : ""}${sessionsHtml}` : ""}
+    ${sessionsHtml ? `${H("특강 수업 구성")}${n.footnote ? `<p class="nt-foot">* ${esc(n.footnote)}</p>` : ""}<div class="nt-sess-wrap${specials.filter((s) => (s.sessions || []).length).length > 1 ? " multi" : ""}">${sessionsHtml}</div>` : ""}
 
     ${cal ? `${H("방학 기간 학습 일정")}${cal}
       <div class="nt-legend"><span class="ev s">특강</span>${w ? `<span class="ev w">윈터스쿨</span>` : ""}${regular.length ? `<span class="ev r">정규수업</span>` : ""}${(n.holidays || []).length ? `<span class="ev h">휴무</span>` : ""}</div>` : ""}
+    </section>` : ""}
 
     ${applyLink}
     <footer class="nt-bottom">문의 : CMS 서초영재교과관 ${esc(CONTACT)}</footer>
@@ -248,10 +250,29 @@ export const NOTICE_CSS = `
   .ev{font-size:9.5px;padding:1px 2px;}
 }
 @media print{
+  @page{size:A4;margin:10mm 12mm;}
+  .nt,.nt *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .nt{padding:0;max-width:none;}
   .nt-cta{display:none;}
-  .nt-cal td{height:64px;}
   .nt-h{break-after:avoid;}
   table{break-inside:avoid;}
+  /* 2·3·4번(시간표·수업 구성·일정)을 한 페이지에 */
+  .nt-p2{break-before:page;break-inside:avoid;}
+  .nt-p2 .nt-h{margin:12px 0 5px;font-size:15px;}
+  .nt-p2 .nt-h:first-child{margin-top:0;}
+  .nt-p2 .nt-tt{font-size:12px;}
+  .nt-p2 .nt-tt th,.nt-p2 .nt-tt td{padding:4px 6px;line-height:1.3;}
+  .nt-p2 .nt-foot{font-size:11.5px;margin:0 0 4px;}
+  .nt-p2 .nt-sess{margin-bottom:6px;}
+  .nt-p2 .nt-sess-t{margin:4px 0 3px;font-size:13px;}
+  .nt-p2 .nt-sess-wrap.multi{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+  .nt-p2 .nt-sess .nt-tbl{font-size:12px;}
+  .nt-p2 .nt-sess .nt-tbl th,.nt-p2 .nt-sess .nt-tbl td{padding:3px 8px;line-height:1.4;}
+  .nt-p2 .nt-cal th{padding:3px 0;font-size:11.5px;}
+  .nt-p2 .nt-cal td{height:42px;padding:2px 3px;}
+  .nt-p2 .nt-cal .dn{font-size:11px;margin-bottom:0;}
+  .nt-p2 .ev{font-size:9.5px;margin-top:1px;padding:0 3px;line-height:1.3;}
+  .nt-p2 .nt-legend{margin-top:5px;}
+  .nt-bottom{display:none;}
 }
 `;
