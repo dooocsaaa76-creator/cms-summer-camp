@@ -671,6 +671,10 @@ function renderWinter() {
   const term = ui.wSearch.trim();
   const list = WINTER.filter((w) => seasonOf(w) === season).sort((a, b) => tsOf(a) - tsOf(b));
   const act = list.filter((w) => !isCancel(w));
+  const wKey = (x) => `${(x.studentName || "").replace(/\s+/g, "")}|${(x.phone || "").replace(/\D/g, "")}`;
+  const wDup = {};
+  act.forEach((x) => { wDup[wKey(x)] = (wDup[wKey(x)] || 0) + 1; });
+  const isWDup = (x) => !isCancel(x) && wDup[wKey(x)] > 1;
   const w = SETTINGS.winter;
   $("#wInfo").textContent = season === SEASON ? `${w.title} · ${w.time} · ${fmtRange(w.start, w.end)}${w.room ? ` · ${w.room}` : ""}${breakText(w.breaks) ? ` · 휴무 ${breakText(w.breaks)}` : ""}` : "";
   $("#wStats").innerHTML = `<div class="stat"><b>${act.length}</b><span>신청 학생</span></div>` +
@@ -681,14 +685,14 @@ function renderWinter() {
     return `<div class="wcol"><div class="wcol-h">${d}요일 <span>${dl.filter((x) => !isCancel(x)).length}명</span></div>
       <table class="wt"><tbody>${dl.map((x, i) => `<tr class="${isCancel(x) ? "x" : ""} ${term && (x.studentName || "").includes(term) ? "hit" : ""}">
         <td class="n">${i + 1}</td>
-        <td class="nm" data-w="${x.id}">${esc(x.studentName)}<small>${esc(x.school || "")}${esc(x.grade ? " " + x.grade : "")}</small></td>
+        <td class="nm" data-w="${x.id}">${esc(x.studentName)}${isWDup(x) ? `<span class="dup">중복</span>` : ""}<small>${esc(x.school || "")}${esc(x.grade ? " " + x.grade : "")}</small></td>
         <td class="pd">${esc(x.period === "일부 기간" ? (x.periodMemo || "일부 기간") : "전체 기간")}${x.staffMemo ? `<br><span class="memo-tag" style="max-width:100%">${esc(x.staffMemo)}</span>` : ""}</td>
         <td class="en"><span class="badge ${x.enrolled === "재원생" ? "green" : "blue"}">${x.enrolled === "재원생" ? "재원" : "외부"}</span></td>
       </tr>`).join("") || `<tr><td class="hint" style="text-align:center;padding:14px">신청자 없음</td></tr>`}</tbody></table></div>`;
   }).join("");
   $("#wTable").innerHTML = `<thead><tr><th>#</th><th>학생</th><th>학교/학년</th><th>연락처</th><th>재원</th><th>요일</th><th>기간</th><th>메모</th><th>상태</th><th>신청일시</th></tr></thead><tbody>
     ${list.map((x, i) => `<tr style="${isCancel(x) ? "color:#B8B8BE;text-decoration:line-through" : ""}">
-      <td>${i + 1}</td><td><a href="javascript:void 0" data-w="${x.id}"><b>${esc(x.studentName)}</b></a></td><td>${esc(x.school || "")} ${esc(x.grade || "")}</td><td>${esc(x.phone || "")}</td><td>${esc(x.enrolled || "")}</td>
+      <td>${i + 1}</td><td><a href="javascript:void 0" data-w="${x.id}"><b>${esc(x.studentName)}</b></a>${isWDup(x) ? `<span class="dup">중복</span>` : ""}</td><td>${esc(x.school || "")} ${esc(x.grade || "")}</td><td>${esc(x.phone || "")}</td><td>${esc(x.enrolled || "")}</td>
       <td><b>${esc((x.days || []).join(""))}</b></td><td>${esc(x.period === "일부 기간" ? x.periodMemo || "일부" : "전체")}</td><td>${esc([x.staffMemo, x.memo].filter(Boolean).join(" / "))}</td>
       <td>${isCancel(x) ? "취소" : "신청"}</td><td>${esc(fmtTs(x))}</td></tr>`).join("") || `<tr><td colspan="10" class="empty">윈터스쿨 신청자가 없습니다.</td></tr>`}</tbody>`;
   $$("[data-w]").forEach((el) => el.onclick = () => editWinter(el.dataset.w));
