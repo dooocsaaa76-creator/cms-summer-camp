@@ -1305,6 +1305,7 @@ function renderSettings() {
         <div class="field"><label>휴무 시작</label><input class="input" type="date" id="sWBA" value="${esc((w.breaks || [])[0]?.from || "")}"></div>
         <div class="field"><label>휴무 끝</label><input class="input" type="date" id="sWBZ" value="${esc((w.breaks || [])[0]?.to || "")}"></div>
         <div class="field full"><label>소개 문구</label><textarea class="input" id="sWD" rows="3">${esc(w.desc)}</textarea></div>
+        <div class="field full"><label>블로그 홍보 링크 <span class="hint">(비우면 신청페이지에 버튼이 나오지 않습니다)</span></label><input class="input" id="sWBlog" placeholder="https://blog.naver.com/..." value="${esc(w.blog || "")}"></div>
       </div>
     </div>
     <div class="card set-card"><h3>바로가기</h3>
@@ -1318,7 +1319,7 @@ function renderSettings() {
     const data = {
       applyOpen: $("#sOpen").checked, heroNote: $("#sNote").value.trim(),
       winter: { enabled: $("#sWOn").checked, title: $("#sWT").value.trim(), subtitle: $("#sWS").value.trim(), time: $("#sWTime").value.trim(), room: $("#sWR").value.trim(),
-        start: $("#sWA").value, end: $("#sWZ").value, breaks: bA ? [{ from: bA, to: bZ || bA }] : [], desc: $("#sWD").value.trim() }
+        start: $("#sWA").value, end: $("#sWZ").value, breaks: bA ? [{ from: bA, to: bZ || bA }] : [], desc: $("#sWD").value.trim(), blog: $("#sWBlog").value.trim() }
     };
     await setDoc(doc(db, "settings", "site"), data, { merge: true });
     settingsDirty = false; toast("설정을 저장했습니다.", "ok");

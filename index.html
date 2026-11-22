@@ -100,6 +100,9 @@
   .winter .w-r{background:linear-gradient(135deg,#2f3a45,#414143);color:#fff;padding:34px;display:flex;flex-direction:column;justify-content:center;gap:14px;}
   .winter h3{font-size:26px;margin:8px 0 10px;letter-spacing:-0.03em;}
   .winter p{color:var(--ink-2);margin:0 0 18px;}
+  .w-acts{display:flex;flex-wrap:wrap;gap:8px;}
+  .btn-blog{background:#03C75A;border-color:#03C75A;color:#fff;}
+  .btn-blog:hover{background:#02b350;border-color:#02b350;color:#fff;}
   .w-r .wi{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:12px;font-size:15px;}
   .w-r .wi b{opacity:.7;font-weight:600;}
   .week{display:flex;gap:6px;margin-top:4px;}
@@ -600,6 +603,7 @@ $("#overlay").addEventListener("click", (e) => { if (e.target.id === "overlay") 
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
 /* ---------------- winter school ---------------- */
+const safeUrl = (u) => { const s = String(u || "").trim(); const l = s.toLowerCase(); return l.startsWith("https://") || l.startsWith("http://") ? s : ""; };
 function renderWinter() {
   const w = SETTINGS.winter;
   const card = $("#winterCard");
@@ -613,7 +617,10 @@ function renderWinter() {
       <span class="badge dark">${esc(w.subtitle || "자기주도학습")}</span>
       <h3>${esc(w.title || "윈터스쿨")}</h3>
       <p>${nl2br(w.desc || "")}</p>
-      <a class="btn btn-dark" href="#apply" id="winterGo">윈터스쿨 신청하기</a>
+      <div class="w-acts">
+        <a class="btn btn-dark" href="#apply" id="winterGo">윈터스쿨 신청하기</a>
+        ${safeUrl(w.blog) ? `<a class="btn btn-blog" href="${esc(safeUrl(w.blog))}" target="_blank" rel="noopener">윈터스쿨 자세히 보기 (블로그) ↗</a>` : ""}
+      </div>
     </div>
     <div class="w-r">
       <div class="wi"><b>시간</b><span>${esc(w.time)}</span></div>

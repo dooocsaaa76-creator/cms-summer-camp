@@ -56,6 +56,7 @@ export const DEFAULT_SETTINGS = {
     end: "2027-02-12",
     breaks: [{ from: "2027-02-06", to: "2027-02-10" }],
     room: "",
+    blog: "https://blog.naver.com/cms_seocho/224485232446",
     desc: "정규과정 과제 및 타 학원 과제 학습. 일일 학습계획표에 따라 자기주도학습 능력을 키우는 소중한 아침 시간입니다. 요일 선택이 가능합니다."
   }
 };
