@@ -123,6 +123,8 @@
   .cm-row .hd{cursor:grab;color:var(--muted);font-size:18px;user-select:none;}
   .cm-row .ti{font-weight:800;}
   .cm-row .vs{font-size:12.5px;color:var(--muted);}
+  .cm-row .tch{margin-left:6px;vertical-align:2px;}
+  .cm-row .tch.none{background:var(--amber-p,#FFF4DB);color:#9A5B00;}
   .cm-row .ac{margin-left:auto;display:flex;gap:6px;}
 
   /* form grid in modals */
@@ -1011,14 +1013,23 @@ function renderCourses() {
     $("#cList").innerHTML = `<div class="empty card">${esc(seasonName(season))} 강좌가 없습니다.${season === SEASON ? " [겨울 초기 강좌 업로드]를 누르면 안내문 한글파일의 강좌 18개가 등록됩니다." : ""}</div>`;
     return;
   }
+  // 특강 담당 표시 (관리자 페이지 전용 · 신청페이지에는 나오지 않음)
+  const teachersOf = (c) => [...new Set((c.variants || []).map((v) => (v.teacher || "").trim()).filter(Boolean))];
+  // 반마다 담당이 다르거나 일부 반만 입력된 경우엔 반별 줄에 표시
+  const teacherPerVariant = (c) => (c.variants || []).length > 1 && (teachersOf(c).length > 1 || (teachersOf(c).length === 1 && (c.variants || []).some((v) => !(v.teacher || "").trim())));
+  const teacherBadges = (c) => {
+    const t = teachersOf(c);
+    if (!t.length) return `<span class="badge tch none" title="수정 > 반 / 일정의 '담당' 칸에 입력하세요">담당 미지정</span>`;
+    return teacherPerVariant(c) ? "" : `<span class="badge green tch">담당 ${esc(t[0])}</span>`;
+  };
   $("#cList").innerHTML = CATEGORIES.map((cat) => {
     const cl = list.filter((c) => c.category === cat);
     if (!cl.length) return "";
     return `<div class="cm-cat">${cat} <span class="hint">${cl.length}개</span></div><div class="cm-group" data-cat="${cat}">${cl.map((c) => `
       <div class="cm-row" draggable="true" data-id="${c.id}">
         <span class="hd" title="드래그해서 순서 변경">⠿</span>
-        <div><div class="ti">${esc(c.title)} ${c.subtitle ? `<span class="hint">${esc(c.subtitle)}</span>` : ""}</div>
-          <div class="vs">${(c.variants || []).map((v) => `${esc(v.label || "")} ${esc(variantTime(v))} · ${esc(variantPeriod(v))}${v.teacher ? ` · ${esc(v.teacher)}` : ""}${v.closed ? " · 마감" : ""}`).join("<br>")}</div></div>
+        <div><div class="ti">${esc(c.title)} ${c.subtitle ? `<span class="hint">${esc(c.subtitle)}</span>` : ""}${teacherBadges(c)}</div>
+          <div class="vs">${(c.variants || []).map((v) => `${esc(v.label || "")} ${esc(variantTime(v))} · ${esc(variantPeriod(v))}${teacherPerVariant(c) ? ` · <b style="color:var(--ink-2)">담당 ${esc(v.teacher || "미지정")}</b>` : ""}${v.closed ? " · 마감" : ""}`).join("<br>")}</div></div>
         <div class="ac"><button class="btn btn-xs" data-cedit="${c.id}">수정</button><button class="btn btn-xs" data-ccopy="${c.id}">복제</button><button class="btn btn-xs btn-danger" data-cdel="${c.id}">삭제</button></div>
       </div>`).join("")}</div>`;
   }).join("");
@@ -1155,7 +1166,7 @@ function editCourse(c, isNew = false) {
         <div class="field"><label>개강일</label><input class="input sm" type="date" data-f="start" value="${esc(v.start || "")}"></div>
         <div class="field"><label>종강일</label><input class="input sm" type="date" data-f="end" value="${esc(v.end || "")}"></div>
         <div class="field" style="grid-column:span 2"><label>기간 표기 <span class="hint">(비우면 개강~종강 자동)</span></label><input class="input sm" data-f="period" value="${esc(v.period || "")}"></div>
-        <div class="field"><label>담당</label><input class="input sm" data-f="teacher" value="${esc(v.teacher || "")}"></div>
+        <div class="field"><label>담당 선생님</label><input class="input sm" data-f="teacher" placeholder="관리자에게만 표시" value="${esc(v.teacher || "")}"></div>
         <div class="field"><label>강의실</label><input class="input sm" data-f="room" value="${esc(v.room || "")}"></div>
       </div>
       <label class="check" style="margin-top:8px;font-size:13px"><input type="checkbox" data-f="closed" ${v.closed ? "checked" : ""}> 신청 마감</label>
