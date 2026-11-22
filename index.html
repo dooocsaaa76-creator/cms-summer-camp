@@ -53,6 +53,9 @@
   .hall-tab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border:1.5px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;text-align:left;transition:all .15s;}
   .hall-tab img{height:34px;width:auto;}
   .hall-tab .cnt{font-size:13px;font-weight:700;color:var(--muted);}
+  .hall-tab .hinfo{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;}
+  .hall-tab .addr{font-size:12.5px;color:var(--muted);font-weight:500;}
+  .hall-tab .addr::before{content:"📍 ";}
   .hall-tab.on{border-color:var(--charcoal);box-shadow:0 0 0 3px rgba(65,65,67,.08);}
   .hall-tab[data-hall="gifted"].on{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,165,126,.12);}
   .hall-tab[data-hall="premium"].on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,167,225,.12);}
@@ -151,6 +154,10 @@
   .m-var .vl{font-weight:800;}
   .m-var .vt{font-size:13.5px;color:var(--ink-2);}
   .m-var .btn{margin-left:auto;}
+  .tg-line{display:flex;gap:8px;align-items:baseline;}
+  .tg-line + .tg-line{margin-top:6px;}
+  .tg-l{flex:none;font-size:12px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--line-2);color:var(--ink-2);}
+  .tg-l.ext{background:#FDECEC;color:#D93636;}
   .m-note{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:#9A5B00;background:var(--amber-p);padding:6px 10px;border-radius:8px;margin-top:6px;}
   .tl-head{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px;gap:8px;flex-wrap:wrap;}
   .tl-head b{font-size:15px;}
@@ -186,6 +193,8 @@
     .halls{grid-template-columns:1fr 1fr;gap:8px;}
     .hall-tab{padding:12px;flex-direction:column;align-items:flex-start;}
     .hall-tab img{height:24px;}
+    .hall-tab .hinfo{align-items:flex-start;text-align:left;}
+    .hall-tab .addr{font-size:11.5px;}
     .grid{grid-template-columns:1fr;}
     .fgrid{grid-template-columns:1fr;}
     .form-card{padding:22px 18px;}
@@ -286,7 +295,7 @@
         <div class="fsec">
           <h3><span class="no">3</span>윈터스쿨 신청 <span class="badge">선택</span></h3>
           <div class="winter-box" id="winterBox">
-            <label class="switch-row"><span class="switch"><input type="checkbox" id="winterOn"><span></span></span><span id="winterSwitchLabel">윈터스쿨도 함께 신청합니다</span></label>
+            <label class="switch-row"><span class="switch"><input type="checkbox" id="winterOn" checked><span></span></span><span id="winterSwitchLabel">윈터스쿨도 함께 신청합니다</span></label>
             <div class="winter-detail">
               <div class="hint" id="winterInfoLine"></div>
               <div class="field"><span class="label">참여 요일<span class="req">*</span></span>
@@ -441,7 +450,7 @@ function renderHalls() {
   $("#halls").innerHTML = HALLS.map((h) => {
     const cnt = COURSES.filter((c) => h.cats.includes(c.category)).length;
     return `<button class="hall-tab ${state.hall === h.id ? "on" : ""}" data-hall="${h.id}">
-      <img src="${h.logo}" alt="CMS ${h.name}"><span class="cnt">${h.name} · ${cnt}개</span></button>`;
+      <img src="${h.logo}" alt="CMS ${h.name}"><span class="hinfo"><span class="cnt">${h.name} · ${cnt}개</span>${h.address ? `<span class="addr">${esc(h.address)}</span>` : ""}</span></button>`;
   }).join("");
   $$("#halls .hall-tab").forEach((b) => b.onclick = () => { state.hall = b.dataset.hall; state.cat = "전체"; renderHalls(); renderChips(); renderCatalog(); });
   const note = SETTINGS.heroNote;
@@ -530,6 +539,12 @@ function togglePick(key, forceOn = false) {
 }
 
 /* ---------------- detail modal ---------------- */
+// 외부생(선수 과정)과 재원생(대상 반)을 나눠 표시. 외부생 항목이 없으면 기존처럼 한 줄로.
+function targetHtml(c) {
+  if (!c.targetExt) return nl2br(c.target || "-");
+  return `<div class="tg-line"><span class="tg-l ext">외부생</span><span>${nl2br(c.targetExt)}</span></div>`
+    + (c.target ? `<div class="tg-line"><span class="tg-l">재원생</span><span>${nl2br(c.target)}</span></div>` : "");
+}
 function openDetail(id, chooseMode = false) {
   const c = COURSES.find((x) => x.id === id);
   if (!c) return;
@@ -545,7 +560,7 @@ function openDetail(id, chooseMode = false) {
     ${c.feature ? `<div class="m-feature">${nl2br(c.feature)}</div>` : ""}
     <div class="m-info">
       <div class="k">교재</div><div>${esc(c.textbook || "-")}</div>
-      <div class="k">수업대상</div><div>${nl2br(c.target || "-")}</div>
+      <div class="k">수업대상</div><div>${targetHtml(c)}</div>
       <div class="k">반 / 일정</div><div>
         ${variants.map((v, i) => {
           const key = `${c.id}#${i}`;
@@ -677,6 +692,7 @@ function initForm() {
   $("#addCourse").onchange = (e) => { if (e.target.value) togglePick(e.target.value, true); e.target.value = ""; };
   $$("input[name=enrolled]").forEach((r) => r.onchange = () => { $("#regularWrap").style.display = r.value === "재원생" && r.checked ? "" : "none"; });
   $("#winterOn").onchange = syncWinterBox;
+  syncWinterBox();
   $$("input[name=wperiod]").forEach((r) => r.onchange = () => { $("#winterMemo").style.display = $("input[name=wperiod]:checked").value === "일부 기간" ? "" : "none"; });
 
   $("#applyForm").addEventListener("submit", async (e) => {
@@ -695,7 +711,7 @@ function initForm() {
     if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(phone)) return fail("학부모 연락처 형식을 확인해주세요. (예: 010-1234-5678)", $("#phone"));
     if (!enrolled) return fail("재원 여부를 선택해주세요.");
     if (!picks.length && !winterOn) return fail("신청할 특강을 담거나 윈터스쿨을 선택해주세요.", $("#addCourse"));
-    if (winterOn && !wdays.length) return fail("윈터스쿨 참여 요일을 선택해주세요.");
+    if (winterOn && !wdays.length) return fail("윈터스쿨 참여 요일을 선택해주세요. (윈터스쿨을 신청하지 않으시면 스위치를 꺼주세요)");
     if (!$("#consent").checked) return fail("개인정보 수집·이용에 동의해주세요.", $("#consent"));
 
     const btn = $("#submitBtn");

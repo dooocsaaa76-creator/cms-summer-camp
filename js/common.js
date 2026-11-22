@@ -36,8 +36,8 @@ export const SHEET_URL = "https://docs.google.com/spreadsheets/d/18sNJcYX8orImVi
 export const CONTACT = "02-595-1280";
 export const CATEGORIES = ["고등", "중등", "초등", "프리미엄관"];
 export const HALLS = [
-  { id: "gifted",  name: "영재관",    cats: ["고등", "중등", "초등"], logo: "assets/logo_gifted.png",  color: "var(--green)" },
-  { id: "premium", name: "프리미엄관", cats: ["프리미엄관"],          logo: "assets/logo_premium.png", color: "var(--blue)" }
+  { id: "gifted",  name: "영재관",    cats: ["고등", "중등", "초등"], logo: "assets/logo_gifted.png",  color: "var(--green)", address: "고무래로 18-4 송암빌딩 2층" },
+  { id: "premium", name: "프리미엄관", cats: ["프리미엄관"],          logo: "assets/logo_premium.png", color: "var(--blue)", address: "동작대로 234 M빌딩" }
 ];
 export const hallOf = (cat) => (cat === "프리미엄관" ? HALLS[1] : HALLS[0]);
 export const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];

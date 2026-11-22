@@ -1079,7 +1079,7 @@ const same = (a, b) => stable(a ?? "") === stable(b ?? "");
 const normBreaks = (bs) => (bs || []).filter((b) => b && b.from).map((b) => ({ from: b.from, to: b.to || b.from }));
 function courseDiff(cur, seed) {
   const changes = [], patch = {};
-  SYNC_FIELDS.forEach(([k, label]) => {
+  [...SYNC_FIELDS, ...(seed.targetExt ? [["targetExt", "수업 대상(외부생)"]] : [])].forEach(([k, label]) => {
     const nv = seed[k] ?? "";
     if (!same(cur[k] ?? "", nv)) { changes.push({ label, from: cur[k], to: nv }); patch[k] = nv; }
   });
@@ -1167,7 +1167,8 @@ function editCourse(c, isNew = false) {
       <div class="field"><label>교재</label><input class="input" id="kBook" value="${esc(c.textbook || "")}"></div>
       <div class="field full"><label>강좌명</label><input class="input" id="kTitle" value="${esc(c.title || "")}"></div>
       <div class="field full"><label>부제 <span class="hint">(선택)</span></label><input class="input" id="kSub" value="${esc(c.subtitle || "")}"></div>
-      <div class="field full"><label>수업대상</label><textarea class="input" id="kTarget" rows="2">${esc(c.target || "")}</textarea></div>
+      <div class="field full"><label>수업대상 · 외부생 <span class="hint">(특강을 듣기 위해 마쳐야 하는 과정, 예: 공수2 기본 완성)</span></label><input class="input" id="kTargetExt" value="${esc(c.targetExt || "")}"></div>
+      <div class="field full"><label>수업대상 · 재원생</label><textarea class="input" id="kTarget" rows="2">${esc(c.target || "")}</textarea></div>
       <div class="field full"><label>특징</label><textarea class="input" id="kFeat" rows="3">${esc(c.feature || "")}</textarea></div>
     </div>
     <div class="mini-h">반 / 일정 <button class="btn btn-xs" id="vAdd">＋ 반 추가</button></div>
@@ -1215,7 +1216,7 @@ function editCourse(c, isNew = false) {
   $("#kSave").onclick = async () => {
     const data = {
       season: seasonOf(c), category: $("#kCat").value, title: $("#kTitle").value.trim(), subtitle: $("#kSub").value.trim(), textbook: $("#kBook").value.trim(),
-      target: $("#kTarget").value.trim(), feature: $("#kFeat").value.trim(), variants: readVariants(), breaks: breaks.filter((b) => b.from),
+      target: $("#kTarget").value.trim(), targetExt: $("#kTargetExt").value.trim(), feature: $("#kFeat").value.trim(), variants: readVariants(), breaks: breaks.filter((b) => b.from),
       note: $("#kNote").value.trim(), sessions: $("#kSess").value.split("\n").map((s) => s.trim()).filter(Boolean)
     };
     if (!data.title) return toast("강좌명을 입력해주세요.", "err");
@@ -1254,7 +1255,7 @@ function renderArchive() {
     openModal(`<span class="badge">${esc(c.category)}</span> <span class="badge">${esc(seasonName(seasonOf(c)))}</span>
       <h2 style="margin-top:10px">${esc(c.title)}</h2>
       ${c.feature ? `<p style="background:var(--bg);padding:12px 14px;border-radius:12px">${nl2br(c.feature)}</p>` : ""}
-      <table class="dt"><tr><th>교재</th><td>${esc(c.textbook || "-")}</td></tr><tr><th>대상</th><td>${nl2br(c.target || "-")}</td></tr>
+      <table class="dt"><tr><th>교재</th><td>${esc(c.textbook || "-")}</td></tr>${c.targetExt ? `<tr><th>외부생</th><td>${nl2br(c.targetExt)}</td></tr>` : ""}<tr><th>${c.targetExt ? "재원생" : "대상"}</th><td>${nl2br(c.target || "-")}</td></tr>
       <tr><th>일정</th><td>${(c.variants || []).map((v) => `<b>${esc(v.label || "")}</b> ${esc(variantTime(v))} · ${esc(variantPeriod(v))}`).join("<br>")}</td></tr>
       ${c.note ? `<tr><th>비고</th><td>${esc(c.note)}</td></tr>` : ""}</table>
       ${(c.sessions || []).length ? `<div class="mini-h">회차별 진도</div><div class="tl">${c.sessions.map((s, i) => `<div><b>${i + 1}회</b>${esc(s)}</div>`).join("")}</div>` : ""}
