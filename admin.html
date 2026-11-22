@@ -789,19 +789,103 @@ function blankNotice() {
     holidays: JSON.parse(JSON.stringify(NOTICE_DEFAULTS.holidays)), footnote: NOTICE_DEFAULTS.footnote
   };
 }
+/* [예시 불러오기] 기준: 2026-11-22 작성한 FIT1-2 안내문 */
+const SAMPLE_NOTICE = {
+  "intro": "✔ 중2-1 과정, 이번 기회에 탄탄히 다져야 합니다!\n중2-1에서 배우는 식의 계산, 연립방정식, 일차함수 등의 개념은\n이후 중3은 물론 고등 수학과도 밀접하게 연결됩니다.\n그렇기에 기초 개념을 정확하게 이해하고 활용하는 능력이 중요합니다.\n중2-1 미리보기 특강은 단순한 선행 학습이 아닌,\n앞으로의 수학 학습을 위해 핵심 개념을 미리 경험하고 기초를 탄탄하게 다지는 과정입니다.\n✔ 지금 확실히 다져놓아야 이후 과정에서도 흔들리지 않습니다.\n이번 특강을 통해 중2-1 주요 개념을 미리 익히고, 문제 해결의 기초까지 탄탄하게 다져보겠습니다!",
+  "hall": "gifted",
+  "title": "",
+  "winter": {
+    "breaks": [
+      {
+        "to": "2027-02-12",
+        "from": "2027-02-06"
+      }
+    ],
+    "goalDetail": "소중한 아침 시간. 일일학습계획표에 따른 자기주도학습 능력을 키울 수 있는 시간!",
+    "title": "윈터스쿨",
+    "goal": "정규과정 과제 및 타 학원 과제 학습",
+    "on": true,
+    "start": "2027-01-11",
+    "end": "2027-02-26",
+    "time": "09:00~12:00"
+  },
+  "slogan": "서로의 생각을 공유하고 발전시킴으로써 함께 성장하는 ‘지적 공동체(Intellectual Community)’를 지향합니다.",
+  "specials": [
+    {
+      "courseId": "inTtcZedeN8kQ20V5b2U",
+      "vi": 0,
+      "title": "중2-1 미리보기",
+      "short": "중2-1 미리보",
+      "label": "수금반",
+      "days": [
+        "수",
+        "금"
+      ],
+      "time": "11:00~14:30",
+      "start": "2027-01-13",
+      "end": "2027-02-26",
+      "count": 10,
+      "period": "",
+      "sessions": [
+        "유리수와 순환소수",
+        "단항식의 계산",
+        "다항식의 계산",
+        "일차부등식",
+        "일차부등식의 활용",
+        "연립일차방정식",
+        "연립일차방정식의 활용",
+        "일차함수와 그 그래프 (1)",
+        "일차함수와 그 그래프 (2)",
+        "일차함수와 일차방정식의 관계"
+      ],
+      "breaks": [
+        {
+          "to": "2027-02-10",
+          "from": "2027-01-29"
+        }
+      ],
+      "goal": "중2-1 과정을 미리 경험하며",
+      "goalDetail": "다음 학기 학습은 물론, 고등 수학으로 이어지는 탄탄한 기반까지 완성!"
+    }
+  ],
+  "regular": [
+    {
+      "name": "1-2기본",
+      "days": [
+        "화",
+        "목"
+      ],
+      "time": "15:00~17:30",
+      "start": "2026-12-01",
+      "end": "2027-02-25",
+      "goal": "1-2 기본 베이스 다지기"
+    },
+    {
+      "name": "1-1심화",
+      "days": [
+        "화",
+        "목"
+      ],
+      "time": "15:00~17:30",
+      "start": "2026-12-01",
+      "end": "2027-02-25",
+      "goal": "1-1 심화 적용력 키우기"
+    }
+  ],
+  "headline": "중2 수학은 고등 수학의 기초를 다지는 중요한 과정입니다.",
+  "holidays": [
+    {
+      "from": "2027-02-06",
+      "to": "2027-02-10",
+      "label": "설 연휴"
+    }
+  ],
+  "className": "FIT1-2",
+  "planRange": "1,2월",
+  "footnote": "재원생들은 진행 과정과의 연계를 위해 특강수업 전원 필수 참여로 진행됩니다."
+};
 function sampleNotice() {
-  const n = blankNotice();
-  const c = COURSES.find((x) => seasonOf(x) === SEASON && x.title === "초5 약수와 배수");
-  Object.assign(n, {
-    className: "FIT초5-1", hall: "gifted",
-    headline: "초등 수학의 고비를 맞는 5학년! 수포자가 될 수 없죠!",
-    intro: "초등 5학년은 수학 격차가 벌어지기 시작하는 가장 중요한 시기입니다.\n특히, 아이들이 가장 어려워하는 단원인 약수와 배수 / 약분·통분은 중1 수학까지 연결되는 핵심 개념!\n✔ 하지만 이 단원을 놓친다면?\n중학교 진입 전부터 수학에 자신감을 잃고, 수포자가 될 위험이 높아집니다!\n수학을 ‘다시 잡을 수 있는’ 유일한 골든 타임!\n이번 겨울방학 약수·배수·약분·통분은 무조건 완벽히 다지는 것으로. 달려보아요!",
-    regular: [
-      { name: "5-1 기본", days: ["월", "수"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-24", goal: "5-1 기본 베이스 다지기" },
-      { name: "4-2 심화", days: ["목"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-25", goal: "4-2 심화 적용력 키우기" }
-    ]
-  });
-  if (c) n.specials = [specialFrom(c, 0, "약수와 배수 + 약분과 통분", "핵심 유형 / 문장제 문제 / 활용 문제까지 확실하게 다루면서 중1 예습까지 이어지도록 완벽하게 마스터!")];
+  const n = { ...blankNotice(), ...JSON.parse(JSON.stringify(SAMPLE_NOTICE)), season: SEASON };
   return n;
 }
 function specialFrom(c, vi, goal, goalDetail) {
@@ -838,7 +922,7 @@ function bindLinkBox() {
 }
 $("#nNew").onclick = () => openEditor(null);
 $("#nBack").onclick = () => { if (!confirm("편집을 마치고 목록으로 갈까요? 저장하지 않은 내용은 사라집니다.")) return; $("#nEditView").style.display = "none"; $("#nListView").style.display = "block"; };
-$("#nSample").onclick = () => { if (!confirm("FIT초5-1 예시 내용으로 채울까요? (지금 입력한 내용은 바뀝니다)")) return; draft = sampleNotice(); renderNForm(); renderNPreview(); };
+$("#nSample").onclick = () => { if (!confirm("FIT1-2 예시 내용으로 채울까요? (지금 입력한 내용은 바뀝니다)")) return; draft = sampleNotice(); renderNForm(); renderNPreview(); };
 $("#nPrint").onclick = () => window.print();
 
 /* ----- 한글 파일 불러오기 ----- */
@@ -898,7 +982,7 @@ function renderNForm() {
   $("#nForm").innerHTML = `
     <div class="sec"><b>기본 정보</b>
       <div class="fg">
-        <div class="field"><label>반 이름 *</label><input class="input sm" data-k="className" value="${esc(n.className)}" placeholder="예: FIT초5-1"></div>
+        <div class="field"><label>반 이름 *</label><input class="input sm" data-k="className" value="${esc(n.className)}" placeholder="예: FIT1-2"></div>
         <div class="field"><label>관 (로고)</label><select class="input sm" data-k="hall"><option value="gifted">영재관</option><option value="premium" ${n.hall === "premium" ? "selected" : ""}>프리미엄관</option></select></div>
         <div class="field full"><label>제목 <span class="hint">(비우면 자동)</span></label><input class="input sm" data-k="title" value="${esc(n.title)}" placeholder="${esc(noticeTitle({ ...n, title: "" }))}"></div>
       </div>
