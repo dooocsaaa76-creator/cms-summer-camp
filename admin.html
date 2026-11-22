@@ -354,7 +354,7 @@ import {
   computeSessions, fmtMD, fmtRange, breakText, formatPhone, toast, copyText, SHEET_URL
 } from "./js/common.js";
 import { SEED_2027_WINTER, SEED_NOTES } from "./js/seed-2027winter.js";
-import { renderNotice, NOTICE_CSS, NOTICE_DEFAULTS, noticeTitle } from "./js/notice-render.js";
+import { renderNotice, NOTICE_CSS, NOTICE_DEFAULTS, noticeTitle, foldLegacy } from "./js/notice-render.js";
 import { extractBlocks, parseNotice } from "./js/hwp-import.js";
 
 document.getElementById("noticeCss").textContent = NOTICE_CSS;
@@ -783,7 +783,7 @@ function blankNotice() {
   const w = SETTINGS.winter;
   return {
     season: SEASON, className: "", hall: "gifted", title: "", slogan: NOTICE_DEFAULTS.slogan, planRange: "1월 ~ 2월",
-    headline: "", question: NOTICE_DEFAULTS.question, points: "", highlightTitle: "", highlightBody: "", closing: "",
+    headline: "", intro: "",
     regular: [], specials: [],
     winter: { on: true, title: w.title, time: w.time, start: w.start, end: w.end, breaks: w.breaks || [], goal: NOTICE_DEFAULTS.winterGoal, goalDetail: NOTICE_DEFAULTS.winterGoalDetail },
     holidays: JSON.parse(JSON.stringify(NOTICE_DEFAULTS.holidays)), footnote: NOTICE_DEFAULTS.footnote
@@ -795,10 +795,7 @@ function sampleNotice() {
   Object.assign(n, {
     className: "FIT초5-1", hall: "gifted",
     headline: "초등 수학의 고비를 맞는 5학년! 수포자가 될 수 없죠!",
-    points: "초등 5학년은 수학 격차가 벌어지기 시작하는 가장 중요한 시기입니다.\n특히, 아이들이 가장 어려워하는 단원인 약수와 배수 / 약분·통분은 중1 수학까지 연결되는 핵심 개념!",
-    highlightTitle: "하지만 이 단원을 놓친다면?",
-    highlightBody: "중학교 진입 전부터 수학에 자신감을 잃고, 수포자가 될 위험이 높아집니다!",
-    closing: "수학을 ‘다시 잡을 수 있는’ 유일한 골든 타임!\n지금 이 기회를 놓치면, 방학이 끝난 뒤 수학 격차는 더 크게 벌어집니다.\n이번 겨울방학 약수·배수·약분·통분은 무조건 완벽히 다지는 것으로. 달려보아요!",
+    intro: "초등 5학년은 수학 격차가 벌어지기 시작하는 가장 중요한 시기입니다.\n특히, 아이들이 가장 어려워하는 단원인 약수와 배수 / 약분·통분은 중1 수학까지 연결되는 핵심 개념!\n✔ 하지만 이 단원을 놓친다면?\n중학교 진입 전부터 수학에 자신감을 잃고, 수포자가 될 위험이 높아집니다!\n수학을 ‘다시 잡을 수 있는’ 유일한 골든 타임!\n이번 겨울방학 약수·배수·약분·통분은 무조건 완벽히 다지는 것으로. 달려보아요!",
     regular: [
       { name: "5-1 기본", days: ["월", "수"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-24", goal: "5-1 기본 베이스 다지기" },
       { name: "4-2 심화", days: ["목"], time: "15:00~17:30", start: "2026-12-01", end: "2027-02-25", goal: "4-2 심화 적용력 키우기" }
@@ -820,7 +817,7 @@ function specialFrom(c, vi, goal, goalDetail) {
 function openEditor(id, preset) {
   draftId = id;
   const src = id ? NOTICES.find((n) => n.id === id) : null;
-  draft = preset ? preset : src ? JSON.parse(JSON.stringify(stripMeta(src))) : blankNotice();
+  draft = foldLegacy(preset ? preset : src ? JSON.parse(JSON.stringify(stripMeta(src))) : blankNotice());
   draft.winter = draft.winter || { on: false };
   $("#nListView").style.display = "none"; $("#nEditView").style.display = "block";
   $("#nLinkBox").innerHTML = id ? linkBoxHtml(id) : "";
@@ -909,13 +906,8 @@ function renderNForm() {
     <div class="sec"><b>도입 문구</b>
       <div class="field"><label>헤드라인</label><textarea class="input" rows="2" data-k="headline" placeholder="예: 초등 수학의 고비를 맞는 5학년! 수포자가 될 수 없죠!">${esc(n.headline)}</textarea></div>
       <div class="field"><label>본문 <span class="hint">(헤드라인 아래 문단 · ✔로 시작하는 줄은 강조)</span></label><textarea class="input" rows="4" data-k="intro">${esc(n.intro || "")}</textarea></div>
-      <div class="field"><label>질문</label><input class="input sm" data-k="question" value="${esc(n.question)}"></div>
-      <div class="field"><label>체크 포인트 <span class="hint">(한 줄에 하나씩 → ✔ 목록)</span></label><textarea class="input" rows="3" data-k="points">${esc(n.points)}</textarea></div>
-      <div class="field"><label>강조 박스 제목</label><input class="input sm" data-k="highlightTitle" value="${esc(n.highlightTitle)}" placeholder="예: 하지만 이 단원을 놓친다면?"></div>
-      <div class="field"><label>강조 박스 내용</label><textarea class="input" rows="2" data-k="highlightBody">${esc(n.highlightBody)}</textarea></div>
       <div class="field"><label>필수 수업 배너 윗줄</label><input class="input sm" data-k="pickLead" value="${esc(n.pickLead || "")}" placeholder="그래서 우리 반 학생들을 위해 준비된 필수 수업!"></div>
-      <div class="field"><label>필수 수업 배너 제목 <span class="hint">(비우면 특강 이름)</span></label><input class="input sm" data-k="pickTitle" value="${esc(n.pickTitle || "")}"></div>
-      <div class="field"><label>마무리 문구 <span class="hint">(✔로 시작하는 줄은 강조)</span></label><textarea class="input" rows="3" data-k="closing">${esc(n.closing)}</textarea></div>
+      <div class="field"><label>필수 수업 배너 제목 <span class="hint">(비우면 회색 글씨 그대로 표시)</span></label><input class="input sm" data-k="pickTitle" value="${esc(n.pickTitle || "")}" placeholder="${esc(pickTitleDefault(n))}"></div>
     </div>
     <div class="sec"><b>정규수업</b>
       <div id="regRows">${(n.regular || []).map((r, i) => `<div class="rowed" data-reg="${i}">
@@ -997,7 +989,9 @@ function syncWinterToDraft() {
   const w = SETTINGS.winter;
   Object.assign(draft.winter, { title: w.title, time: w.time, start: w.start, end: w.end, breaks: w.breaks || [] });
 }
+const pickTitleDefault = (n) => (n.specials || []).map((s) => s.title).join(" · ") || "특강 이름";
 function renderNPreview() {
+  const pt = $("#nForm [data-k=pickTitle]"); if (pt) pt.placeholder = pickTitleDefault(draft);
   $("#nPreview").innerHTML = renderNotice(draft, { applyUrl: applyUrlOf(draft) });
 }
 

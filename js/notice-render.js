@@ -7,7 +7,6 @@ import { esc, nl2br, parseDate, isoDate, fmtMD, fmtMDshort, fmtRange, inBreaks, 
 
 export const NOTICE_DEFAULTS = {
   slogan: "서로의 생각을 공유하고 발전시킴으로써 함께 성장하는 ‘지적 공동체(Intellectual Community)’를 지향합니다.",
-  question: "왜 이번 겨울방학 특강이 필수일까요?",
   footnote: "재원생들은 진행 과정과의 연계를 위해 특강 수업 전원 필수 참여로 진행됩니다.",
   holidays: [{ from: "2027-02-06", to: "2027-02-10", label: "설 연휴" }],
   winterGoal: "정규과정 과제 및 타 학원 과제 학습",
@@ -100,15 +99,27 @@ function richLines(text) {
     /^[✔✓√]/.test(l) ? `<div class="ck">${esc(l.replace(/^[✔✓√]\s*/, ""))}</div>` : `<p>${esc(l)}</p>`).join("");
 }
 
+/* 예전 안내문 항목(질문·체크 포인트·강조 박스·마무리 문구)은 입력칸을 없앴습니다.
+   이미 저장된 안내문에 내용이 있으면 본문(intro) 뒤에 이어 붙여 그대로 보이게 합니다. */
+export function foldLegacy(n) {
+  const extra = [];
+  String(n.points || "").split("\n").map((s) => s.trim()).filter(Boolean).forEach((p) => extra.push("✔ " + p.replace(/^[✔✓√]\s*/, "")));
+  if (String(n.highlightTitle || "").trim()) extra.push("✔ " + n.highlightTitle.trim());
+  if (String(n.highlightBody || "").trim()) extra.push(...n.highlightBody.trim().split("\n"));
+  if (String(n.closing || "").trim()) extra.push(...n.closing.trim().split("\n"));
+  const out = { ...n, question: "", points: "", highlightTitle: "", highlightBody: "", closing: "" };
+  if (extra.length) out.intro = [String(n.intro || "").trim(), ...extra].filter(Boolean).join("\n");
+  return out;
+}
+
 export function noticeTitle(n) {
   return n.title || `2027 서초 ${n.className || "OO반"} 겨울방학 학습 계획 안내문`;
 }
 
 export function renderNotice(n, opts = {}) {
+  n = foldLegacy(n);
   const logo = n.hall === "premium" ? "assets/logo_premium.png" : "assets/logo_gifted.png";
   const accent = n.hall === "premium" ? "blue" : "green";
-  const points = String(n.points || "").split("\n").map((s) => s.trim()).filter(Boolean);
-  const closing = String(n.closing || "").trim();
   const specials = n.specials || [];
   const regular = n.regular || [];
   const w = n.winter && n.winter.on ? n.winter : null;
@@ -158,13 +169,7 @@ export function renderNotice(n, opts = {}) {
     <h1 class="nt-title">${esc(noticeTitle(n))}</h1>
     ${n.headline ? `<div class="nt-headline">${nl2br(n.headline)}</div>` : ""}
     ${String(n.intro || "").trim() ? `<div class="nt-intro">${richLines(n.intro)}</div>` : ""}
-    ${(n.question || points.length) ? `<div class="nt-why">
-      ${n.question ? `<h3>${esc(n.question)}</h3>` : ""}
-      ${points.length ? `<ul>${points.map((p) => `<li>${esc(p.replace(/^✔\s*/, ""))}</li>`).join("")}</ul>` : ""}
-    </div>` : ""}
-    ${(n.highlightTitle || n.highlightBody) ? `<div class="nt-alert"><b>${esc(n.highlightTitle || "")}</b>${n.highlightBody ? `<p>${nl2br(n.highlightBody)}</p>` : ""}</div>` : ""}
     ${(specials.length || n.pickTitle) ? `<div class="nt-pick"><small>${esc(n.pickLead || "그래서 우리 반 학생들을 위해 준비된 필수 수업!")}</small><div>${esc(n.pickTitle || specials.map((s) => s.title).join(" · "))}</div></div>` : ""}
-    ${closing ? `<div class="nt-closing">${richLines(closing)}</div>` : ""}
 
     ${planRows.length ? `${H("학습 계획", ` <small>(${esc(n.planRange || "1월 ~ 2월")})</small>`)}
       <table class="nt-tbl nt-plan"><thead><tr><th style="width:84px">수업</th><th>과정</th><th style="width:110px">요일 / 시간</th><th style="width:104px">개강 및 종강</th><th>목표</th></tr></thead><tbody>${planRows.join("")}</tbody></table>` : ""}

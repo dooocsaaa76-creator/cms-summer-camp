@@ -306,8 +306,8 @@ export function parseNotice(blocks, ctx) {
     if (pm || (t0 && t0.length <= 30 && /특강|과정|수업/.test(t0) && !/^✔/.test(t0))) { draft.pickTitle = clean(pm ? pm[1] : t0); after = after.slice(1); }
   }
   if (before.length) { draft.headline = before[0]; before = before.slice(1); }
-  draft.intro = before.join("\n");
-  draft.closing = after.join("\n");
+  draft.intro = [...before, ...after].join("\n");
+  draft.closing = "";
   draft.question = "";
   draft.points = "";
   draft.highlightTitle = ""; draft.highlightBody = "";
