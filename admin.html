@@ -156,6 +156,34 @@
   .ed-form .field{margin-bottom:10px;}
   .ed-prev{background:#E9E9EE;border-radius:16px;padding:20px;min-height:400px;}
   .ed-prev .nt{box-shadow:var(--shadow);border-radius:6px;}
+  /* 선생님별 */
+  .t-h{font-size:15px;margin:22px 0 10px;}
+  .t-scroll{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:14px;}
+  .t-grid{width:100%;border-collapse:collapse;font-size:12.5px;min-width:760px;}
+  .t-grid th,.t-grid td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px;vertical-align:top;text-align:left;}
+  .t-grid th:last-child,.t-grid td:last-child{border-right:0;}
+  .t-grid tr:last-child td,.t-grid tr:last-child th{border-bottom:0;}
+  .t-grid thead th{background:#414143;color:#fff;font-weight:700;text-align:center;white-space:nowrap;}
+  .t-grid tbody th{background:#F6F6F8;white-space:nowrap;font-size:13.5px;width:96px;}
+  .t-grid tbody th small{display:block;font-weight:500;color:var(--ink-3,#8A8A90);font-size:11.5px;margin-top:2px;}
+  .t-grid tbody th.none{color:#B26B00;}
+  .t-chip{border-radius:8px;padding:5px 7px;margin-bottom:5px;background:var(--green-p);border-left:3px solid var(--green);line-height:1.35;}
+  .t-chip.prem{background:#E5F5FC;border-left-color:#00A7E1;}
+  .t-chip.bad{background:#FDECEC;border-left-color:#E5484D;}
+  .t-chip b{display:block;font-size:12.5px;}
+  .t-chip span{color:#55555A;font-size:11.5px;}
+  .t-chip:last-child{margin-bottom:0;}
+  .t-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px;}
+  .t-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;break-inside:avoid;}
+  .t-card h4{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:8px;}
+  .t-card h4 .hint{font-weight:500;font-size:12.5px;}
+  .t-card table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .t-card td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top;}
+  .t-card td.n{white-space:nowrap;text-align:right;color:#55555A;}
+  .t-card tr.bad td{background:#FDECEC;}
+  .t-warn{border:1.5px solid #E5484D;background:#FDECEC;border-radius:12px;padding:10px 14px;margin:12px 0;font-size:13.5px;}
+  .t-warn ul{margin:4px 0 0;padding-left:20px;}
+  @media print{ #p-teachers .t-scroll{border:0;overflow:visible;} #p-teachers .t-grid{min-width:0;font-size:10.5px;} #p-teachers .t-cards{grid-template-columns:1fr 1fr;} #p-teachers .t-chip,#p-teachers .t-grid thead th{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
   .impbox{border:1.5px solid #F2C94C;background:#FFF9E6;border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:13.5px;}
   .impbox.ok{border-color:var(--green);background:var(--green-p);}
   .impbox h4{margin:0 0 6px;font-size:14.5px;display:flex;align-items:center;gap:8px;}
@@ -232,6 +260,7 @@
     </div>
     <nav class="tabs" id="tabs">
       <button data-tab="roster" class="on">특강 명단 <span class="c" id="cRoster">0</span></button>
+      <button data-tab="teachers">선생님별</button>
       <button data-tab="winter">윈터스쿨 명단 <span class="c" id="cWinter">0</span></button>
       <button data-tab="notices">반별 안내문 <span class="c" id="cNotice">0</span></button>
       <button data-tab="courses">강좌 관리</button>
@@ -258,6 +287,23 @@
       <div class="search-res" id="rSearchRes"></div>
       <div class="legend no-print"><span><i class="dot in"></i> 재원생</span><span><i class="dot"></i> 외부생</span><span><b style="color:var(--green-d)">O</b> 수강 · <b style="color:var(--red)">X</b> 취소(이름 유지)</span><span>이름 클릭 → 상세/수정 · 칸 아래에 이름 입력 후 Enter → 바로 추가</span></div>
       <div id="rosterRoot"></div>
+    </section>
+
+    <!-- 선생님별 -->
+    <section class="panel" id="p-teachers">
+      <div class="bar">
+        <div><b style="font-size:17px">선생님별 특강 담당 현황</b><div class="hint">강좌 관리 · 특강 명단(⋯)에서 입력한 담당 선생님 기준입니다. 같은 선생님의 수업 시간이 겹치면 빨간색으로 표시됩니다.</div></div>
+        <span class="sp"></span>
+        <div class="seg" id="tHall"><button data-h="gifted" class="on">영재관</button><button data-h="premium">프리미엄관</button><button data-h="all">전체</button></div>
+        <button class="btn btn-sm" id="tCsv">CSV 다운로드</button>
+        <button class="btn btn-sm" onclick="window.print()">인쇄</button>
+      </div>
+      <div class="stats" id="tStats"></div>
+      <div id="tWarn"></div>
+      <h3 class="t-h">주간 시간표</h3>
+      <div class="t-scroll"><table class="t-grid" id="tGrid"></table></div>
+      <h3 class="t-h">선생님별 담당 반</h3>
+      <div class="t-cards" id="tCards"></div>
     </section>
 
     <!-- 윈터스쿨 -->
@@ -466,10 +512,99 @@ function refresh() {
     $("#cRoster").textContent = APPS.filter((a) => seasonOf(a) === SEASON && !isCancel(a)).length;
     $("#cWinter").textContent = WINTER.filter((a) => seasonOf(a) === SEASON && !isCancel(a)).length;
     $("#cNotice").textContent = NOTICES.filter((n) => seasonOf(n) === SEASON).length;
-    renderRoster(); renderWinter(); renderNoticeList(); renderCourses(); renderArchive();
+    renderRoster(); renderTeachers(); renderWinter(); renderNoticeList(); renderCourses(); renderArchive();
     if (!settingsDirty) renderSettings();
   });
 }
+
+/* ================= 선생님별 담당 현황 ================= */
+const T_DAYS = ["월", "화", "수", "목", "금", "토", "일"];
+ui.tHall = "gifted";
+const timeRange = (t) => {
+  const m = String(t || "").match(/(\d{1,2}):(\d{2})\s*[~\-–]\s*(\d{1,2}):(\d{2})/);
+  return m ? [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]] : null;
+};
+function teacherRows() {
+  const { cols } = buildColumns(SEASON);
+  return cols.filter((x) => ui.tHall === "all" || x.hall === ui.tHall).map((x) => ({
+    ...x,
+    teacher: (x.v.teacher || "").trim(),
+    name: variantLabel(x.c, x.vi),
+    days: (x.v.days || []).filter((d) => T_DAYS.includes(d)),
+    tr: timeRange(x.v.time),
+    count: x.apps.filter((a) => !isCancel(a)).length
+  }));
+}
+function findConflicts(rows) {
+  const bad = new Map(); // key → [메시지]
+  const byT = {};
+  rows.filter((r) => r.teacher).forEach((r) => (byT[r.teacher] = byT[r.teacher] || []).push(r));
+  const msgs = [];
+  Object.entries(byT).forEach(([t, list]) => {
+    for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
+      const a = list[i], b = list[j];
+      if (!a.tr || !b.tr) continue;
+      const days = a.days.filter((d) => b.days.includes(d));
+      if (!days.length) continue;
+      if (!(a.tr[0] < b.tr[1] && b.tr[0] < a.tr[1])) continue;
+      const as = a.v.start || "0000", ae = a.v.end || "9999", bs = b.v.start || "0000", be = b.v.end || "9999";
+      if (!(as <= be && bs <= ae)) continue;
+      const m = `${t} 선생님: ${a.name}(${a.v.time})와 ${b.name}(${b.v.time})이 ${days.join("·")}요일에 겹칩니다.`;
+      msgs.push(m);
+      [a, b].forEach((r) => { if (!bad.has(r.key)) bad.set(r.key, []); bad.get(r.key).push(days); });
+    }
+  });
+  return { bad, msgs };
+}
+function renderTeachers() {
+  const rows = teacherRows();
+  const { bad, msgs } = findConflicts(rows);
+  const teachers = [...new Set(rows.map((r) => r.teacher).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ko"));
+  const none = rows.filter((r) => !r.teacher);
+  const groups = teachers.map((t) => ({ t, list: rows.filter((r) => r.teacher === t) }));
+  if (none.length) groups.push({ t: "", list: none });
+  const usedDays = T_DAYS.filter((d) => rows.some((r) => r.days.includes(d)));
+  const days = usedDays.length ? usedDays : T_DAYS.slice(0, 5);
+  const byStart = (a, b) => ((a.tr ? a.tr[0] : 9999) - (b.tr ? b.tr[0] : 9999)) || a.name.localeCompare(b.name, "ko");
+
+  $("#tStats").innerHTML = `
+    <div class="stat"><b>${teachers.length}</b><span>담당 선생님</span></div>
+    <div class="stat"><b>${rows.length - none.length}</b><span>담당 지정된 반</span></div>
+    <div class="stat"><b style="${none.length ? "color:#B26B00" : ""}">${none.length}</b><span>담당 미지정</span></div>
+    <div class="stat"><b style="${msgs.length ? "color:var(--red)" : ""}">${msgs.length}</b><span>시간 겹침</span></div>
+    <div class="stat"><b>${rows.reduce((s, r) => s + r.count, 0)}</b><span>수강 신청</span></div>`;
+  $("#tWarn").innerHTML = msgs.length ? `<div class="t-warn"><b>⚠ 같은 선생님 수업 시간이 겹칩니다</b><ul>${msgs.map((m) => `<li>${esc(m)}</li>`).join("")}</ul></div>` : "";
+
+  const chip = (r, d) => `<div class="t-chip ${r.hall === "premium" ? "prem" : ""} ${bad.has(r.key) && bad.get(r.key).some((ds) => ds.includes(d)) ? "bad" : ""}">
+      <b>${esc(r.c.title)}${(r.c.variants || []).length > 1 ? ` <span>(${esc(r.v.label || "")})</span>` : ""}</b>
+      <span>${esc(r.v.time || "")} · ${r.count}${r.v.capacity ? "/" + r.v.capacity : ""}명${r.v.room ? ` · ${esc(r.v.room)}` : ""}${r.v.closed ? " · 마감" : ""}</span></div>`;
+  $("#tGrid").innerHTML = groups.length ? `<thead><tr><th>선생님</th>${days.map((d) => `<th>${d}</th>`).join("")}</tr></thead><tbody>${groups.map(({ t, list }) => `<tr>
+      <th class="${t ? "" : "none"}">${t ? esc(t) : "담당 미지정"}<small>${list.length}개 반</small></th>
+      ${days.map((d) => `<td>${list.filter((r) => r.days.includes(d)).sort(byStart).map((r) => chip(r, d)).join("")}</td>`).join("")}</tr>`).join("")}</tbody>`
+    : `<tbody><tr><td class="hint" style="text-align:center;padding:20px">이번 시즌 강좌가 없습니다.</td></tr></tbody>`;
+
+  $("#tCards").innerHTML = groups.map(({ t, list }) => {
+    const total = list.reduce((s, r) => s + r.count, 0);
+    return `<div class="t-card"><h4>${t ? esc(t) + " 선생님" : `<span style="color:#B26B00">담당 미지정</span>`} <span class="hint">${list.length}개 반 · 수강 ${total}명</span></h4>
+      <table>${list.slice().sort((a, b) => (T_DAYS.indexOf(a.days[0]) - T_DAYS.indexOf(b.days[0])) || byStart(a, b)).map((r) => `<tr class="${bad.has(r.key) ? "bad" : ""}">
+        <td><b>${esc(r.c.title)}</b>${(r.c.variants || []).length > 1 ? ` (${esc(r.v.label || "")})` : ""}<br><span class="hint">${esc(r.c.category)} · ${esc(variantPeriod(r.v))}${r.v.count ? ` · ${r.v.count}회` : ""}${r.v.room ? ` · ${esc(r.v.room)}` : ""}</span></td>
+        <td class="n"><b>${esc(r.days.join(""))}</b><br>${esc(r.v.time || "")}</td>
+        <td class="n">${r.count}${r.v.capacity ? "/" + r.v.capacity : ""}명${r.v.closed ? "<br><span class='badge red'>마감</span>" : ""}</td></tr>`).join("")}</table></div>`;
+  }).join("");
+}
+$$("#tHall button").forEach((b) => b.onclick = () => {
+  ui.tHall = b.dataset.h;
+  $$("#tHall button").forEach((x) => x.classList.toggle("on", x === b));
+  renderTeachers();
+});
+$("#tCsv").onclick = () => {
+  const rows = teacherRows();
+  const { bad } = findConflicts(rows);
+  const out = [["선생님", "구분", "특강", "반", "요일", "시간", "기간", "회차", "강의실", "수강 인원", "정원", "마감", "시간 겹침"]];
+  rows.slice().sort((a, b) => (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.name.localeCompare(b.name, "ko")).forEach((r) =>
+    out.push([r.teacher || "미지정", r.c.category, r.c.title, r.v.label || "", r.days.join(""), r.v.time || "", variantPeriod(r.v), r.v.count || "", r.v.room || "", r.count, r.v.capacity || "", r.v.closed ? "마감" : "", bad.has(r.key) ? "겹침" : ""]));
+  downloadCSV(`${SEASON}_선생님별_특강.csv`, out);
+};
 
 /* ================= 1. 특강 명단 ================= */
 function buildColumns(season) {
