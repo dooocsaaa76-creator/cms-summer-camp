@@ -3,7 +3,7 @@
    index.html · admin.html · notice.html 에서 함께 사용합니다.
 ===================================================================== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyDCI98mwQ4lz3h0yzFfooTqXjrsdzyQArU",
@@ -14,7 +14,13 @@ export const firebaseConfig = {
   appId: "1:506548644045:web:6fb7f90d37d5891747a184"
 };
 export const fbApp = initializeApp(firebaseConfig);
-export const db = getFirestore(fbApp);
+// 브라우저에 데이터를 임시 저장(캐시)해서, 다시 열 때 바뀐 것 위주로 읽도록 함 (읽기 횟수 절약)
+// 캐시를 쓸 수 없는 브라우저(일부 시크릿 모드 등)에서는 예전처럼 동작
+function makeDb() {
+  try { return initializeFirestore(fbApp, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+  catch (e) { console.warn("Firestore 캐시 없이 실행합니다:", e); return getFirestore(fbApp); }
+}
+export const db = makeDb();
 
 /* ---------------------------------------------------------------
    시즌 설정

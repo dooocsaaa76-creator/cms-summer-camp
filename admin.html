@@ -454,6 +454,10 @@
     <!-- 설정 -->
     <section class="panel" id="p-settings">
       <div id="sForm"></div>
+      <div class="card set-card"><h3>데이터 백업</h3>
+        <p class="hint" style="margin:0 0 12px">매일 오전 10시 자동 백업은 구글 드라이브 「CMS특강_백업」 폴더에 저장됩니다 (설정 방법: 배포가이드 「자동 백업」).<br>지금 바로 내 컴퓨터에 받아두려면 아래 버튼을 누르세요. 강좌 · 신청 · 윈터스쿨 · 안내문 · 설정 · 인원현황 전체가 한 파일(.json)로 저장됩니다.</p>
+        <button class="btn btn-dark" id="sBackup">지금 전체 백업 다운로드</button> <span class="hint" id="sBackupMsg"></span>
+      </div>
     </section>
   </main>
 </div>
@@ -462,7 +466,7 @@
 
 <script type="module">
 import {
-  collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch
+  collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch, query, where, getDocs
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import {
   getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
@@ -512,11 +516,12 @@ const permErr = (what) => (err) => {
     ? `<b>${what}</b> 데이터를 읽을 권한이 없습니다. Firebase 콘솔에서 <b>Firestore 보안규칙</b>을 「설정파일/Firestore_보안규칙.txt」 내용으로 업데이트해주세요.`
     : `<b>${what}</b> 데이터를 불러오지 못했습니다: ${esc(err.message)}`;
 };
-function subscribe() {
-  unsubs.push(onSnapshot(collection(db, "courses"), (s) => {
-    COURSES = sortCourses(s.docs.map((d) => ({ ...d.data(), id: d.id })));
-    refresh();
-  }, permErr("강좌")));
+// 지난 시즌(여름 등)을 볼 때 한 번만 전체 신청 · 윈터스쿨을 불러와 실시간으로 이어서 봅니다
+let pastLoaded = false;
+function loadPastSeasons() {
+  if (pastLoaded || !auth.currentUser) return;
+  pastLoaded = true;
+  toast("지난 시즌 신청 내역을 불러옵니다…");
   unsubs.push(onSnapshot(collection(db, "applications"), (s) => {
     APPS = s.docs.map((d) => ({ ...d.data(), id: d.id }));
     refresh();
@@ -525,11 +530,29 @@ function subscribe() {
     WINTER = s.docs.map((d) => ({ ...d.data(), id: d.id }));
     refresh();
   }, permErr("윈터스쿨")));
+}
+function subscribe() {
+  unsubs.push(onSnapshot(collection(db, "courses"), (s) => {
+    COURSES = sortCourses(s.docs.map((d) => ({ ...d.data(), id: d.id })));
+    refresh();
+  }, permErr("강좌")));
+  // 읽기 횟수 절약: 신청 · 윈터스쿨 · 인원현황은 이번 시즌만 읽고, 지난 시즌은 볼 때만 불러옵니다 (loadPastSeasons)
+  pastLoaded = false;
+  unsubs.push(onSnapshot(query(collection(db, "applications"), where("season", "==", SEASON)), (s) => {
+    if (pastLoaded) return;
+    APPS = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    refresh();
+  }, permErr("특강 신청")));
+  unsubs.push(onSnapshot(query(collection(db, "winterSchool"), where("season", "==", SEASON)), (s) => {
+    if (pastLoaded) return;
+    WINTER = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    refresh();
+  }, permErr("윈터스쿨")));
   unsubs.push(onSnapshot(collection(db, "notices"), (s) => {
     NOTICES = s.docs.map((d) => ({ ...d.data(), id: d.id }));
     refresh();
   }, permErr("안내문")));
-  unsubs.push(onSnapshot(collection(db, "members"), (s) => {
+  unsubs.push(onSnapshot(query(collection(db, "members"), where("season", "==", SEASON)), (s) => {
     MEMBERS = []; MEMBER_META = {};
     s.docs.forEach((d) => {
       const x = { ...d.data(), id: d.id };
@@ -584,6 +607,7 @@ const picked = (name, root = document) => $$(`input[name="${name}"]:checked`, ro
 $$("#tabs button").forEach((b) => b.onclick = () => {
   $$("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   $$(".panel").forEach((p) => p.classList.toggle("on", p.id === `p-${b.dataset.tab}`));
+  if (b.dataset.tab === "archive") loadPastSeasons();
 });
 
 let refreshQueued = false;
@@ -1256,7 +1280,7 @@ function editColMeta(key) {
   };
 }
 
-$("#rSeason").onchange = (e) => { ui.rSeason = e.target.value; refresh(); };
+$("#rSeason").onchange = (e) => { ui.rSeason = e.target.value; if (ui.rSeason !== SEASON) loadPastSeasons(); refresh(); };
 $$("#rHall button").forEach((b) => b.onclick = () => { $$("#rHall button").forEach((x) => x.classList.toggle("on", x === b)); ui.rHall = b.dataset.h; renderRoster(); });
 $("#rSearch").oninput = (e) => { ui.rSearch = e.target.value; renderRoster(); };
 $("#rCsv").onclick = () => {
@@ -1339,7 +1363,7 @@ function editWinter(id) {
     await deleteDoc(doc(db, "winterSchool", id)); closeModal(); toast("삭제했습니다.");
   };
 }
-$("#wSeason").onchange = (e) => { ui.wSeason = e.target.value; refresh(); };
+$("#wSeason").onchange = (e) => { ui.wSeason = e.target.value; if (ui.wSeason !== SEASON) loadPastSeasons(); refresh(); };
 $("#wSearch").oninput = (e) => { ui.wSearch = e.target.value; renderWinter(); };
 $("#wAdd").onclick = () => editWinter(null);
 $("#wCsv").onclick = () => {
@@ -1746,7 +1770,7 @@ $("#cOrderSave").onclick = async () => {
   await batch.commit();
   pendingOrder = null; $("#cOrderSave").style.display = "none"; toast("순서를 저장했습니다.", "ok");
 };
-$("#cSeason").onchange = (e) => { ui.cSeason = e.target.value; refresh(); };
+$("#cSeason").onchange = (e) => { ui.cSeason = e.target.value; if (ui.cSeason !== SEASON) loadPastSeasons(); refresh(); };
 $("#cAdd").onclick = () => editCourse({ season: ui.cSeason, category: "고등", title: "", variants: [{ label: "월금반", days: ["월", "금"], time: "", count: 0, start: "", end: "" }], sessions: [], breaks: [] }, true);
 $("#cSeed").onclick = async () => {
   const exist = COURSES.filter((c) => seasonOf(c) === SEASON).length;
@@ -1887,10 +1911,31 @@ function copyToSeason(c) {
   editCourse(rest, true);
   toast(`${SEASON_LABEL} 강좌로 복사합니다. 일정을 수정한 뒤 저장하세요.`);
 }
-$("#aSeason").onchange = (e) => { ui.aSeason = e.target.value; refresh(); };
+$("#aSeason").onchange = (e) => { ui.aSeason = e.target.value; loadPastSeasons(); refresh(); };
 
 /* ================= 6. 설정 ================= */
 let settingsDirty = false;
+// 지금 전체 백업 (모든 시즌 · 모든 컬렉션 → .json 파일)
+const BACKUP_COLS = ["courses", "applications", "winterSchool", "notices", "settings", "members"];
+const plain = (v) => v && typeof v.toDate === "function" ? { __time: v.toDate().toISOString() } : Array.isArray(v) ? v.map(plain) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, plain(x)])) : v;
+$("#sBackup").onclick = async () => {
+  const btn = $("#sBackup"); btn.disabled = true; $("#sBackupMsg").textContent = "백업 중…";
+  try {
+    const out = { project: "cms-summer-camp", backedUpAt: new Date().toISOString(), by: (auth.currentUser && auth.currentUser.email) || "", collections: {} };
+    let n = 0;
+    for (const c of BACKUP_COLS) {
+      const snap = await getDocs(collection(db, c));
+      out.collections[c] = snap.docs.map((d) => ({ id: d.id, data: plain(d.data()) }));
+      n += snap.docs.length;
+    }
+    const stamp = new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).replace(" ", "_").replace(/[-:]/g, "").slice(0, 13);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
+    a.download = `CMS특강_백업_${stamp}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    $("#sBackupMsg").textContent = `${n}건을 저장했습니다.`;
+  } catch (e) { console.error(e); $("#sBackupMsg").textContent = "백업 실패: " + e.message; }
+  btn.disabled = false;
+};
 function renderSettings() {
   const s = SETTINGS, w = s.winter;
   $("#sForm").innerHTML = `
