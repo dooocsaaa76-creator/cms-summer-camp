@@ -39,6 +39,17 @@ export const TEACHER_ALIAS = { "김수진": "김나연" };
 export const PREMIUM_TEACHERS = ["김나연", "유재은", "오선영"];
 export const dispTeacher = (t) => { const s = String(t || "").replace(/[,\s]/g, "").trim(); return TEACHER_ALIAS[s] || s; };
 export const teacherName = dispTeacher;
+// 학생별 담임 직접 지정 (배치생 리스트 ID → 선생님). 리스트를 다시 올려도 유지됨
+export const TEACHER_FIX = { "2544370": "이정석" }; // 노예린(원촌중1): 금 이진성 · 일 이정석 → 이정석 담당
+// 담임 고정 학생은 그 선생님 반을 담임반으로
+export function applyTeacherFix(m) {
+  const t = TEACHER_FIX[m.sid];
+  if (!t) return m;
+  const cls = (m.classes || []).slice();
+  const i = cls.findIndex((c) => c.teacher === t);
+  if (i > 0) cls.unshift(cls.splice(i, 1)[0]);
+  return { ...m, teacher: t, classes: cls, mainClass: i >= 0 && cls[0] ? cls[0].name : m.mainClass, teacherFixed: true };
+}
 export const teacherHall = (t) => (!t || t === "미지정" ? 2 : PREMIUM_TEACHERS.includes(t) ? 1 : 0);
 // 인원현황에서 아예 빼는 반: [HM] 클라이매쓰 + 과학고 대비 · 면접대비 · 기출 예상 모의고사
 const EXCLUDE_NAME = /과학고\s*대비|면접\s*대비|기출\s*예상\s*모의고사/;
@@ -173,11 +184,11 @@ export function buildMembers(rows) {
     const cls = s.all.filter((c) => c.kind !== "제외").sort(classSort);
     if (!cls.length) { hmOnly.push(s.name); return; }
     const main = cls[0];
-    members.push({
+    members.push(applyTeacherFix({
       sid: s.sid, name: s.name, grade: s.grade, gender: s.gender, school: s.school,
       mainClass: main.name, mainKind: main.kind, teacher: main.teacher || "",
       classes: cls.map((c) => ({ name: c.name, kind: c.kind, teacher: c.teacher, hold: c.hold })),
-    });
+    }));
   });
   members.sort((a, b) => teacherHall(a.teacher) - teacherHall(b.teacher) || (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"));
   return { members, lines, hmLines, hmOnly, students: byStudent.size };
