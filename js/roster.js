@@ -4,7 +4,7 @@
    - 학생 1명당 여러 줄(반마다 1줄)인 배치생 리스트를 학생 단위로 묶습니다.
 
    배정 규칙
-   1. [HM##] 반(클라이매쓰 고등관)은 제외. HM 반만 듣는 학생은 명단에서 빠짐
+   1. [HM##] 반(클라이매쓰 고등관) · 과학고 대비 · 면접대비 · 기출 예상 모의고사 반은 제외. 이 반만 듣는 학생은 명단에서 빠짐
    2. 정규반([FIT] [GS] [GSTOP] [BL] 등) > [PL] 개별진도반 > 단과([SM] [SL] [G] [RE] 등) 순으로 담임 결정
       - 정규반 + PL  → 정규반 담임
       - PL + 단과    → PL반 담임
@@ -19,7 +19,7 @@ export const isHM = (s) => tagsOf(s).some((t) => /^HM\d*$/.test(t));
 export const isPL = (s) => tagsOf(s).some((t) => /^PL\d*$/.test(t));
 const REGULAR_TAG = /^(FIT|GS|GSTOP|BL)\d*$/;
 export const isRegular = (s) => !isPL(s) && tagsOf(s).some((t) => REGULAR_TAG.test(t));
-export const classKind = (s) => (isHM(s) ? "HM" : isRegular(s) ? "정규" : isPL(s) ? "PL" : "단과");
+export const classKind = (s) => (isExcluded(s) ? "제외" : isRegular(s) ? "정규" : isPL(s) ? "PL" : "단과");
 const KIND_RANK = { 정규: 0, PL: 1, 단과: 2 };
 const DAY_ORDER = "월화수목금토일";
 // 요일: '_' 뒤(없으면 마지막 ']' 뒤)에서 처음 나오는 요일 글자
@@ -33,7 +33,16 @@ export function classDay(s) {
 const classTime = (s) => { const m = String(s || "").match(/(\d{1,2}):(\d{2})/); return m ? +m[1] * 60 + +m[2] : 9999; };
 // 짧은 반 이름: [태그] 와 시간을 뺀 이름 (예: [IL][FIT09]중1-2_화목 19:00 → 중1-2_화목)
 export const shortClass = (s) => cleanClass(s).replace(/\[[^\]]*\]/g, "").replace(/\s*\d{1,2}:\d{2}\s*$/, "").trim();
-export const teacherName = (s) => String(s || "").replace(/[,\s]/g, "").trim();
+// 배치생 리스트의 이름 → 웹에 보일 이름 (리스트는 그대로 올려도 화면에서만 바뀜)
+export const TEACHER_ALIAS = { "김수진": "김나연" };
+// 프리미엄관 소속 선생님 (영재관 선생님 다음에 나열)
+export const PREMIUM_TEACHERS = ["김나연", "유재은", "오선영"];
+export const dispTeacher = (t) => { const s = String(t || "").replace(/[,\s]/g, "").trim(); return TEACHER_ALIAS[s] || s; };
+export const teacherName = dispTeacher;
+export const teacherHall = (t) => (!t || t === "미지정" ? 2 : PREMIUM_TEACHERS.includes(t) ? 1 : 0);
+// 인원현황에서 아예 빼는 반: [HM] 클라이매쓰 + 과학고 대비 · 면접대비 · 기출 예상 모의고사
+const EXCLUDE_NAME = /과학고\s*대비|면접\s*대비|기출\s*예상\s*모의고사/;
+export const isExcluded = (s) => isHM(s) || EXCLUDE_NAME.test(String(s || ""));
 
 function classSort(a, b) {
   return (KIND_RANK[a.kind] - KIND_RANK[b.kind])
@@ -155,13 +164,13 @@ export function buildMembers(rows) {
     let s = byStudent.get(id);
     if (!s) byStudent.set(id, s = { sid: id.replace(/[\/.#$\[\]]/g, "_"), name, grade: shortGrade(get(r, "grade")), gender: get(r, "gender"), school: get(r, "school"), all: [] });
     const kind = classKind(raw);
-    if (kind === "HM") hmLines++;
+    if (kind === "제외") hmLines++;
     s.all.push({ raw, kind, name: cleanClass(raw), teacher: teacherName(get(r, "teacher")), hold: /hold/i.test(get(r, "clsState")) });
   });
 
   const members = [], hmOnly = [];
   byStudent.forEach((s) => {
-    const cls = s.all.filter((c) => c.kind !== "HM").sort(classSort);
+    const cls = s.all.filter((c) => c.kind !== "제외").sort(classSort);
     if (!cls.length) { hmOnly.push(s.name); return; }
     const main = cls[0];
     members.push({
@@ -170,7 +179,7 @@ export function buildMembers(rows) {
       classes: cls.map((c) => ({ name: c.name, kind: c.kind, teacher: c.teacher, hold: c.hold })),
     });
   });
-  members.sort((a, b) => (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"));
+  members.sort((a, b) => teacherHall(a.teacher) - teacherHall(b.teacher) || (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"));
   return { members, lines, hmLines, hmOnly, students: byStudent.size };
 }
 

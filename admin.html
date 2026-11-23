@@ -70,13 +70,15 @@
   .col-stat .meter i.full{background:var(--red);}
   .rt{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
   .rt td{padding:6px 6px;border-bottom:1px solid var(--line-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .rt td.n{width:26px;color:var(--muted);text-align:center;font-size:11.5px;}
-  .rt td.nm{width:30%;font-weight:700;cursor:pointer;}
+  .rt td.n{width:20px;color:var(--muted);text-align:center;font-size:11.5px;}
+  .rt td.nm{width:102px;font-weight:700;cursor:pointer;}
+  .rt td.nm .stg{margin-left:3px;padding:0 3px;}
   .rt td.nm:hover{color:var(--green-d);text-decoration:underline;}
-  .rt td.sc{color:var(--ink-2);font-size:12px;}
+  .rt td.sc{width:64px;color:var(--ink-2);font-size:12px;}
   .rt td.rc{color:var(--ink-2);font-size:12px;}
-  .rt td.ox{width:34px;text-align:center;}
-  .rt td.mm{width:58px;text-align:right;}
+  .rt td.th{width:44px;color:var(--ink-2);font-size:11.5px;}
+  .rt td.ox{width:30px;text-align:center;}
+  .rt td.mm{width:52px;text-align:right;}
   .rt tr.x td.nm,.rt tr.x td.sc,.rt tr.x td.rc{text-decoration:line-through;color:#B8B8BE;}
   .rt tr.hit td{background:#FFF7D6;}
   .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle;background:var(--blue);}
@@ -464,7 +466,7 @@ import {
 import { SEED_2027_WINTER } from "./js/seed-2027winter.js";
 import { renderNotice, NOTICE_CSS, NOTICE_DEFAULTS, noticeTitle, foldLegacy } from "./js/notice-render.js";
 import { extractBlocks, parseNotice } from "./js/hwp-import.js";
-import { readXlsx, buildMembers, memberStage, shortSchool, shortGrade, shortClass, baseName, OX } from "./js/roster.js";
+import { readXlsx, buildMembers, memberStage, shortSchool, shortGrade, shortClass, baseName, OX, dispTeacher, teacherHall, isExcluded } from "./js/roster.js";
 
 document.getElementById("noticeCss").textContent = NOTICE_CSS;
 const $ = (s, r = document) => r.querySelector(s);
@@ -520,7 +522,14 @@ function subscribe() {
   }, permErr("안내문")));
   unsubs.push(onSnapshot(collection(db, "members"), (s) => {
     MEMBERS = []; MEMBER_META = {};
-    s.docs.forEach((d) => { const x = { ...d.data(), id: d.id }; if (d.id.startsWith("_meta")) MEMBER_META[x.season || ""] = x; else MEMBERS.push(x); });
+    s.docs.forEach((d) => {
+      const x = { ...d.data(), id: d.id };
+      if (d.id.startsWith("_meta")) { MEMBER_META[x.season || ""] = x; return; }
+      if (isExcluded(x.mainClass)) return;
+      x.teacher = dispTeacher(x.teacher);
+      x.classes = (x.classes || []).filter((c) => !isExcluded(c.name)).map((c) => ({ ...c, teacher: dispTeacher(c.teacher) }));
+      MEMBERS.push(x);
+    });
     membersLoaded = true;
     refresh();
   }, (err) => { membersErr = err; permErr("인원현황")(err); refresh(); }));
@@ -657,15 +666,17 @@ function renderPeople() {
   // 선생님 목록
   const tCount = {};
   active.forEach((m) => { const t = m.teacher || "미지정"; tCount[t] = (tCount[t] || 0) + 1; });
-  const teachers = Object.keys(tCount).sort((a, b) => (a === "미지정") - (b === "미지정") || a.localeCompare(b, "ko"));
+  const teachers = Object.keys(tCount).sort((a, b) => teacherHall(a) - teacherHall(b) || a.localeCompare(b, "ko"));
   if (ui.pTeacher !== "all" && !tCount[ui.pTeacher] && all.length) ui.pTeacher = "all";
-  $("#pTeacher").innerHTML = `<option value="all">전체 선생님 (${active.length}명)</option>` + teachers.map((t) => `<option value="${esc(t)}" ${t === ui.pTeacher ? "selected" : ""}>${esc(t)} (${tCount[t]}명)</option>`).join("");
+  const tOpt = (t) => `<option value="${esc(t)}" ${t === ui.pTeacher ? "selected" : ""}>${esc(t)} (${tCount[t]}명)</option>`;
+  $("#pTeacher").innerHTML = `<option value="all">전체 선생님 (${active.length}명)</option>`
+    + [["영재관", 0], ["프리미엄관", 1], ["담임 미지정", 2]].map(([g, h]) => { const ts = teachers.filter((t) => teacherHall(t) === h); return ts.length ? `<optgroup label="${g}">${ts.map(tOpt).join("")}</optgroup>` : ""; }).join("");
   $("#pView").value = ui.pView;
 
   // 기준 파일 · 마감일
   const upAt = meta.uploadedAt && meta.uploadedAt.toDate ? meta.uploadedAt.toDate().toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
   const due = (k, label) => `<label class="due ${meta[k] && ddayText(meta[k]).startsWith("D-") && +ddayText(meta[k]).slice(2) <= 3 ? "on" : ""}">${label} <input type="date" data-due="${k}" value="${esc(meta[k] || "")}">${meta[k] ? `<span>${ddayText(meta[k])}</span>` : ""}</label>`;
-  $("#pMeta").innerHTML = (meta.fileName ? `<span>📄 <b>${esc(meta.fileName)}</b> 기준 · ${esc(upAt)} 업로드 · 재원생 ${active.length}명${meta.hmOnly ? ` <span class="hint">(클라이매쓰만 수강 ${meta.hmOnly}명 제외)</span>` : ""}</span>` : `<span class="hint">아직 배치생 리스트가 없습니다. 오른쪽 위 <b>[배치생 리스트 업로드]</b>로 엑셀 파일을 올려주세요.</span>`)
+  $("#pMeta").innerHTML = (meta.fileName ? `<span>📄 <b>${esc(meta.fileName)}</b> 기준 · ${esc(upAt)} 업로드 · 재원생 ${active.length}명${meta.hmOnly ? ` <span class="hint">(클라이매쓰 · 과학고 대비 · 면접대비 · 기출 모의고사 반만 수강 ${meta.hmOnly}명 제외)</span>` : ""}</span>` : `<span class="hint">아직 배치생 리스트가 없습니다. 오른쪽 위 <b>[배치생 리스트 업로드]</b>로 엑셀 파일을 올려주세요.</span>`)
     + `<span class="sp" style="flex:1"></span>${due("due1", "1차 확정 입력 마감")}${due("due2", "2차")}${due("due3", "수강확정")}`;
 
   // 통계 (선생님 선택 시 그 선생님 기준)
@@ -687,7 +698,7 @@ function renderPeople() {
     return;
   }
   if (!membersLoaded) { root.innerHTML = `<div class="empty">불러오는 중…</div>`; return; }
-  if (!all.length) { root.innerHTML = `<div class="empty card">배치생 리스트를 올리면 담임 선생님별 학생 명단이 만들어집니다.<br><span class="hint">[HM] 클라이매쓰 반은 빠지고, 정규반 · PL반 · 단과 순으로 담임이 정해집니다.</span></div>`; return; }
+  if (!all.length) { root.innerHTML = `<div class="empty card">배치생 리스트를 올리면 담임 선생님별 학생 명단이 만들어집니다.<br><span class="hint">[HM] 클라이매쓰 · 과학고 대비 · 면접대비 · 기출 예상 모의고사 반은 빠지고, 정규반 · PL반 · 단과 순으로 담임이 정해집니다.</span></div>`; return; }
 
   const list = recList();
   const term = ui.pSearch.trim();
@@ -716,13 +727,17 @@ function renderPeople() {
       <tbody>${rows.map(rowHtml).join("")}</tbody></table></div>`;
 
   const shown = teachers.filter((t) => ui.pTeacher === "all" || t === ui.pTeacher);
+  let lastHall = -1;
   let html = shown.map((t) => {
     const ms = active.filter((m) => (m.teacher || "미지정") === t);
     const rows = ms.filter(peopleFilter).sort((a, b) => a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"));
     if (!rows.length) return "";
     const [bg, bd] = T_COLORS[teachers.indexOf(t) % T_COLORS.length];
     const d1 = ms.filter((m) => m.c1).length;
-    return `<div class="p-sec"><div class="p-sec-h" style="background:${bg};border-left:5px solid ${bd}">${esc(t)} ${t === "미지정" ? "" : "선생님"} <span class="hint">${ms.length}명${rows.length !== ms.length ? ` 중 ${rows.length}명 표시` : ""}</span>
+    const h = teacherHall(t);
+    const hallHead = ui.pTeacher === "all" && h !== lastHall && h < 2 ? `<div class="hall-h" style="margin-top:${lastHall < 0 ? 4 : 30}px"><img src="${HALLS[h].logo}" alt="">${HALLS[h].name} <span class="hint">${teachers.filter((x) => teacherHall(x) === h).length}명 선생님 · 학생 ${active.filter((m) => teacherHall(m.teacher || "미지정") === h).length}명</span></div>` : "";
+    lastHall = h;
+    return hallHead + `<div class="p-sec"><div class="p-sec-h" style="background:${bg};border-left:5px solid ${bd}">${esc(t)} ${t === "미지정" ? "" : "선생님"} <span class="hint">${ms.length}명${rows.length !== ms.length ? ` 중 ${rows.length}명 표시` : ""}</span>
       <span class="prog">1차 입력 ${d1}/${ms.length} · 2차 ${ms.filter((m) => m.c2).length} · 수강확정 O ${ms.filter((m) => m.final === "O").length}</span></div>${table(rows)}</div>`;
   }).join("");
   const gone = all.filter((m) => m.active === false && (ui.pTeacher === "all" || (m.teacher || "미지정") === ui.pTeacher)).filter(peopleFilter);
@@ -730,6 +745,7 @@ function renderPeople() {
   root.innerHTML = html || `<div class="empty card">조건에 맞는 학생이 없습니다.</div>`;
 }
 
+const hasInput = (m) => !!(m.janClass || m.recommend || m.c1 || m.c2 || m.final || m.memo);
 async function saveMember(id, patch) {
   const m = MEMBERS.find((x) => x.id === id); if (m) Object.assign(m, patch);
   try { await updateDoc(doc(db, "members", id), { ...patch, updatedAt: serverTimestamp(), updatedBy: (auth.currentUser && auth.currentUser.email) || "" }); }
@@ -802,12 +818,12 @@ $("#pFile").onchange = async (e) => {
   const names = (arr, f = (x) => x.name) => arr.length ? `<div class="hint" style="margin-top:4px;line-height:1.6">${arr.slice(0, 60).map((x) => esc(f(x))).join(", ")}${arr.length > 60 ? ` 외 ${arr.length - 60}명` : ""}</div>` : "";
   openModal(`<h2 style="margin-bottom:6px">배치생 리스트 반영</h2>
     <p class="hint" style="margin:0 0 14px">📄 ${esc(file.name)} · ${res.lines}줄 · 학생 ${res.students}명</p>
-    <div class="impbox ok"><b>재원생 ${res.members.length}명</b>을 담임 선생님별로 정리합니다. <span class="hint">(클라이매쓰[HM] 반만 듣는 ${res.hmOnly.length}명 제외)</span></div>
+    <div class="impbox ok"><b>재원생 ${res.members.length}명</b>을 담임 선생님별로 정리합니다. <span class="hint">(클라이매쓰[HM] · 과학고 대비 · 면접대비 · 기출 모의고사 반만 듣는 ${res.hmOnly.length}명 제외)</span></div>
     <ul style="font-size:13.5px;line-height:1.7;padding-left:20px">
       <li><b>새로 추가</b> ${added.length}명${names(added)}</li>
       <li><b>담임 · 반 변경</b> ${moved.length}명${names(moved, ({ m, o }) => `${m.name}: ${o.teacher || "미지정"} → ${m.teacher || "미지정"}${o.mainClass !== m.mainClass ? ` (${shortClass(m.mainClass)})` : ""}`)}</li>
       ${back.length ? `<li><b>다시 들어온 학생</b> ${back.length}명${names(back)}</li>` : ""}
-      <li><b>리스트에서 빠진 학생</b> ${gone.length}명 <span class="hint">— 지우지 않고 맨 아래 '빠진 학생'으로 옮깁니다</span>${names(gone)}</li>
+      <li><b>리스트에서 빠진 학생</b> ${gone.length}명 <span class="hint">— 선생님이 입력한 내용이 있으면 맨 아래 '빠진 학생'에 보관하고, 없으면 지웁니다</span>${names(gone)}</li>
     </ul>
     <p class="hint">선생님들이 입력한 1월 반명 · 추천특강 · 1차/2차/수강확정 · 특이사항은 그대로 유지됩니다.</p>
     <div class="acts"><button class="btn" data-close>취소</button><button class="btn btn-green" id="pGo">반영하기</button></div>`);
@@ -819,10 +835,10 @@ $("#pFile").onchange = async (e) => {
         const base = { ...m, season: SEASON, active: true, syncedAt: serverTimestamp() };
         ops.push(cur.has(id) ? [id, base, true] : [id, { ...base, janClass: "", recommend: "", c1: "", c2: "", final: "", memo: "" }, false]);
       });
-      gone.forEach((o) => ops.push([o.id, { active: false, syncedAt: serverTimestamp() }, true]));
+      gone.forEach((o) => ops.push(hasInput(o) ? [o.id, { active: false, syncedAt: serverTimestamp() }, true] : [o.id, null]));
       for (let i = 0; i < ops.length; i += 400) {
         const batch = writeBatch(db);
-        ops.slice(i, i + 400).forEach(([id, data, merge]) => batch.set(doc(db, "members", id), data, merge ? { merge: true } : {}));
+        ops.slice(i, i + 400).forEach(([id, data, merge]) => data === null ? batch.delete(doc(db, "members", id)) : batch.set(doc(db, "members", id), data, merge ? { merge: true } : {}));
         await batch.commit();
       }
       await setDoc(doc(db, "members", metaId(SEASON)), { season: SEASON, kind: "meta", fileName: file.name, uploadedAt: serverTimestamp(), uploadedBy: (auth.currentUser && auth.currentUser.email) || "", count: res.members.length, hmOnly: res.hmOnly.length }, { merge: true });
@@ -838,7 +854,7 @@ $("#pFile").onchange = async (e) => {
 $("#pCsv").onclick = () => {
   const list = recList();
   const rows = [["담임", "ID", "이름", "학년", "성별", "학교", "클래스(담임반)", "다른 반", "1월 반명", "추천특강", "1차 확정여부", "2차 확정여부", "수강확정", "특이사항", "특강명단 반영", "리스트 상태"]];
-  seasonMembers(SEASON).slice().sort((a, b) => (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"))
+  seasonMembers(SEASON).slice().sort((a, b) => teacherHall(a.teacher) - teacherHall(b.teacher) || (a.teacher || "힣").localeCompare(b.teacher || "힣", "ko") || a.mainClass.localeCompare(b.mainClass, "ko") || a.name.localeCompare(b.name, "ko"))
     .forEach((m) => { const st = memberStage(m); rows.push([m.teacher || "미지정", m.sid, m.name, m.grade, m.gender, m.school, m.mainClass, (m.classes || []).slice(1).map((c) => c.name).join(" / "), m.janClass, recLabel(m.recommend, list), m.c1, m.c2, m.final, m.memo, st && m.recommend && m.recommend !== "none" ? st.label : "", m.active === false ? "빠짐" : ""]); });
   downloadCSV(`${SEASON}_인원현황.csv`, rows);
 };
@@ -1039,10 +1055,11 @@ const stgBadge = (st) => (st ? `<span class="stg ${stgCls(st)}" title="인원현
 // 특강 명단 한 줄: 이름 · 학교/학년 · 반(1월반명)
 function appClassCell(a) {
   const m = a._mem || memberFor(a);
-  if (m && m.janClass) return { t: m.janClass, fb: false };
-  if (a.regularClass) return { t: a.regularClass, fb: false };
-  if (m) return { t: shortClass(m.mainClass), fb: true };
-  return { t: a.enrolled === "외부생" ? "외부생" : "", fb: true };
+  const th = m ? m.teacher || "" : "";
+  if (m && m.janClass) return { t: m.janClass, fb: false, th };
+  if (a.regularClass) return { t: a.regularClass, fb: false, th };
+  if (m) return { t: shortClass(m.mainClass), fb: true, th };
+  return { t: a.enrolled === "외부생" ? "외부생" : "", fb: true, th };
 }
 function colHtml(x, term) {
   const v = x.v || {};
@@ -1050,6 +1067,7 @@ function colHtml(x, term) {
   const cancel = x.apps.filter((a) => isCancel(a)).length;
   const cap = +v.capacity || 0;
   const hit = term && (x.apps.some((a) => (a.studentName || "").includes(term)) || x.mem.some(({ m }) => m.name.includes(term)));
+  const hasMemo = x.apps.some((a) => a.staffMemo || a.memo) || x.mem.some(({ m }) => m.memo);
   const dupKey = {};
   x.apps.forEach((a) => { const k = `${a.studentName}|${a.phone}`; dupKey[k] = (dupKey[k] || 0) + 1; });
   const appRows = x.apps.map((a, i) => { const rc = appClassCell(a); return `<tr class="${isCancel(a) ? "x" : ""} ${term && (a.studentName || "").includes(term) ? "hit" : ""}">
@@ -1057,16 +1075,18 @@ function colHtml(x, term) {
         <td class="nm" data-app="${a.id}" title="${esc(a.studentName)}">${esc(a.studentName)}<i class="dot ${a.enrolled === "재원생" ? "in" : ""}"></i>${stgBadge(a._st)}${dupKey[`${a.studentName}|${a.phone}`] > 1 ? `<span class="dup">중복</span>` : ""}</td>
         <td class="sc" title="${esc(a.school)} ${esc(a.grade)}">${esc(shortSchool(a.school))} ${esc(a.grade || "")}</td>
         <td class="rc ${rc.fb ? "fb" : ""}" title="${esc(rc.t)}">${esc(rc.t)}</td>
+        <td class="th" title="담임">${esc(rc.th || "")}</td>
         <td class="ox"><button class="oxb ${isCancel(a) ? "x" : ""}" data-ox="${a.id}" title="수강/취소 전환">${isCancel(a) ? "X" : "O"}</button></td>
-        <td class="mm">${a.staffMemo ? `<span class="memo-tag" title="${esc(a.staffMemo)}">${esc(a.staffMemo)}</span>` : (a.memo ? `<span class="badge amber" title="${esc(a.memo)}">요청</span>` : "")}</td>
+        ${hasMemo ? `<td class="mm">${a.staffMemo ? `<span class="memo-tag" title="${esc(a.staffMemo)}">${esc(a.staffMemo)}</span>` : (a.memo ? `<span class="badge amber" title="${esc(a.memo)}">요청</span>` : "")}</td>` : ""}
       </tr>`; }).join("");
   const memRows = x.mem.map(({ m, st }, j) => `<tr class="mem ${term && m.name.includes(term) ? "hit" : ""}">
         <td class="n">${x.apps.length + j + 1}</td>
         <td class="nm" data-mem="${m.id}" title="${esc(m.name)} · 담임 ${esc(m.teacher || "미지정")} (인원현황)">${esc(m.name)}<i class="dot in"></i>${stgBadge(st)}</td>
         <td class="sc" title="${esc(m.school)} ${esc(m.grade)}">${esc(shortSchool(m.school))} ${esc(m.grade || "")}</td>
         <td class="rc ${m.janClass ? "" : "fb"}" title="${esc(m.janClass || m.mainClass)}">${esc(m.janClass || shortClass(m.mainClass))}</td>
+        <td class="th" title="담임">${esc(m.teacher || "")}</td>
         <td class="ox"></td>
-        <td class="mm">${m.memo ? `<span class="memo-tag" title="${esc(m.memo)}">${esc(m.memo)}</span>` : ""}</td>
+        ${hasMemo ? `<td class="mm">${m.memo ? `<span class="memo-tag" title="${esc(m.memo)}">${esc(m.memo)}</span>` : ""}</td>` : ""}
       </tr>`).join("");
   return `<div class="col ${x.hall} ${term && !hit ? "dim" : ""}">
     <div class="col-h"><span class="no">${x.no}</span><div class="tt">${esc(x.c.title)}${(x.c.variants || []).length > 1 || v.label ? `<small>${esc(v.label || "")}</small>` : ""}</div>
@@ -1078,7 +1098,7 @@ function colHtml(x, term) {
     </div>` : ""}
     <div class="col-stat">수강 <b>${act}</b>${cap ? ` / ${cap}` : ""}<span class="meter"><i class="${cap && act >= cap ? "full" : ""}" style="width:${cap ? Math.min(100, act / cap * 100) : (act ? 100 : 0)}%"></i></span>취소 ${cancel}${v.closed ? ` <span class="badge red">마감</span>` : ""}</div>
     <table class="rt"><tbody>
-      ${appRows + memRows || `<tr><td colspan="6" class="hint" style="text-align:center;padding:14px">신청자가 없습니다</td></tr>`}
+      ${appRows + memRows || `<tr><td colspan="7" class="hint" style="text-align:center;padding:14px">신청자가 없습니다</td></tr>`}
     </tbody></table>
     ${x.key !== "orphan" ? `<div class="col-add"><input data-quick="${x.key}" placeholder="＋ 학생 이름 입력 후 Enter"></div>` : ""}
   </div>`;
