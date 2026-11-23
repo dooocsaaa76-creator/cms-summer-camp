@@ -361,7 +361,6 @@
         <span class="sp"></span>
         <button class="btn btn-sm" id="cOrderSave" style="display:none">순서 저장</button>
         <button class="btn btn-sm" id="cSeed">겨울 초기 강좌 업로드</button>
-        <button class="btn btn-sm btn-green" id="cSync">안내문 수정사항 반영</button>
         <button class="btn btn-sm btn-dark" id="cAdd">＋ 강좌 추가</button>
       </div>
       <div id="cInfo"></div>
@@ -1220,7 +1219,6 @@ function renderCourses() {
   const season = ui.cSeason;
   const list = COURSES.filter((c) => seasonOf(c) === season);
   $("#cSeed").style.display = season === SEASON ? "" : "none";
-  $("#cSync").style.display = season === SEASON && COURSES.some((c) => seasonOf(c) === SEASON) ? "" : "none";
   $("#cInfo").innerHTML = season === SEASON && SEED_NOTES.length ? `<div class="infobox"><b>안내문 원본 확인 필요 항목</b> (초기 업로드 데이터 기준)<ul>${SEED_NOTES.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : "";
   if (!list.length) {
     $("#cList").innerHTML = `<div class="empty card">${esc(seasonName(season))} 강좌가 없습니다.${season === SEASON ? " [겨울 초기 강좌 업로드]를 누르면 안내문 한글파일의 강좌 18개가 등록됩니다." : ""}</div>`;
@@ -1288,81 +1286,6 @@ $("#cSeed").onclick = async () => {
   SEED_2027_WINTER.forEach((c, i) => batch.set(doc(collection(db, "courses")), { ...c, season: SEASON, order: exist + i }));
   await batch.commit();
   toast("겨울 강좌를 업로드했습니다.", "ok");
-};
-
-/* ----- 안내문(한글파일) 수정본을 이미 등록된 강좌에 반영 -----
-   강좌 이름으로 짝을 지어 바뀐 항목만 보여주고, 선택한 강좌만 업데이트합니다.
-   담당 선생님·강의실·정원·마감 여부와 강좌 순서는 그대로 둡니다. */
-const SYNC_FIELDS = [["subtitle", "부제"], ["textbook", "교재"], ["target", "수업 대상"], ["feature", "특징"], ["note", "휴강 안내"]];
-const V_FIELDS = [["days", "요일"], ["time", "시간"], ["count", "회차"], ["start", "개강"], ["end", "종강"], ["period", "기간 표기"]];
-const showVal = (x) => Array.isArray(x) ? x.join(", ") : (x === undefined || x === null || x === "" ? "(없음)" : String(x));
-// Firestore는 객체 키 순서를 바꿔 돌려주므로 키를 정렬해서 비교
-const stable = (x) => Array.isArray(x) ? `[${x.map(stable).join(",")}]`
-  : x && typeof x === "object" ? `{${Object.keys(x).sort().map((k) => `${JSON.stringify(k)}:${stable(x[k])}`).join(",")}}` : JSON.stringify(x ?? "");
-const same = (a, b) => stable(a ?? "") === stable(b ?? "");
-const normBreaks = (bs) => (bs || []).filter((b) => b && b.from).map((b) => ({ from: b.from, to: b.to || b.from }));
-function courseDiff(cur, seed) {
-  const changes = [], patch = {};
-  [...SYNC_FIELDS, ...(seed.targetExt ? [["targetExt", "수업 대상(외부생)"]] : [])].forEach(([k, label]) => {
-    const nv = seed[k] ?? "";
-    if (!same(cur[k] ?? "", nv)) { changes.push({ label, from: cur[k], to: nv }); patch[k] = nv; }
-  });
-  if (!same(cur.sessions || [], seed.sessions || [])) {
-    const a = cur.sessions || [], b = seed.sessions || [];
-    const diffs = [];
-    for (let i = 0; i < Math.max(a.length, b.length); i++) if ((a[i] || "") !== (b[i] || "")) diffs.push(`${i + 1}회: ${a[i] || "(없음)"} → ${b[i] || "(없음)"}`);
-    changes.push({ label: "회차 진도", text: diffs.join(" / ") });
-    patch.sessions = [...b];
-  }
-  if (!same(normBreaks(cur.breaks), normBreaks(seed.breaks))) { changes.push({ label: "휴강 기간", from: breakText(cur.breaks), to: breakText(seed.breaks) }); patch.breaks = seed.breaks || []; }
-  const vars = (cur.variants || []).map((v) => ({ ...v }));
-  let vChanged = false;
-  (seed.variants || []).forEach((sv) => {
-    const cv = vars.find((v) => (v.label || "") === (sv.label || ""));
-    if (!cv) { vars.push({ ...sv }); vChanged = true; changes.push({ label: `${sv.label} (새 반)`, text: `${(sv.days || []).join("")} ${sv.time} · ${sv.count}회 · ${fmtRange(sv.start, sv.end)}` }); return; }
-    V_FIELDS.forEach(([k, label]) => {
-      const nv = sv[k] ?? (k === "count" ? 0 : k === "days" ? [] : "");
-      const ov = cv[k] ?? (k === "count" ? 0 : k === "days" ? [] : "");
-      if (!same(ov, nv)) { changes.push({ label: `${sv.label} ${label}`, from: ov, to: nv }); cv[k] = nv; vChanged = true; }
-    });
-  });
-  if (vChanged) patch.variants = vars;
-  return { changes, patch };
-}
-$("#cSync").onclick = () => {
-  const mine = COURSES.filter((c) => seasonOf(c) === SEASON);
-  const rows = [];
-  const unmatched = [];
-  SEED_2027_WINTER.forEach((s) => {
-    const cur = mine.find((c) => c.title === s.title && c.category === s.category) || mine.find((c) => c.title === s.title);
-    if (!cur) { unmatched.push(s); return; }
-    const d = courseDiff(cur, s);
-    if (d.changes.length) rows.push({ cur, seed: s, ...d });
-  });
-  if (!rows.length && !unmatched.length) return toast("등록된 강좌가 모두 최신 안내문과 같습니다.", "ok");
-  openModal(`<h2 style="margin:0 0 4px">안내문 수정사항 반영</h2>
-    <div class="hint" style="margin-bottom:12px">최신 한글 안내문 기준으로 바뀐 항목입니다. 반영할 강좌를 선택하세요. 담당 선생님·강의실·정원·마감 여부는 바뀌지 않습니다.<br>※ 강좌 관리에서 직접 고친 내용도 아래 목록에 나오면 안내문 값으로 덮어써지니, 유지할 강좌는 체크를 해제하세요.</div>
-    ${rows.map((r, i) => `<div class="card" style="padding:12px 14px;margin-bottom:8px">
-      <label class="check" style="font-weight:800"><input type="checkbox" data-sync="${i}" checked> [${esc(r.cur.category)}] ${esc(r.cur.title)} <span class="hint">${r.changes.length}개 항목</span></label>
-      <ul style="margin:6px 0 0;padding-left:20px;font-size:13px;line-height:1.6">${r.changes.map((c) => `<li><b>${esc(c.label)}</b>: ${c.text !== undefined ? esc(c.text) : `<span style="color:#9a9aa0;text-decoration:line-through">${esc(showVal(c.from))}</span> → <span style="color:var(--green-d);font-weight:700">${esc(showVal(c.to))}</span>`}</li>`).join("")}</ul></div>`).join("")}
-    ${unmatched.length ? `<div class="card" style="padding:12px 14px;margin-bottom:8px">
-      <b>등록되지 않은 강좌 ${unmatched.length}개</b> <span class="hint">(강좌 이름이 달라 짝을 찾지 못한 경우 포함)</span>
-      ${unmatched.map((s, i) => `<label class="check" style="display:flex;margin-top:6px"><input type="checkbox" data-add="${i}"> [${esc(s.category)}] ${esc(s.title)} 새로 추가</label>`).join("")}</div>` : ""}
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn" data-close>취소</button><button class="btn btn-green" id="syncGo">선택한 항목 반영</button></div>`, true);
-  $("#syncGo").onclick = async () => {
-    const pick = $$("[data-sync]:checked").map((x) => rows[+x.dataset.sync]);
-    const adds = $$("[data-add]:checked").map((x) => unmatched[+x.dataset.add]);
-    if (!pick.length && !adds.length) return toast("선택한 강좌가 없습니다.", "err");
-    try {
-      const batch = writeBatch(db);
-      pick.forEach((r) => batch.update(doc(db, "courses", r.cur.id), r.patch));
-      const base = mine.length;
-      adds.forEach((s, i) => batch.set(doc(collection(db, "courses")), { ...s, season: SEASON, order: base + i }));
-      await batch.commit();
-      closeModal();
-      toast(`${pick.length}개 강좌를 수정${adds.length ? `, ${adds.length}개를 추가` : ""}했습니다.`, "ok");
-    } catch (e) { console.error(e); toast("반영에 실패했습니다: " + e.message, "err"); }
-  };
 };
 
 function editCourse(c, isNew = false) {
