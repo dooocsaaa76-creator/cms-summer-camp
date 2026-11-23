@@ -363,7 +363,6 @@
         <button class="btn btn-sm" id="cSeed">겨울 초기 강좌 업로드</button>
         <button class="btn btn-sm btn-dark" id="cAdd">＋ 강좌 추가</button>
       </div>
-      <div id="cInfo"></div>
       <div id="cList"></div>
     </section>
 
@@ -398,7 +397,7 @@ import {
   esc, nl2br, mergeSettings, DEFAULT_SETTINGS, variantTime, variantPeriod, variantLabel, legacyCourseLabel, sortCourses,
   computeSessions, fmtMD, fmtRange, breakText, formatPhone, toast, copyText, SHEET_URL
 } from "./js/common.js";
-import { SEED_2027_WINTER, SEED_NOTES } from "./js/seed-2027winter.js";
+import { SEED_2027_WINTER } from "./js/seed-2027winter.js";
 import { renderNotice, NOTICE_CSS, NOTICE_DEFAULTS, noticeTitle, foldLegacy } from "./js/notice-render.js";
 import { extractBlocks, parseNotice } from "./js/hwp-import.js";
 
@@ -1219,7 +1218,6 @@ function renderCourses() {
   const season = ui.cSeason;
   const list = COURSES.filter((c) => seasonOf(c) === season);
   $("#cSeed").style.display = season === SEASON ? "" : "none";
-  $("#cInfo").innerHTML = season === SEASON && SEED_NOTES.length ? `<div class="infobox"><b>안내문 원본 확인 필요 항목</b> (초기 업로드 데이터 기준)<ul>${SEED_NOTES.map((t) => `<li>${esc(t)}</li>`).join("")}</ul></div>` : "";
   if (!list.length) {
     $("#cList").innerHTML = `<div class="empty card">${esc(seasonName(season))} 강좌가 없습니다.${season === SEASON ? " [겨울 초기 강좌 업로드]를 누르면 안내문 한글파일의 강좌 18개가 등록됩니다." : ""}</div>`;
     return;
