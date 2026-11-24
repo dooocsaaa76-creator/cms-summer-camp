@@ -48,17 +48,37 @@
   .sec-head h2{font-size:28px;letter-spacing:-0.03em;margin:0;font-weight:800;}
   .sec-head p{margin:6px 0 0;color:var(--muted);font-size:14.5px;}
 
-  /* hall tabs */
+  /* 관별 색상 (영재관 = 초록, 프리미엄관 = 파랑) */
+  [data-hall="gifted"]{--hz-tint:#F1FAF6;--hz-tint2:#E0F4EC;--hz-line:#BFE6D8;--hz-band:#00916F;--hz-text:#007A5E;}
+  [data-hall="premium"]{--hz-tint:#EFF8FC;--hz-tint2:#DDF1FA;--hz-line:#BEE3F2;--hz-band:#0083B3;--hz-text:#00739E;}
+
+  /* 관 바로가기 카드 */
   .halls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
-  .hall-tab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 22px;border:1.5px solid var(--line);border-radius:18px;background:#fff;cursor:pointer;text-align:left;transition:all .15s;}
-  .hall-tab img{height:34px;width:auto;}
-  .hall-tab .cnt{font-size:13px;font-weight:700;color:var(--muted);}
-  .hall-tab .hinfo{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:right;}
-  .hall-tab .addr{font-size:12.5px;color:var(--muted);font-weight:500;}
-  .hall-tab .addr::before{content:"📍 ";}
-  .hall-tab.on{border-color:var(--charcoal);box-shadow:0 0 0 3px rgba(65,65,67,.08);}
-  .hall-tab[data-hall="gifted"].on{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,165,126,.12);}
-  .hall-tab[data-hall="premium"].on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,167,225,.12);}
+  .hjump{display:flex;align-items:center;gap:16px;padding:18px 22px;border:1.5px solid var(--hz-line);border-radius:18px;background:#fff;text-decoration:none;color:var(--ink);transition:box-shadow .15s, transform .15s;}
+  .hjump:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(20,20,30,.08);}
+  .hjump img{height:34px;width:auto;flex:none;}
+  .hj-info{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0;}
+  .hj-name{font-size:17px;font-weight:800;}
+  .hj-name b{color:var(--hz-text);}
+  .hj-addr{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--ink-2);}
+  .hj-addr svg{color:var(--hz-band);flex:none;}
+  .hj-go{display:inline-flex;align-items:center;gap:4px;height:34px;padding:0 12px;border-radius:9px;background:var(--hz-tint);color:var(--hz-text);font-size:13px;font-weight:700;white-space:nowrap;flex:none;}
+
+  /* 관별 특강 영역 */
+  #catalog{display:flex;flex-direction:column;gap:32px;}
+  .hall-zone{border-radius:28px;background:var(--hz-tint);border:1px solid var(--hz-line);overflow:hidden;scroll-margin-top:80px;}
+  .hz-band{background:var(--hz-band);color:#fff;padding:24px 30px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .hz-logo{display:inline-flex;background:#fff;border-radius:14px;padding:10px 16px;flex:none;}
+  .hz-logo img{height:30px;width:auto;}
+  .hz-title{margin:0;font-size:28px;font-weight:900;letter-spacing:-0.03em;flex:1;min-width:200px;}
+  .hz-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:15px;}
+  .hz-addr{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);font-size:14px;font-weight:700;}
+  .hz-body{padding:22px 30px 32px;}
+  .hz-body > .chips{margin-bottom:6px;}
+  .hz-body > .table-wrap{margin-top:12px;}
+  .hall-zone .chip.on{background:var(--hz-band);border-color:var(--hz-band);}
+  .hall-zone .cat-title::before{content:"";width:8px;height:8px;border-radius:4px;background:var(--hz-band);}
+  .hall-zone .hz-body > .grid:first-child{margin-top:4px;}
 
   .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
   .chips{display:flex;gap:8px;flex-wrap:wrap;}
@@ -178,6 +198,7 @@
   .foot .staff{margin-left:auto;color:var(--muted);text-decoration:none;}
   .foot .staff:hover{text-decoration:underline;}
 
+  @media (max-width:1100px){ .hj-go{display:none;} }
   @media (max-width:900px){
     .hero-in{grid-template-columns:1fr;padding:36px 16px 32px;gap:20px;}
     .hero-art{display:none;}
@@ -193,11 +214,21 @@
     .topbar .season{font-size:14px;}
     .topbar nav a.admin-btn{padding:0 10px;margin-left:0;}
     .topbar nav a.admin-btn span{display:none;}
-    .halls{grid-template-columns:1fr 1fr;gap:8px;}
-    .hall-tab{padding:12px;flex-direction:column;align-items:flex-start;}
-    .hall-tab img{height:24px;}
-    .hall-tab .hinfo{align-items:flex-start;text-align:left;}
-    .hall-tab .addr{font-size:11.5px;}
+    /* 휴대폰: 관 바로가기 버튼 줄이 화면 위에 붙어 다님 */
+    .halls{position:sticky;top:64px;z-index:40;gap:8px;margin:0 -16px 16px;padding:10px 16px;background:rgba(247,247,249,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+    .hjump{justify-content:center;padding:0 10px;height:46px;border-radius:12px;background:var(--hz-band);border-color:var(--hz-band);color:#fff;}
+    .hjump img,.hj-addr,.hj-go{display:none;}
+    .hj-info{flex:none;align-items:center;}
+    .hj-name{font-size:14.5px;}
+    .hj-name b{color:#fff;font-weight:600;opacity:.9;}
+    .hall-zone{border-radius:22px;scroll-margin-top:136px;}
+    .hz-band{padding:18px;gap:12px;}
+    .hz-logo{padding:7px 10px;border-radius:10px;}
+    .hz-logo img{height:22px;}
+    .hz-title{font-size:21px;min-width:0;}
+    .hz-meta{align-items:flex-start;width:100%;font-size:13.5px;}
+    .hz-addr{font-size:12.5px;padding:5px 10px;}
+    .hz-body{padding:14px 12px 18px;}
     .grid{grid-template-columns:1fr;}
     .fgrid{grid-template-columns:1fr;}
     .form-card{padding:22px 18px;}
@@ -216,7 +247,8 @@
     <span class="divider"></span>
     <span class="season">2027 겨울방학 특강</span>
     <nav>
-      <a class="lnk" href="#courses">특강 안내</a>
+      <a class="lnk" href="#hall-gifted">영재관 특강</a>
+      <a class="lnk" href="#hall-premium">프리미엄관 특강</a>
       <a class="lnk" href="#winter">윈터스쿨</a>
       <a class="btn btn-dark btn-sm" href="#apply">신청하기 <span class="cart-count" id="cartCount">0</span></a>
       <a class="admin-btn" href="admin.html" title="강사·관리자 로그인"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>관리자 로그인</span></a>
@@ -249,7 +281,7 @@
     <div class="sec-head">
       <div>
         <h2>특강 안내</h2>
-        <p>카드를 눌러 교재 · 수업대상 · 회차별 진도를 확인하고 <b>신청 담기</b>를 눌러주세요. 여러 특강을 한 번에 신청할 수 있습니다.</p>
+        <p>이번 겨울에는 <b>영재관 · 프리미엄관 두 곳</b>에서 특강이 열립니다. 아래로 내리면 영재관, 프리미엄관 특강을 차례로 볼 수 있어요.<br>카드의 <b>자세히 보기</b>로 교재 · 수업대상 · 회차별 진도를 확인하고 <b>신청 담기</b>를 눌러주세요. 여러 특강을 한 번에 신청할 수 있습니다.</p>
       </div>
       <div class="seg" id="viewSeg">
         <button class="on" data-view="card">카드 보기</button>
@@ -258,7 +290,6 @@
     </div>
     <div class="halls" id="halls"></div>
     <div class="notice-line" id="heroNote" style="display:none"></div>
-    <div class="toolbar"><div class="chips" id="chips"></div></div>
     <div id="catalog"><div class="empty">강좌 정보를 불러오는 중입니다…</div></div>
   </section>
 
@@ -384,7 +415,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 let COURSES = [];
 let SETTINGS = mergeSettings(null);
 let usingSeed = false;
-let state = { hall: "gifted", cat: "전체", view: "card" };
+let state = { cat: {}, view: "card" };   // cat: 관별 선택한 과정 { gifted: "중등" }
 const picked = new Set();               // "courseId#variantIdx"
 
 /* ---------------- data ---------------- */
@@ -449,28 +480,27 @@ function renderMeta() {
   $("#metaPeriod").textContent = a && b ? `${fmtMDshort(a)} ~ ${fmtMDshort(b)}` : "-";
 }
 
+/* 영재관 · 프리미엄관을 한 화면에 모두 표시 (위: 영재관, 아래: 프리미엄관) */
+const PIN_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>`;
+const DOWN_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>`;
+const hallCourses = (h) => COURSES.filter((c) => h.cats.includes(c.category));
+const shownHalls = () => HALLS.filter((h) => hallCourses(h).length);
+
 function renderHalls() {
-  $("#halls").innerHTML = HALLS.map((h) => {
-    const cnt = COURSES.filter((c) => h.cats.includes(c.category)).length;
-    return `<button class="hall-tab ${state.hall === h.id ? "on" : ""}" data-hall="${h.id}">
-      <img src="${h.logo}" alt="CMS ${h.name}"><span class="hinfo"><span class="cnt">${h.name} · ${cnt}개</span>${h.address ? `<span class="addr">${esc(h.address)}</span>` : ""}</span></button>`;
-  }).join("");
-  $$("#halls .hall-tab").forEach((b) => b.onclick = () => { state.hall = b.dataset.hall; state.cat = "전체"; renderHalls(); renderChips(); renderCatalog(); });
+  $("#halls").innerHTML = shownHalls().map((h) => `<a class="hjump" data-hall="${h.id}" href="#hall-${h.id}">
+      <img src="${h.logo}" alt="CMS ${h.name}">
+      <span class="hj-info"><span class="hj-name">${h.name} 특강 <b>${hallCourses(h).length}개</b></span>${h.address ? `<span class="hj-addr">${PIN_SVG}${esc(h.address)}</span>` : ""}</span>
+      <span class="hj-go">바로가기 ${DOWN_SVG}</span></a>`).join("");
   const note = SETTINGS.heroNote;
   $("#heroNote").style.display = note ? "flex" : "none";
   $("#heroNote").innerHTML = note ? `⏸ ${esc(note)}` : "";
 }
 
-function renderChips() {
-  const hall = HALLS.find((h) => h.id === state.hall);
-  const cats = hall.cats.length > 1 ? ["전체", ...hall.cats] : [];
-  $("#chips").innerHTML = cats.map((c) => `<button class="chip ${state.cat === c ? "on" : ""}" data-cat="${c}">${c}</button>`).join("");
-  $$("#chips .chip").forEach((b) => b.onclick = () => { state.cat = b.dataset.cat; renderChips(); renderCatalog(); });
-}
+function renderChips() { /* 관별 과정 버튼은 각 관 영역 안에 그립니다 (renderCatalog) */ }
 
-function visibleCats() {
-  const hall = HALLS.find((h) => h.id === state.hall);
-  return state.cat === "전체" ? hall.cats : [state.cat];
+function visibleCats(h) {
+  const sel = state.cat[h.id] || "전체";
+  return sel === "전체" || !h.cats.includes(sel) ? h.cats : [sel];
 }
 const catBadge = (c) => `<span class="badge ${hallOf(c.category).id === "premium" ? "blue" : "green"}">${esc(c.category)}</span>`;
 const isPicked = (c) => (c.variants || []).some((_, i) => picked.has(`${c.id}#${i}`));
@@ -478,8 +508,30 @@ const allClosed = (c) => (c.variants || []).length && (c.variants || []).every((
 
 function renderCatalog() {
   const root = $("#catalog");
-  const cats = visibleCats();
   if (!COURSES.length) { root.innerHTML = `<div class="empty">등록된 특강이 없습니다.</div>`; return; }
+  root.innerHTML = shownHalls().map((h) => {
+    const n = hallCourses(h).length;
+    const sel = state.cat[h.id] || "전체";
+    const chips = h.cats.length > 1
+      ? `<div class="chips">${["전체", ...h.cats].map((c) => `<button type="button" class="chip ${sel === c ? "on" : ""}" data-hall="${h.id}" data-cat="${c}">${c}</button>`).join("")}</div>`
+      : "";
+    return `<section class="hall-zone" id="hall-${h.id}" data-hall="${h.id}">
+      <div class="hz-band">
+        <span class="hz-logo"><img src="${h.logo}" alt="CMS ${h.name}"></span>
+        <h2 class="hz-title">${h.name} 겨울방학 특강</h2>
+        <div class="hz-meta"><b>특강 ${n}개</b>${h.address ? `<span class="hz-addr">${PIN_SVG}${esc(h.address)}</span>` : ""}</div>
+      </div>
+      <div class="hz-body">${chips}${hallBody(h)}</div>
+    </section>`;
+  }).join("");
+  $$(".hall-zone .chip", root).forEach((b) => b.onclick = () => { state.cat[b.dataset.hall] = b.dataset.cat; renderCatalog(); });
+  $$("[data-detail]", root).forEach((b) => b.onclick = () => openDetail(b.dataset.detail));
+  $$("[data-pick]", root).forEach((b) => b.onclick = () => quickPick(b.dataset.pick));
+  $$("[data-toggle]", root).forEach((b) => b.onclick = () => togglePick(b.dataset.toggle));
+}
+
+function hallBody(h) {
+  const cats = visibleCats(h);
   if (state.view === "table") {
     const rows = [];
     cats.forEach((cat) => COURSES.filter((c) => c.category === cat).forEach((c) => (c.variants || []).forEach((v, vi) => {
@@ -495,17 +547,18 @@ function renderCatalog() {
           `<button class="btn btn-xs ${picked.has(key) ? "btn-green" : ""}" data-toggle="${key}">${picked.has(key) ? "담김 ✓" : "담기"}</button>`}</td>
       </tr>`);
     })));
-    root.innerHTML = `<div class="table-wrap"><table class="ttable"><thead><tr><th>구분</th><th>특강</th><th>반</th><th>요일 / 시간</th><th>회차</th><th>개강 ~ 종강</th><th></th></tr></thead><tbody>${rows.join("") || `<tr><td colspan="7" class="empty">특강이 없습니다.</td></tr>`}</tbody></table></div>`;
-  } else {
-    root.innerHTML = cats.map((cat) => {
+    return `<div class="table-wrap"><table class="ttable"><thead><tr><th>구분</th><th>특강</th><th>반</th><th>요일 / 시간</th><th>회차</th><th>개강 ~ 종강</th><th></th></tr></thead><tbody>${rows.join("") || `<tr><td colspan="7" class="empty">특강이 없습니다.</td></tr>`}</tbody></table></div>`;
+  }
+  return cats.map((cat) => {
       const list = COURSES.filter((c) => c.category === cat);
       if (!list.length) return "";
-      return `<div class="cat-title">${esc(cat === "프리미엄관" ? "프리미엄관" : cat + "과정")} 특강 <span class="n">${list.length}개</span></div>
+      const head = h.cats.length > 1 ? `<div class="cat-title">${esc(cat)}과정 특강 <span class="n">${list.length}개</span></div>` : "";
+      return `${head}
       <div class="grid">${list.map((c) => {
         const multi = (c.variants || []).length > 1;
         const pk = isPicked(c);
         return `<article class="card ccard ${pk ? "picked" : ""}">
-          <div class="top">${catBadge(c)}${multi ? `<span class="badge">${c.variants.length}개 반</span>` : ""}${allClosed(c) ? `<span class="badge red">마감</span>` : ""}</div>
+          <div class="top">${hallBadge(c)}${multi ? `<span class="badge">${c.variants.length}개 반</span>` : ""}${allClosed(c) ? `<span class="badge red">마감</span>` : ""}</div>
           <h3>${esc(c.title)}</h3>
           ${c.subtitle ? `<div class="sub">${esc(c.subtitle)}</div>` : ""}
           <div class="tgt">${esc(c.target || "")}</div>
@@ -520,11 +573,13 @@ function renderCatalog() {
         </article>`;
       }).join("")}</div>`;
     }).join("") || `<div class="empty">특강이 없습니다.</div>`;
-  }
-  $$("[data-detail]", root).forEach((b) => b.onclick = () => openDetail(b.dataset.detail));
-  $$("[data-pick]", root).forEach((b) => b.onclick = () => quickPick(b.dataset.pick));
-  $$("[data-toggle]", root).forEach((b) => b.onclick = () => togglePick(b.dataset.toggle));
 }
+// 카드에 어느 관 특강인지 표시: 영재관 카드는 [영재관][고등], 프리미엄관 카드는 [프리미엄관]
+const hallBadge = (c) => {
+  const h = hallOf(c.category);
+  const cls = h.id === "premium" ? "blue" : "green";
+  return `<span class="badge ${cls}">${esc(h.name)}</span>${c.category !== h.name ? `<span class="badge">${esc(c.category)}</span>` : ""}`;
+};
 
 function quickPick(id) {
   const c = COURSES.find((x) => x.id === id);
