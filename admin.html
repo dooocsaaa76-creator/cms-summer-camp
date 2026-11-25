@@ -146,6 +146,35 @@
 
   /* notices */
   .nlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+  .n-sum{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-2);margin-bottom:12px;}
+  .n-sum b{color:var(--ink);}
+  .n-sum .warn{color:#B26B00;font-weight:700;}
+  .n-grp{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+  .n-grp-h{display:flex;align-items:baseline;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:14.5px;}
+  .n-grp-h span{font-weight:500;font-size:12px;color:var(--muted);}
+  .n-tbl{width:100%;border-collapse:collapse;min-width:760px;font-size:13.5px;}
+  .n-tbl th{font-size:11.5px;color:var(--muted);font-weight:700;text-align:left;padding:7px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap;}
+  .n-tbl td{padding:7px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle;}
+  .n-tbl tr:last-child td{border-bottom:0;}
+  .n-tbl tr:hover td{background:#F6FBF9;}
+  .n-tbl td.cls{font-weight:800;white-space:nowrap;width:200px;}
+  .n-tbl td.cls .badge{margin-left:6px;vertical-align:1px;}
+  .n-flag{display:inline-block;margin-left:6px;font-size:10.5px;font-weight:800;color:#B26B00;background:var(--amber-p);border-radius:5px;padding:0 5px;vertical-align:1px;}
+  .n-tbl .spn{font-weight:700;}
+  .n-tbl .spv{color:var(--muted);font-size:12.5px;margin-left:6px;}
+  .n-tbl td.w{width:70px;text-align:center;font-size:12px;color:var(--green-d);font-weight:700;}
+  .n-tbl td.d{width:64px;color:var(--muted);font-size:12.5px;white-space:nowrap;}
+  .n-tbl td.act{white-space:nowrap;text-align:right;width:1%;}
+  .n-tbl td.act .btn{margin-left:3px;}
+  .n-spgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;}
+  .n-spcard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .n-spcard h3{margin:0;font-size:15px;}
+  .n-spcard .full{font-size:12px;color:var(--muted);margin:2px 0 10px;}
+  .n-spcard .cnt{float:right;font-size:12px;font-weight:800;color:var(--green-d);background:var(--green-p);border-radius:20px;padding:1px 9px;}
+  .n-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .n-chip{border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:700;background:var(--bg);cursor:pointer;font-family:inherit;color:var(--ink);}
+  .n-chip:hover{border-color:var(--green);}
+  .n-chip small{color:var(--muted);font-weight:500;margin-left:4px;}
   .ncard{padding:18px;display:flex;flex-direction:column;gap:8px;}
   .ncard .nt1{font-weight:800;font-size:16px;}
   .ncard .nt2{font-size:12.5px;color:var(--muted);}
@@ -408,7 +437,12 @@
           <button class="btn btn-dark" id="nNew">＋ 새 안내문</button>
         </div>
         <input type="file" id="nFile" accept=".hwp,.hwpx" hidden>
-        <div class="nlist" id="nList"></div>
+        <div class="bar" style="margin-bottom:10px">
+          <div class="seg" id="nView"><button data-v="list" class="on">반별 목록</button><button data-v="sp">특강별로 묶기</button><button data-v="card">카드</button></div>
+          <input class="input search" id="nSearch" placeholder="반 이름 · 특강 검색">
+        </div>
+        <div class="n-sum" id="nSum"></div>
+        <div id="nList"></div>
       </div>
       <div id="nEditView" style="display:none">
         <div class="bar">
@@ -1423,22 +1457,65 @@ const applyUrlOf = (n) => {
 };
 const smsText = (n, id) => `[CMS 서초영재교과관] ${n.className || ""} 학부모님, 안녕하세요.\n${noticeTitle(n)}을 보내드립니다.\n아래 링크에서 겨울방학 학습 계획과 특강 일정을 확인하시고, 안내문 하단의 [특강 신청하러 가기]로 신청 부탁드립니다.\n\n▶ 안내문: ${noticeUrl(id)}\n\n문의: 02-595-1280`;
 
+// 목록 보기: 반별 목록(계열별) · 특강별로 묶기 · 카드
+ui.nView = (() => { try { return localStorage.getItem("nView") || "list"; } catch (e) { return "list"; } })();
+ui.nSearch = "";
+const nNorm = (s) => String(s || "").replace(/\s+/g, "");
+const spShort = (t) => String(t || "").split(/\s+:\s+/)[0].trim(); // "꼭대기 : 꼭 필요한…" → "꼭대기"
+const nSeries = (c) => /^FIT/i.test(c) ? "FIT" : /^GS/i.test(c) ? "GS" : /^BM/i.test(c) ? "BM" : "특별반 · 기타";
+const N_SERIES = ["FIT", "GS", "BM", "특별반 · 기타"];
+const nDate = (n) => { const t = n.updatedAt || n.createdAt; return t && t.toDate ? `${t.toDate().getMonth() + 1}/${t.toDate().getDate()}` : ""; };
+const nActs = (n, xs = "btn-xs") => `<button class="btn ${xs} btn-dark" data-nedit="${n.id}">편집</button><a class="btn ${xs}" href="${noticeUrl(n.id)}" target="_blank">열기 ↗</a><button class="btn ${xs}" data-nlink="${n.id}">링크 복사</button><button class="btn ${xs}" data-nsms="${n.id}">문자 문구 복사</button><button class="btn ${xs}" data-ndup="${n.id}">복제</button><button class="btn ${xs} btn-danger" data-ndel="${n.id}">삭제</button>`;
+$$("#nView button").forEach((b) => b.onclick = () => { ui.nView = b.dataset.v; try { localStorage.setItem("nView", ui.nView); } catch (e) { /* 무시 */ } renderNoticeList(); });
+$("#nSearch").oninput = (e) => { ui.nSearch = e.target.value; renderNoticeList(); };
+
 function renderNoticeList() {
-  const list = NOTICES.filter((n) => seasonOf(n) === SEASON).sort((a, b) => (a.className || "").localeCompare(b.className || "", "ko"));
-  $("#nList").innerHTML = list.map((n) => `<div class="card ncard">
+  const all = NOTICES.filter((n) => seasonOf(n) === SEASON);
+  // 같은 반 이름 확인: 특강까지 같으면 '중복 의심', 특강이 다르면 '같은 이름 n개'
+  const byName = {};
+  all.forEach((n) => (byName[nNorm(n.className)] ||= []).push(n));
+  const spKey = (n) => (n.specials || []).map((s) => `${s.courseId}#${s.vi}`).join("/");
+  const flagOf = (n) => { const same = byName[nNorm(n.className)] || []; if (same.length < 2) return ""; return same.filter((x) => spKey(x) === spKey(n)).length > 1 ? "중복 의심" : `같은 이름 ${same.length}개`; };
+  const q = nNorm(ui.nSearch);
+  const list = all.filter((n) => !q || nNorm(n.className).includes(q) || (n.specials || []).some((s) => nNorm(`${s.title}${s.label || s.variantLabel || ""}`).includes(q)))
+    .sort((a, b) => (a.className || "").localeCompare(b.className || "", "ko", { numeric: true }));
+  $$("#nView button").forEach((x) => x.classList.toggle("on", x.dataset.v === ui.nView));
+  const dupN = all.filter((n) => flagOf(n) === "중복 의심").length;
+  $("#nSum").innerHTML = all.length ? `<span>안내문 <b>${all.length}</b>개</span><span>특강 <b>${new Set(all.flatMap((n) => (n.specials || []).map((s) => s.title))).size}</b>개</span><span>윈터스쿨 포함 <b>${all.filter((n) => n.winter && n.winter.on).length}</b>개</span>${dupN ? `<span class="warn">중복 의심 ${dupN}개</span>` : ""}${q ? `<span>검색 결과 <b>${list.length}</b>개</span>` : ""}` : "";
+  const box = $("#nList");
+  box.className = ui.nView === "card" ? "nlist" : "";
+  if (!all.length) { box.className = "nlist"; box.innerHTML = `<div class="empty card" style="grid-column:1/-1">아직 만든 안내문이 없습니다. [＋ 새 안내문]으로 시작하세요.</div>`; return; }
+  if (!list.length) { box.innerHTML = `<div class="empty card" style="grid-column:1/-1">‘${esc(ui.nSearch)}’ 검색 결과가 없습니다.</div>`; return; }
+
+  if (ui.nView === "list") {
+    box.innerHTML = N_SERIES.map((g) => {
+      const rows = list.filter((n) => nSeries(n.className || "") === g);
+      if (!rows.length) return "";
+      return `<section class="n-grp"><div class="n-grp-h">${esc(g)} <span>${rows.length}개</span></div><div style="overflow-x:auto"><table class="n-tbl">
+        <thead><tr><th>반 이름</th><th>특강</th><th style="text-align:center">윈터스쿨</th><th>수정일</th><th></th></tr></thead><tbody>
+        ${rows.map((n) => `<tr>
+          <td class="cls">${esc(n.className || "(반 이름 없음)")}${n.hall === "premium" ? `<span class="badge blue">프리미엄관</span>` : ""}${flagOf(n) ? `<span class="n-flag" title="같은 반 이름의 안내문이 더 있습니다">${flagOf(n)}</span>` : ""}</td>
+          <td>${(n.specials || []).map((s) => `<span class="spn" title="${esc(s.title)}">${esc(spShort(s.title))}</span><span class="spv">${esc(s.label || s.variantLabel || "")}</span>`).join("<br>") || `<span class="hint">-</span>`}</td>
+          <td class="w">${n.winter && n.winter.on ? "포함" : ""}</td>
+          <td class="d" title="${esc(n.author || "")}">${nDate(n)}</td>
+          <td class="act">${nActs(n)}</td>
+        </tr>`).join("")}</tbody></table></div></section>`;
+    }).join("");
+  } else if (ui.nView === "sp") {
+    const m = new Map();
+    list.forEach((n) => (n.specials || []).forEach((s) => { if (!m.has(s.title)) m.set(s.title, []); m.get(s.title).push({ n, v: s.label || s.variantLabel || "" }); }));
+    const none = list.filter((n) => !(n.specials || []).length);
+    box.innerHTML = `<div class="n-spgrid">${[...m.entries()].sort((a, b) => b[1].length - a[1].length || spShort(a[0]).localeCompare(spShort(b[0]), "ko"))
+      .map(([t, cs]) => `<div class="n-spcard"><span class="cnt">${cs.length}개 반</span><h3>${esc(spShort(t))}</h3><div class="full">${esc(t)}</div>
+        <div class="n-chips">${cs.map(({ n, v }) => `<button class="n-chip" data-nedit="${n.id}" title="눌러서 편집">${esc(n.className || "(반 이름 없음)")}<small>${esc(v)}</small></button>`).join("")}</div></div>`).join("")}
+      ${none.length ? `<div class="n-spcard"><h3>특강 없음</h3><div class="full">특강을 고르지 않은 안내문</div><div class="n-chips">${none.map((n) => `<button class="n-chip" data-nedit="${n.id}">${esc(n.className || "(반 이름 없음)")}</button>`).join("")}</div></div>` : ""}</div>`;
+  } else box.innerHTML = list.map((n) => `<div class="card ncard">
       <div><span class="badge ${n.hall === "premium" ? "blue" : "green"}">${n.hall === "premium" ? "프리미엄관" : "영재관"}</span></div>
       <div class="nt1">${esc(n.className || "(반 이름 없음)")}</div>
       <div class="nt2">${esc(noticeTitle(n))}</div>
       <div class="nt2">특강: ${esc((n.specials || []).map((s) => s.title).join(", ") || "-")}${n.winter && n.winter.on ? " · 윈터스쿨" : ""}</div>
-      <div class="nt2">${esc(n.author || "")} ${n.updatedAt && n.updatedAt.toDate ? "· " + n.updatedAt.toDate().toLocaleDateString("ko-KR") : ""}</div>
-      <div class="ac">
-        <button class="btn btn-xs btn-dark" data-nedit="${n.id}">편집</button>
-        <a class="btn btn-xs" href="${noticeUrl(n.id)}" target="_blank">열기 ↗</a>
-        <button class="btn btn-xs" data-nlink="${n.id}">링크 복사</button>
-        <button class="btn btn-xs" data-nsms="${n.id}">문자 문구 복사</button>
-        <button class="btn btn-xs" data-ndup="${n.id}">복제</button>
-        <button class="btn btn-xs btn-danger" data-ndel="${n.id}">삭제</button>
-      </div></div>`).join("") || `<div class="empty card" style="grid-column:1/-1">아직 만든 안내문이 없습니다. [＋ 새 안내문]으로 시작하세요.</div>`;
+      <div class="nt2">${esc(n.author || "")} ${n.updatedAt && n.updatedAt.toDate ? "· " + n.updatedAt.toDate().toLocaleDateString("ko-KR") : ""}${flagOf(n) ? ` <span class="n-flag">${flagOf(n)}</span>` : ""}</div>
+      <div class="ac">${nActs(n)}</div></div>`).join("");
   $$("[data-nedit]").forEach((b) => b.onclick = () => openEditor(b.dataset.nedit));
   $$("[data-nlink]").forEach((b) => b.onclick = async () => { await copyText(noticeUrl(b.dataset.nlink)); toast("안내문 링크를 복사했습니다.", "ok"); });
   $$("[data-nsms]").forEach((b) => b.onclick = async () => { const n = NOTICES.find((x) => x.id === b.dataset.nsms); await copyText(smsText(n, n.id)); toast("문자 발송용 문구를 복사했습니다.", "ok"); });
