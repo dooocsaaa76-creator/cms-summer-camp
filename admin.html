@@ -175,6 +175,16 @@
   .n-chip{border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:700;background:var(--bg);cursor:pointer;font-family:inherit;color:var(--ink);}
   .n-chip:hover{border-color:var(--green);}
   .n-chip small{color:var(--muted);font-weight:500;margin-left:4px;}
+  .n-cat{margin-bottom:22px;}
+  .n-cat-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:0 2px 8px;margin-bottom:10px;border-bottom:2px solid var(--green);}
+  .n-cat-h.prem{border-bottom-color:var(--blue);}
+  .n-cat-h.etc{border-bottom-color:var(--line);}
+  .n-cat-h b{font-size:16px;}
+  .n-cat-h span{font-size:12.5px;color:var(--muted);}
+  .n-cat-h em{font-style:normal;color:#B26B00;font-weight:700;}
+  .n-spcard.none{background:transparent;border-style:dashed;}
+  .n-spcard.none h3{color:var(--ink-2);}
+  .n-spcard.none .cnt{color:#B26B00;background:var(--amber-p);}
   .ncard{padding:18px;display:flex;flex-direction:column;gap:8px;}
   .ncard .nt1{font-weight:800;font-size:16px;}
   .ncard .nt2{font-size:12.5px;color:var(--muted);}
@@ -1502,13 +1512,34 @@ function renderNoticeList() {
         </tr>`).join("")}</tbody></table></div></section>`;
     }).join("");
   } else if (ui.nView === "sp") {
-    const m = new Map();
-    list.forEach((n) => (n.specials || []).forEach((s) => { if (!m.has(s.title)) m.set(s.title, []); m.get(s.title).push({ n, v: s.label || s.variantLabel || "" }); }));
+    // 고등 · 중등 · 초등 · 프리미엄관 (강좌 관리의 구분과 순서). 안내문이 없는 특강도 점선 카드로 표시
+    const courses = COURSES.filter((c) => seasonOf(c) === SEASON);
+    const m = new Map(); // courseId → [{n, v}]
+    const orphan = new Map(); // 강좌를 찾을 수 없는 특강 (삭제·이름 변경 등)
+    list.forEach((n) => (n.specials || []).forEach((s) => {
+      const c = courses.find((x) => x.id === s.courseId) || courses.find((x) => x.title === s.title);
+      const tgt = c ? m : orphan; const k = c ? c.id : s.title;
+      if (!tgt.has(k)) tgt.set(k, []);
+      tgt.get(k).push({ n, v: s.label || s.variantLabel || "" });
+    }));
     const none = list.filter((n) => !(n.specials || []).length);
-    box.innerHTML = `<div class="n-spgrid">${[...m.entries()].sort((a, b) => b[1].length - a[1].length || spShort(a[0]).localeCompare(spShort(b[0]), "ko"))
-      .map(([t, cs]) => `<div class="n-spcard"><span class="cnt">${cs.length}개 반</span><h3>${esc(spShort(t))}</h3><div class="full">${esc(t)}</div>
-        <div class="n-chips">${cs.map(({ n, v }) => `<button class="n-chip" data-nedit="${n.id}" title="눌러서 편집">${esc(n.className || "(반 이름 없음)")}<small>${esc(v)}</small></button>`).join("")}</div></div>`).join("")}
-      ${none.length ? `<div class="n-spcard"><h3>특강 없음</h3><div class="full">특강을 고르지 않은 안내문</div><div class="n-chips">${none.map((n) => `<button class="n-chip" data-nedit="${n.id}">${esc(n.className || "(반 이름 없음)")}</button>`).join("")}</div></div>` : ""}</div>`;
+    const chips = (cs) => cs.slice().sort((a, b) => (a.n.className || "").localeCompare(b.n.className || "", "ko", { numeric: true }))
+      .map(({ n, v }) => `<button class="n-chip" data-nedit="${n.id}" title="눌러서 편집">${esc(n.className || "(반 이름 없음)")}<small>${esc(v)}</small></button>`).join("");
+    const card = (title, cs) => `<div class="n-spcard ${cs.length ? "" : "none"}"><span class="cnt">${cs.length ? cs.length + "개 반" : "안내문 없음"}</span><h3>${esc(spShort(title))}</h3><div class="full">${esc(title)}</div>
+      <div class="n-chips">${chips(cs) || `<span class="hint" style="font-size:12px">아직 이 특강을 넣은 반별 안내문이 없습니다</span>`}</div></div>`;
+    let html = CATEGORIES.map((cat) => {
+      const cl = courses.filter((c) => c.category === cat);
+      const linked = cl.filter((c) => m.has(c.id));
+      const shown = q ? linked : cl;
+      if (!shown.length) return "";
+      const nCnt = linked.reduce((s, c) => s + m.get(c.id).length, 0);
+      return `<section class="n-cat"><div class="n-cat-h ${cat === "프리미엄관" ? "prem" : ""}"><b>${esc(cat)}</b><span>특강 ${cl.length}개 · 안내문 연결 ${nCnt}개${cl.length - linked.length ? ` · <em>안내문 없는 특강 ${cl.length - linked.length}개</em>` : ""}</span></div>
+        <div class="n-spgrid">${shown.map((c) => card(c.title, m.get(c.id) || [])).join("")}</div></section>`;
+    }).join("");
+    if (orphan.size || none.length) html += `<section class="n-cat"><div class="n-cat-h etc"><b>기타</b><span>강좌 관리에서 찾을 수 없는 특강 · 특강을 고르지 않은 안내문</span></div><div class="n-spgrid">
+      ${[...orphan.entries()].map(([t, cs]) => card(t, cs)).join("")}
+      ${none.length ? `<div class="n-spcard"><h3>특강 없음</h3><div class="full">특강을 고르지 않은 안내문</div><div class="n-chips">${chips(none.map((n) => ({ n, v: "" })))}</div></div>` : ""}</div></section>`;
+    box.innerHTML = html || `<div class="empty card">‘${esc(ui.nSearch)}’ 검색 결과가 없습니다.</div>`;
   } else box.innerHTML = list.map((n) => `<div class="card ncard">
       <div><span class="badge ${n.hall === "premium" ? "blue" : "green"}">${n.hall === "premium" ? "프리미엄관" : "영재관"}</span></div>
       <div class="nt1">${esc(n.className || "(반 이름 없음)")}</div>
