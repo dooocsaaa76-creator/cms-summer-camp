@@ -175,6 +175,9 @@
   .n-chip{border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12.5px;font-weight:700;background:var(--bg);cursor:pointer;font-family:inherit;color:var(--ink);}
   .n-chip:hover{border-color:var(--green);}
   .n-chip small{color:var(--muted);font-weight:500;margin-left:4px;}
+  .n-state{font-size:12.5px;font-weight:700;white-space:nowrap;}
+  .n-state.ok{color:var(--green-d);}
+  .n-state.dirty{color:#B26B00;}
   .n-cat{margin-bottom:22px;}
   .n-cat-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:0 2px 8px;margin-bottom:10px;border-bottom:2px solid var(--green);}
   .n-cat-h.prem{border-bottom-color:var(--blue);}
@@ -462,6 +465,7 @@
           <button class="btn btn-sm btn-green" id="nImport2">한글 파일 불러오기</button>
           <button class="btn btn-sm" id="nSample">예시 불러오기</button>
           <button class="btn btn-sm" id="nPrint">인쇄 / PDF</button>
+          <span class="n-state ok" id="nState"></span>
           <button class="btn btn-sm btn-green" id="nSave">저장</button>
         </div>
         <div id="nLinkBox"></div>
@@ -552,6 +556,7 @@ onAuthStateChanged(auth, (user) => {
   $("#who").textContent = user.email;
   $("#seasonBadge").textContent = `공개 중: ${SEASON_LABEL}`;
   subscribe();
+  applyRoute();
 });
 
 // 로그인 정보(토큰)가 잠깐 끊기면 Firestore가 "권한 없음"을 보내고 실시간 연결을 끊습니다.
@@ -629,6 +634,7 @@ function subscribe() {
   }, permErr("윈터스쿨")));
   unsubs.push(onSnapshot(collection(db, "notices"), (s) => {
     NOTICES = s.docs.map((d) => ({ ...d.data(), id: d.id }));
+    if (pendingNoticeRoute) { pendingNoticeRoute = ""; applyRoute(); }
     refresh();
   }, permErr("안내문")));
   unsubs.push(onSnapshot(query(collection(db, "members"), where("season", "==", SEASON)), (s) => {
@@ -687,12 +693,58 @@ const dayPick = (name, sel = [], days = ["월", "화", "수", "목", "금", "토
   `<div class="daypick">${days.map((d) => `<label><input type="checkbox" name="${name}" value="${d}" ${sel.includes(d) ? "checked" : ""}>${d}</label>`).join("")}</div>`;
 const picked = (name, root = document) => $$(`input[name="${name}"]:checked`, root).map((x) => x.value);
 
-/* 탭 */
-$$("#tabs button").forEach((b) => b.onclick = () => {
-  $$("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
-  $$(".panel").forEach((p) => p.classList.toggle("on", p.id === `p-${b.dataset.tab}`));
-  if (b.dataset.tab === "archive") loadPastSeasons();
+/* 탭 · 브라우저 뒤로가기 연동
+   주소 끝(#people, #roster, #notices, #notices/안내문ID …)으로 지금 화면을 기억해서
+   브라우저의 뒤로/앞으로 버튼이 관리자 페이지 안에서 탭 · 안내문 편집 화면을 오가게 합니다. */
+const TABS = $$("#tabs button").map((b) => b.dataset.tab);
+function showTab(tab) {
+  if (!TABS.includes(tab)) tab = TABS[0];
+  $$("#tabs button").forEach((x) => x.classList.toggle("on", x.dataset.tab === tab));
+  $$(".panel").forEach((p) => p.classList.toggle("on", p.id === `p-${tab}`));
+  if (tab === "archive") loadPastSeasons();
+}
+const parseRoute = (h = location.hash) => { const [tab, nid] = decodeURIComponent(h.replace(/^#/, "")).split("/"); return { tab: tab || TABS[0], nid: nid || "" }; };
+const routeHash = (tab, nid) => `#${tab}${nid ? "/" + encodeURIComponent(nid) : ""}`;
+function navTo(tab, nid = "", replace = false) {
+  const h = routeHash(tab, nid);
+  if (location.hash === h) return;
+  history[replace ? "replaceState" : "pushState"]({ tab, nid }, "", h);
+}
+let pendingNoticeRoute = "";
+// 주소에 맞게 화면 바꾸기 (뒤로가기 · 새로고침 · 로그인 직후)
+function applyRoute() {
+  const { tab, nid } = parseRoute();
+  closeModal();
+  showTab(tab);
+  const editing = $("#nEditView").style.display === "block";
+  if (tab === "notices" && nid && nid !== "new") {
+    if (!NOTICES.length) { pendingNoticeRoute = nid; return; } // 안내문을 아직 불러오는 중
+    if (NOTICES.some((n) => n.id === nid)) { if (!editing || draftId !== nid) openEditor(nid, null, true); return; }
+    navTo("notices", "", true);
+  }
+  if (tab === "notices" && nid === "new" && editing && !draftId) return; // 새 안내문 작성 중
+  if (editing) closeEditorView();
+}
+window.addEventListener("popstate", () => {
+  // 편집 중에 저장 안 한 내용이 있으면 확인 후 이동
+  const editing = $("#nEditView").style.display === "block";
+  const { tab, nid } = parseRoute();
+  const stays = tab === "notices" && nid && (nid === draftId || (nid === "new" && !draftId));
+  if (editing && !stays && noticeDirty() && !confirm("저장하지 않은 수정 내용이 있습니다. 저장하지 않고 나갈까요?")) {
+    history.pushState({ tab: "notices", nid: draftId || "new" }, "", routeHash("notices", draftId || "new"));
+    return;
+  }
+  applyRoute();
 });
+$$("#tabs button").forEach((b) => b.onclick = () => {
+  const editing = $("#nEditView").style.display === "block";
+  if (editing && b.dataset.tab !== "notices" && noticeDirty() && !confirm("저장하지 않은 수정 내용이 있습니다. 저장하지 않고 다른 탭으로 갈까요?")) return;
+  if (editing && b.dataset.tab !== "notices") closeEditorView();
+  showTab(b.dataset.tab);
+  navTo(b.dataset.tab, b.dataset.tab === "notices" && $("#nEditView").style.display === "block" ? (draftId || "new") : "");
+});
+// 창을 닫거나 새로고침할 때도 저장 안 한 내용이 있으면 브라우저가 한 번 물어봄
+window.addEventListener("beforeunload", (e) => { if ($("#nEditView").style.display === "block" && noticeDirty()) { e.preventDefault(); e.returnValue = ""; } });
 
 let refreshQueued = false;
 function refresh() {
@@ -1674,7 +1726,16 @@ function specialFrom(c, vi, goal, goalDetail) {
   };
 }
 
-function openEditor(id, preset) {
+// 저장 안 한 수정이 있는지: 마지막으로 열거나 저장한 때의 내용과 비교
+let savedSnap = null, savedAt = null;
+const noticeDirty = () => !!draft && JSON.stringify(draft) !== savedSnap;
+function updateSaveState() {
+  const el = $("#nState"); if (!el) return;
+  const dirty = noticeDirty();
+  el.className = `n-state ${dirty ? "dirty" : "ok"}`;
+  el.textContent = dirty ? (draftId ? "● 저장하지 않은 수정 있음" : "● 아직 저장하지 않음") : `✓ 저장됨${savedAt ? " " + savedAt.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }) : ""}`;
+}
+function openEditor(id, preset, fromRoute = false) {
   draftId = id;
   const src = id ? NOTICES.find((n) => n.id === id) : null;
   draft = foldLegacy(preset ? preset : src ? JSON.parse(JSON.stringify(stripMeta(src))) : blankNotice());
@@ -1684,7 +1745,15 @@ function openEditor(id, preset) {
   $("#nImportBox").innerHTML = "";
   bindLinkBox();
   renderNForm(); renderNPreview();
+  // 복제 · 한글 파일로 만든 새 안내문은 아직 저장 전이므로 '수정 있음'으로 시작
+  savedSnap = preset ? null : JSON.stringify(draft);
+  savedAt = null;
+  updateSaveState();
+  if (!fromRoute) navTo("notices", id || "new");
   window.scrollTo(0, 0);
+}
+function closeEditorView() {
+  $("#nEditView").style.display = "none"; $("#nListView").style.display = "block";
 }
 function linkBoxHtml(id) {
   return `<div class="linkbox"><b>발송 링크</b><code>${esc(noticeUrl(id))}</code>
@@ -1697,7 +1766,13 @@ function bindLinkBox() {
   });
 }
 $("#nNew").onclick = () => openEditor(null);
-$("#nBack").onclick = () => { if (!confirm("편집을 마치고 목록으로 갈까요? 저장하지 않은 내용은 사라집니다.")) return; $("#nEditView").style.display = "none"; $("#nListView").style.display = "block"; };
+// 목록으로: 수정한 내용이 없으면 바로 이동, 저장 안 한 수정이 있을 때만 확인
+$("#nBack").onclick = () => {
+  if (noticeDirty() && !confirm("저장하지 않은 수정 내용이 있습니다. 저장하지 않고 목록으로 갈까요?")) return;
+  closeEditorView();
+  navTo("notices");
+  window.scrollTo(0, 0);
+};
 $("#nSample").onclick = () => { if (!confirm("FIT1-2 예시 내용으로 채울까요? (지금 입력한 내용은 바뀝니다)")) return; draft = sampleNotice(); renderNForm(); renderNPreview(); };
 $("#nPrint").onclick = () => window.print();
 
@@ -1746,6 +1821,8 @@ $("#nSave").onclick = async () => {
     if (draftId) await setDoc(doc(db, "notices", draftId), data);
     else { const ref = await addDoc(collection(db, "notices"), { ...data, createdAt: serverTimestamp() }); draftId = ref.id; }
     $("#nLinkBox").innerHTML = linkBoxHtml(draftId); bindLinkBox();
+    savedSnap = JSON.stringify(draft); savedAt = new Date(); updateSaveState();
+    navTo("notices", draftId, true);
     toast("저장했습니다. 발송 링크를 복사해 학부모님께 보내세요.", "ok");
   } catch (e) { console.error(e); toast("저장에 실패했습니다: " + e.message, "err"); }
 };
@@ -1853,6 +1930,7 @@ const pickTitleDefault = (n) => (n.specials || []).map((s) => s.title).join(" ·
 function renderNPreview() {
   const pt = $("#nForm [data-k=pickTitle]"); if (pt) pt.placeholder = pickTitleDefault(draft);
   $("#nPreview").innerHTML = renderNotice(draft, { applyUrl: applyUrlOf(draft) });
+  updateSaveState();
 }
 
 /* ================= 4. 강좌 관리 ================= */
