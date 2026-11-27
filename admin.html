@@ -1268,6 +1268,15 @@ function renderRoster() {
 
   $$("[data-app]", root).forEach((el) => el.onclick = () => editApp(el.dataset.app));
   $$("[data-mem]", root).forEach((el) => el.onclick = () => editMember(el.dataset.mem));
+  // 인원현황에서 들어온 학생: O → X 는 인원현황의 마지막 단계(1차/2차/수강확정)를 X로 바꾸고 명단에서 뺌
+  $$("[data-memx]", root).forEach((el) => el.onclick = async () => {
+    const m = MEMBERS.find((x) => x.id === el.dataset.memx); if (!m) return;
+    const f = m.final ? "final" : m.c2 ? "c2" : "c1";
+    const step = { final: "수강확정", c2: "2차 확정여부", c1: "1차 확정여부" }[f];
+    if (!confirm(`${m.name} 학생의 인원현황 ${step}를 X로 바꿀까요?\nX가 되면 특강 명단에서 빠집니다. (다시 넣으려면 인원현황에서 O나 △로 바꾸면 됩니다)`)) return;
+    await saveMember(m.id, { [f]: "X" });
+    toast(`${m.name}: ${step} X — 특강 명단에서 뺐습니다.`, "ok");
+  });
   $$("[data-ox]", root).forEach((el) => el.onclick = async () => {
     const a = APPS.find((x) => x.id === el.dataset.ox);
     await updateDoc(doc(db, "applications", a.id), { status: isCancel(a) ? "active" : "cancel" });
@@ -1322,7 +1331,7 @@ function colHtml(x, term) {
         <td class="sc" title="${esc(m.school)} ${esc(m.grade)}">${esc(shortSchool(m.school))} ${esc(m.grade || "")}</td>
         <td class="rc ${m.janClass ? "" : "fb"}" title="${esc(m.janClass || m.mainClass)}">${esc(m.janClass || shortClass(m.mainClass))}</td>
         <td class="th" title="담임">${esc(m.teacher || "")}</td>
-        <td class="ox"></td>
+        <td class="ox"><button class="oxb" data-memx="${m.id}" title="인원현황 ${esc(st.step)} 확정여부를 X로 바꾸기 (특강 명단에서 빠짐)">O</button></td>
         ${hasMemo ? `<td class="mm">${m.memo ? `<span class="memo-tag" title="${esc(m.memo)}">${esc(m.memo)}</span>` : ""}</td>` : ""}
       </tr>`).join("");
   return `<div class="col ${x.hall} ${term && !hit ? "dim" : ""}">
